@@ -10,17 +10,16 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import project.source.enums.TokenType;
-import project.source.enums.TokenType.*;
+import project.source.models.enums.TokenType;
 import project.source.exceptions.InvalidDataException;
-import project.source.models.Token;
-import project.source.models.User;
+import project.source.models.entities.Token;
+import project.source.models.entities.User;
 import project.source.requests.ResetPasswordRequest;
 import project.source.requests.SignInRequest;
-import project.source.responses.TokenResponse;
+import project.source.respones.TokenResponse;
 
 import static org.springframework.http.HttpHeaders.REFERER;
-import static project.source.enums.TokenType.*;
+import static project.source.models.enums.TokenType.*;
 
 import java.util.List;
 

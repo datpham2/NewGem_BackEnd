@@ -1,4 +1,4 @@
-package project.source.enums;
+package project.source.models.enums;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

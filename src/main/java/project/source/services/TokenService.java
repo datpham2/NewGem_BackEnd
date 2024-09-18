@@ -2,8 +2,8 @@ package project.source.services;
 
 
 import org.springframework.stereotype.Service;
-import project.source.exceptions.ResourceNotFoundException;
-import project.source.models.Token;
+import project.source.exceptions.NotFoundException;
+import project.source.models.entities.Token;
 import project.source.repositories.TokenRepository;
 
 import java.util.Optional;
@@ -12,7 +12,7 @@ import java.util.Optional;
 @Service
 public record TokenService(TokenRepository tokenRepository) {
     public Token getByUsername(String username) {
-        return tokenRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("Not found token"));
+        return tokenRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("Not found token"));
     }
 
     public int save(Token token) {

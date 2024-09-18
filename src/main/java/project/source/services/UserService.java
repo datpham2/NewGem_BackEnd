@@ -2,11 +2,11 @@ package project.source.services;
 
 
 import org.springframework.security.core.userdetails.UserDetailsService;
-import project.source.enums.UserStatus;
-import project.source.models.User;
-import project.source.requests.UserDTO;
-import project.source.responses.PageResponse;
-import project.source.responses.UserDetailResponse;
+import project.source.models.enums.UserStatus;
+import project.source.models.entities.User;
+import project.source.dtos.UserDTO;
+import project.source.respones.PageResponse;
+import project.source.respones.UserDetailResponse;
 
 import java.util.List;
 

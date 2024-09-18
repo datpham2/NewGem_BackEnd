@@ -1,14 +1,11 @@
-package project.source.models;
+package project.source.models.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import org.hibernate.usertype.UserType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import project.source.enums.Gender;
-import project.source.enums.UserStatus;
+import project.source.models.enums.Gender;
+import project.source.models.enums.UserStatus;
 
 import java.util.*;
 

@@ -1,7 +1,7 @@
 package project.source.services;
 
 import org.springframework.security.core.userdetails.UserDetails;
-import project.source.enums.TokenType;
+import project.source.models.enums.TokenType;
 
 public interface JwtService {
     String generateToken(UserDetails user);

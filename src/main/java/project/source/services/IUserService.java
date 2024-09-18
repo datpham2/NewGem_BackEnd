@@ -9,13 +9,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import project.source.enums.UserStatus;
+import project.source.models.enums.UserStatus;
 import project.source.exceptions.ResourceNotFoundException;
-import project.source.models.User;
+import project.source.models.entities.User;
 import project.source.repositories.UserRepository;
-import project.source.requests.UserDTO;
-import project.source.responses.PageResponse;
-import project.source.responses.UserDetailResponse;
+import project.source.dtos.UserDTO;
+import project.source.respones.PageResponse;
+import project.source.respones.UserDetailResponse;
 
 
 import java.util.List;

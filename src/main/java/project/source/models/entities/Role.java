@@ -1,4 +1,4 @@
-package project.source.models;
+package project.source.models.entities;
 
 
 import jakarta.persistence.Entity;

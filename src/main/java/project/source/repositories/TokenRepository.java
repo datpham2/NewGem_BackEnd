@@ -3,7 +3,7 @@ package project.source.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import project.source.models.Token;
+import project.source.models.entities.Token;
 
 import java.util.List;
 import java.util.Optional;

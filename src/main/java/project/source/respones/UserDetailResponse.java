@@ -1,10 +1,9 @@
-package project.source.responses;
+package project.source.respones;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
-import project.source.enums.Gender;
-import project.source.enums.UserStatus;
+import project.source.models.enums.Gender;
+import project.source.models.enums.UserStatus;
 
 import java.util.Date;
 

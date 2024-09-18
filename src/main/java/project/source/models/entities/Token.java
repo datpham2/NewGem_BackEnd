@@ -1,4 +1,4 @@
-package project.source.models;
+package project.source.models.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "token")
-public class Token extends BaseEntity<Long>{
+public class Token extends BaseEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;

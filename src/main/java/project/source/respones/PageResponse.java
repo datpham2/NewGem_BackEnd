@@ -1,4 +1,4 @@
-package project.source.responses;
+package project.source.respones;
 
 import lombok.Builder;
 import lombok.Getter;
