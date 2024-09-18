@@ -1,0 +1,77 @@
+package project.source.services.reservation;
+
+import project.source.dtos.ReservationDTO;
+import project.source.models.entities.Reservation;
+
+public interface IReservationService {
+    Reservation addReservation(ReservationDTO reservationDTO, Long userId);
+//    Reservation getReservationById(Long id);
+//    Reservation updateReservation(Long id, ReservationDTO reservationDTO);
+//    void deleteReservation(Long id);
+//    void reserveRoom(Long roomId, Long userId);
+//    void cancelReservation(Long reservationId);
+//    void checkIn(Long reservationId);
+//    void checkOut(Long reservationId);
+//    void rateRoom(Long reservationId, int rating);
+//    void commentOnRoom(Long reservationId, String comment);
+//    void payForRoom(Long reservationId);
+//    void refund(Long reservationId);
+//    void changeReservation(Long reservationId, Long newRoomId);
+//    void changeReservationDate(Long reservationId, String newDate);
+//    void changeReservationDuration(Long reservationId, int newDuration);
+//    void changeReservationGuests(Long reservationId, int newGuests);
+//    void changeReservationPrice(Long reservationId, double newPrice);
+//    void changeReservationStatus(Long reservationId, String newStatus);
+//    void changeReservationRating(Long reservationId, int newRating);
+//    void changeReservationComment(Long reservationId, String newComment);
+//    void changeReservationPaymentStatus(Long reservationId, String newPaymentStatus);
+//    void changeReservationPaymentMethod(Long reservationId, String newPaymentMethod);
+//    void changeReservationPaymentDate(Long reservationId, String newPaymentDate);
+//    void changeReservationPaymentAmount(Long reservationId, double newPaymentAmount);
+//    void changeReservationPaymentRefundStatus(Long reservationId, String newRefundStatus);
+//    void changeReservationPaymentRefundMethod(Long reservationId, String newRefundMethod);
+//    void changeReservationPaymentRefundDate(Long reservationId, String newRefundDate);
+//    void changeReservationPaymentRefundAmount(Long reservationId, double newRefundAmount);
+//    void changeReservationPaymentRefundReason(Long reservationId, String newRefundReason);
+//    void changeReservationPaymentRefundProcessedBy(Long reservationId, Long newRefundProcessedBy);
+//    void changeReservationPaymentRefundProcessedDate(Long reservationId, String newRefundProcessedDate);
+//    void changeReservationPaymentRefundProcessedAmount(Long reservationId, double newRefundProcessedAmount);
+//    void changeReservationPaymentRefundProcessedMethod(Long reservationId, String newRefundProcessedMethod);
+//    void changeReservationPaymentRefundProcessedStatus(Long reservationId, String newRefundProcessedStatus);
+//    void changeReservationPaymentRefundProcessedReason(Long reservationId, String newRefundProcessedReason);
+//    void changeReservationPaymentRefundProcessedDate(Long reservationId,
+//    void reserveRoom(Long roomId, Long userId);
+//    void cancelReservation(Long reservationId);
+//    void checkIn(Long reservationId);
+//    void checkOut(Long reservationId);
+//    void rateRoom(Long reservationId, int rating);
+//    void commentOnRoom(Long reservationId, String comment);
+//    void payForRoom(Long reservationId);
+//    void refund(Long reservationId);
+//    void changeReservation(Long reservationId, Long newRoomId);
+//    void changeReservationDate(Long reservationId, String newDate);
+//    void changeReservationDuration(Long reservationId, int newDuration);
+//    void changeReservationGuests(Long reservationId, int newGuests);
+//    void changeReservationPrice(Long reservationId, double newPrice);
+//    void changeReservationStatus(Long reservationId, String newStatus);
+//    void changeReservationRating(Long reservationId, int newRating);
+//    void changeReservationComment(Long reservationId, String newComment);
+//    void changeReservationPaymentStatus(Long reservationId, String newPaymentStatus);
+//    void changeReservationPaymentMethod(Long reservationId, String newPaymentMethod);
+//    void changeReservationPaymentDate(Long reservationId, String newPaymentDate);
+//    void changeReservationPaymentAmount(Long reservationId, double newPaymentAmount);
+//    void changeReservationPaymentRefundStatus(Long reservationId, String newRefundStatus);
+//    void changeReservationPaymentRefundMethod(Long reservationId, String newRefundMethod);
+//    void changeReservationPaymentRefundDate(Long reservationId, String newRefundDate);
+//    void changeReservationPaymentRefundAmount(Long reservationId, double newRefundAmount);
+//    void changeReservationPaymentRefundReason(Long reservationId, String newRefundReason);
+//    void changeReservationPaymentRefundProcessedBy(Long reservationId, Long newRefundProcessedBy);
+//    void changeReservationPaymentRefundProcessedDate(Long reservationId, String newRefundProcessedDate);
+//    void changeReservationPaymentRefundProcessedAmount(Long reservationId, double newRefundProcessedAmount);
+//    void changeReservationPaymentRefundProcessedMethod(Long reservationId, String newRefundProcessedMethod);
+//    void changeReservationPaymentRefundProcessedStatus(Long reservationId, String newRefundProcessedStatus);
+//    void changeReservationPaymentRefundProcessedReason(Long reservationId, String newRefundProcessedReason);
+//    void changeReservationPaymentRefundProcessedDate(Long reservationId, String newRefundProcessedDate);
+//    void changeReservationPaymentRefundProcessedAmount(Long reservationId, double newRefundProcessedAmount);
+//    void changeReservationPaymentRefundProcessedMethod(Long
+}
