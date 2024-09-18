@@ -1,5 +1,6 @@
 package project.source.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import project.source.models.enums.Gender;
 import project.source.models.enums.UserStatus;
 
+import java.time.LocalDate;
 import java.util.*;
 
 
@@ -25,20 +27,20 @@ public class User extends BaseEntity<Long> implements UserDetails {
     private String lastName;
 
     @Column(name = "date_of_birth")
-    @Temporal(TemporalType.DATE)
-    private Date dateOfBirth;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
     private Gender gender;
 
-    @Column(name = "phone")
+    @Column(name = "phone", unique = true)
     private String phone;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name = "password")
@@ -48,8 +50,7 @@ public class User extends BaseEntity<Long> implements UserDetails {
     @Column(name = "status")
     private UserStatus status;
 
-
-    @OneToMany(mappedBy = "user")
+    @OneToMany
     private Set<Role> roles = new HashSet<>();
 
 

@@ -2,34 +2,27 @@ package project.source.services;
 
 
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
 import project.source.models.enums.UserStatus;
 import project.source.models.entities.User;
 import project.source.dtos.UserDTO;
 import project.source.respones.PageResponse;
-import project.source.respones.UserDetailResponse;
 
-import java.util.List;
 
+
+@Service
 public interface UserService {
     UserDetailsService userDetailsService();
 
-    User getByUsername(String userName);
+    User addUser(UserDTO request);
 
-    long saveUser(UserDTO request);
+    User getUser(long userId);
 
-    long saveUser(User user);
+    UserDTO updateUser(long userId, UserDTO request);
 
-    void updateUser(long userId, UserDTO request);
-
-    void changeStatus(long userId, UserStatus status);
+    UserDTO changeStatus(long userId, UserStatus status);
 
     void deleteUser(long userId);
 
     PageResponse<?> getAllUsers(int pageNo, int pageSize);
-
-    UserDetailResponse getUser(long userId);
-
-    List<String> getAllRolesByUserId(long userId);
-
-    User getUserByEmail(String email);
 }

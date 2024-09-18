@@ -15,8 +15,6 @@ import lombok.Setter;
 public class Role extends BaseEntity<Long> {
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private String description;
 }
 

@@ -1,4 +1,4 @@
-package project.source.configurations;
+package project.source.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.lang.NonNull;
