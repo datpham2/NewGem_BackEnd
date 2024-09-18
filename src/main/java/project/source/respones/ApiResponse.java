@@ -14,6 +14,6 @@ import lombok.Setter;
 public class ApiResponse {
     private int status;
     private String message;
-    @JsonIgnore
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Object data;
 }
