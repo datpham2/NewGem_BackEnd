@@ -1,20 +1,20 @@
 package project.source.respones;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ApiResponse {
-    private int status;
-    private String message;
+    int status;
+
+    String message;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Object data;
+    Object data;
 }
