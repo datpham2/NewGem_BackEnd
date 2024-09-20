@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum RoomType {
     SINGLE("Single"), DOUBLE("Double"), VIP("VIP");
-    private String type;
+    private final String type;
 
     RoomType(String type){
         this.type = type;

@@ -21,5 +21,4 @@ public class Role extends BaseEntity<Long>{
 
     public static String ADMIN = "ROLE_ADMIN";
     public static String USER = "ROLE_USER";
-    public static String HOTEL = "ROLE_HOTEL";
 }

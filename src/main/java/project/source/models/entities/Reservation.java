@@ -13,7 +13,7 @@ import java.time.LocalDate;
 
 
 @Entity
-@Table(name = "reservations")
+@Table(name = "reservations") /* old table name: bookrooms */
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -21,16 +21,17 @@ public class Reservation extends BaseEntity<Long>{
     // start date of the reservation
     @Column(name="start_date")
     @Future(message = "Start date must be in the future")
-    private LocalDate checkIn;
+    private LocalDate checkIn; /* old column name: startDate */
 
     // end date of the reservation
     @Column(name="end_date")
     @Future(message = "End date must be in the future")
-    private LocalDate checkOut;
+    private LocalDate checkOut; /* old column name: endDate */
 
     // room in the range of room available in Room class
     @ManyToOne
     @JoinColumn(name = "room_id")
+
     private Room room;
 
     // user who made the reservation
@@ -42,14 +43,14 @@ public class Reservation extends BaseEntity<Long>{
     @Column(name="adults")
     @Min(value = 1, message = "Number of adults must be greater than or equal to 1")
     @Value("1")
-    private int adults;
+    private int adults; /* old column name: noAdults */
 
     // number of children
     @Column(name="children")
     @Value("0")
     @Min(value = 0, message = "Number of children must be greater than or equal to 0")
     @Max(value = 10, message = "Number of children must be less than or equal to 10")
-    private int children;
+    private int children; /* old column name: noChild */
 
     // total price
     // is paid

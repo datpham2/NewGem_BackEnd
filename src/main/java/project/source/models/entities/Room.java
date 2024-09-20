@@ -15,7 +15,6 @@ import java.util.Set;
 @Table(name = "rooms")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
 public class Room extends BaseEntity<Long>{
 
@@ -28,16 +27,16 @@ public class Room extends BaseEntity<Long>{
 
     @NotNull(message = "Type must not be null")
     @Enumerated(EnumType.STRING)
-    private RoomType type;
+    private RoomType type; /* old column name: typeRoom */
 
 //    ???
 
     @OneToMany(mappedBy = "room", fetch = FetchType.EAGER)
-    private Set<Reservation> reservations;
+    private Set<Reservation> reservations; /* old column name: bookrooms */
 
 //    ??
 
     // numbers of guests that can stay in the room
     @Column(name="guests")
-    private int guests;
+    private int guests; /* old column name: noGuests */
 }

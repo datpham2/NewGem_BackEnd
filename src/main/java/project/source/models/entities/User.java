@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import project.source.models.enums.Gender;
-import project.source.models.enums.UserStatus;
+import project.source.models.enums.Status;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -52,7 +52,7 @@ public class User extends BaseEntity<Long> implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    UserStatus status;
+    Status status;
 
     @ManyToOne
     @JoinColumn(name="role_id", nullable = false)
@@ -82,6 +82,6 @@ public class User extends BaseEntity<Long> implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserStatus.ACTIVE.equals(status);
+        return Status.ACTIVE.equals(status);
     }
 }
