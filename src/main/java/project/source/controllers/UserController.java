@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import project.source.dtos.UserDTO;
@@ -52,9 +54,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+
     @GetMapping("getUser/{id}")
     public ResponseEntity<ApiResponse> getUser(@PathVariable long id) {
-        User user = userService.getUser(id);
+        User user = userService.getUserById(id);
         ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("User retrieved successfully")
@@ -63,6 +66,8 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("getAllUser")
     public ResponseEntity<ApiResponse> getAllUser(
             @RequestParam(name = "page", defaultValue = "0") @Min(value = 0, message = "Page must be greater than or equal to 0") int page,
@@ -115,6 +120,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("changeStatus/{id}")
     public ResponseEntity<ApiResponse> updateUserStatus(@PathVariable Long id) {
         userService.changeStatus(id);
@@ -124,6 +130,7 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(response);
     }
+
 
 
     @DeleteMapping("deleteUser/{id}")

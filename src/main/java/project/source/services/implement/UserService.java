@@ -6,7 +6,10 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +26,7 @@ import project.source.dtos.UserDTO;
 
 import project.source.services.IUserService;
 
-import java.util.List;
+
 import java.util.Optional;
 
 @Slf4j
@@ -35,11 +38,13 @@ public class UserService implements IUserService {
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
 
+
     @Override
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+
 
     @Override
     public User addUser(UserDTO userDTO) {
@@ -54,32 +59,48 @@ public class UserService implements IUserService {
 
 
     @Override
-    public User getUser(long userId) {
-        return userRepository.findById(userId)
+    public User getUserById(long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        if (user.getUsername().equals(currentUsername)) {
+            return user;
+        } else {
+            throw new AccessDeniedException("You do not have permission to access this user.");
+        }
     }
 
 
     @Override
     public UserDTO updateUser(long userId, UserDTO userDTO) {
-        User user = getUser(userId);
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setPhone(userDTO.getPhone());
-        user.setEmail(userDTO.getEmail());
-        user.setDateOfBirth(userDTO.getDateOfBirth());
-        user.setGender(userDTO.getGender());
-        user.setUsername(userDTO.getUsername());
+        User user = getUserById(userId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        if (user.getUsername().equals(currentUsername)) {
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
+            user.setPhone(userDTO.getPhone());
+            user.setEmail(userDTO.getEmail());
+            user.setDateOfBirth(userDTO.getDateOfBirth());
+            user.setGender(userDTO.getGender());
+            user.setUsername(userDTO.getUsername());
 
-        User updatedUser = userRepository.save(user);
-        updatedUser.setPassword(null);
-        return UserDTO.fromUser(updatedUser);
+            User updatedUser = userRepository.save(user);
+            updatedUser.setPassword(null);
+            return UserDTO.fromUser(updatedUser);
+        } else {
+            throw new AccessDeniedException("You do not have permission to access this user.");
+        }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @Override
     public UserDTO changeStatus(long userId) {
-        User user = getUser(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
         if (user.getStatus() == Status.ACTIVE){
             user.setStatus(Status.INACTIVE);
         } else {
@@ -90,16 +111,16 @@ public class UserService implements IUserService {
         return UserDTO.fromUser(updatedUser);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @Override
     public void deleteUser(long userId) {
-        User user = getUser(userId);
+        User user = getUserById(userId);
         user.setStatus(Status.INACTIVE);
         userRepository.save(user);
 //        userRepository.delete(user);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @Override
     public Page<User> getAllUsers(PageRequest request) {
         return userRepository.findAll(request);

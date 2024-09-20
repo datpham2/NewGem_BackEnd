@@ -18,7 +18,7 @@ public interface IUserService {
 
     User addUser(UserDTO userDTO);
 
-    User getUser(long userId);
+    User getUserById(long userId);
 
     void emailExisted(String email);
 
