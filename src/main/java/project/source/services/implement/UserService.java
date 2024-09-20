@@ -4,6 +4,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,14 +15,15 @@ import project.source.exceptions.ExistedException;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Role;
 import project.source.models.entities.User;
-import project.source.models.enums.UserStatus;
-//import project.source.repositories.RoleRepository;
+import project.source.models.enums.Status;
+
 import project.source.repositories.RoleRepository;
 import project.source.repositories.UserRepository;
 import project.source.dtos.UserDTO;
-import project.source.respones.PageResponse;
+
 import project.source.services.IUserService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -42,6 +46,7 @@ public class UserService implements IUserService {
         existed(userDTO);
         User user = UserDTO.toUser(userDTO);
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setStatus(Status.ACTIVE);
         Role role = roleRepository.findByName(Role.USER).orElseThrow(() -> new NotFoundException("Role not found"));
         user.setRole(role);
         return userRepository.save(user);
@@ -71,27 +76,35 @@ public class UserService implements IUserService {
         return UserDTO.fromUser(updatedUser);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
-    public UserDTO changeStatus(long userId, UserStatus status) {
+    public UserDTO changeStatus(long userId) {
         User user = getUser(userId);
-        user.setStatus(status);
-
+        if (user.getStatus() == Status.ACTIVE){
+            user.setStatus(Status.INACTIVE);
+        } else {
+            user.setStatus(Status.ACTIVE);
+        }
         User updatedUser = userRepository.save(user);
         updatedUser.setPassword(null);
         return UserDTO.fromUser(updatedUser);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public void deleteUser(long userId) {
         User user = getUser(userId);
-        userRepository.delete(user);
+        user.setStatus(Status.INACTIVE);
+        userRepository.save(user);
+//        userRepository.delete(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
-    public PageResponse<?> getAllUsers(int pageNo, int pageSize) {
-        // Implement pagination logic if required
-        return null; // Placeholder for now
+    public Page<User> getAllUsers(PageRequest request) {
+        return userRepository.findAll(request);
     }
+
 
     @Override
     public long saveUser(User user) {

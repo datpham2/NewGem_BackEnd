@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.source.requests.ResetPasswordRequest;
 import project.source.requests.SignInRequest;
+import project.source.respones.ApiResponse;
 import project.source.respones.TokenResponse;
 import project.source.services.implement.AuthService;
 
@@ -36,23 +37,35 @@ public class AuthController {
     }
 
     @PostMapping("/remove-token")
-    public ResponseEntity<String> removeToken(HttpServletRequest request) {
-        return new ResponseEntity<>(authService.removeToken(request), HttpStatus.OK);
+    public ResponseEntity<ApiResponse> removeToken(HttpServletRequest request) {
+        authService.removeToken(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.builder()
+                        .status(HttpStatus.OK.value())
+                        .message("Token removed")
+                        .build());
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestBody String username) {
-        return new ResponseEntity<>(authService.forgotPassword(username), HttpStatus.OK);
+    public ResponseEntity<ApiResponse> forgotPassword(@RequestBody String username) {
+        String resetToken = authService.forgotPassword(username);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.builder()
+                        .status(HttpStatus.CREATED.value())
+                        .message("Reset token createad successfull")
+                        .data(resetToken)
+                        .build());
     }
 
-    @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestBody String secretKey) {
-        return new ResponseEntity<>(authService.resetPassword(secretKey), HttpStatus.OK);
-    }
 
     @PostMapping("/change-password")
-    public ResponseEntity<String> changePassword(@RequestBody @Valid ResetPasswordRequest request) {
-        return new ResponseEntity<>(authService.changePassword(request), HttpStatus.OK);
+    public ResponseEntity<ApiResponse> changePassword(@RequestBody @Valid ResetPasswordRequest request) {
+        authService.changePassword(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.builder()
+                        .status(HttpStatus.OK.value())
+                        .message("Password changed successfully")
+                        .build());
     }
 
 }
