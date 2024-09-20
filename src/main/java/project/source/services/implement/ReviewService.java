@@ -27,7 +27,7 @@ public class ReviewService implements IReviewService {
     @Override
     public void saveReview(Long hotelId, Long userId, ReviewsDTO reviewsDTO) {
         Hotel hotel =hotelService.getHotelById(hotelId);
-        User user = userService.getUser(userId);
+        User user = userService.getUserById(userId);
         Reviews reviews = Reviews.builder()
                 .comment(reviewsDTO.getComment())
                 .rating(reviewsDTO.getRating())
@@ -50,7 +50,7 @@ public class ReviewService implements IReviewService {
         reviews.setComment(reviewsDTO.getComment());
         reviews.setHotel(hotelService.getHotelById(reviewsDTO.getHotelId()));
         reviews.setStatus(reviewsDTO.getStatus());
-        reviews.setUser(userService.getUser(reviewsDTO.getUserId()));
+        reviews.setUser(userService.getUserById(reviewsDTO.getUserId()));
         reviewsRepository.save(reviews);
     }
 
