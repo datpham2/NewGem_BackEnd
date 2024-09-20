@@ -34,7 +34,7 @@ public class HotelService implements IHotelService {
         Hotel hotel = Hotel.builder()
                 .location(hotelDTO.getLocation())
                 .noRooms(hotelDTO.getNoRooms())
-                .status(hotelDTO.getStatus())
+                .status(Status.ACTIVE)
                 .maxPrice(hotelDTO.getMaxPrice())
                 .minPrice(hotelDTO.getMinPrice())
                 .name(hotelDTO.getName())

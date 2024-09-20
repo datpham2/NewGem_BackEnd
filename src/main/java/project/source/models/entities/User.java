@@ -58,6 +58,9 @@ public class User extends BaseEntity<Long> implements UserDetails {
     @JoinColumn(name="role_id", nullable = false)
     private Role role;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Set<Reviews> reviews = new HashSet<Reviews>(0);
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
