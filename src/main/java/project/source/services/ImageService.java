@@ -24,9 +24,18 @@ public class ImageService implements ImageServiceInterface {
         return imageRepository.save(image);
     };
 
-    Image getImageById(Long id){
 
-    };
+    @Override
+    public Image getImageById(Long id) {
+        return null;
+    }
+
+    @Override
+    public void deleteImage(Long id) {
+
+    }
+
+    ;
 
     @Override
     public Image updateImage(Long id, Image newImage){
