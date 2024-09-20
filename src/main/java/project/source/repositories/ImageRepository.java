@@ -1,9 +1,15 @@
 package project.source.repositories;
 
+import org.springframework.stereotype.Repository;
+
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import project.source.models.entities.Image;
 
 import java.util.List;
 
-public interface ImageRepository /*extends JpaRepository<Image, Long>*/ {
+
+@Repository
+public interface ImageRepository extends JpaRepository<Image, Long>{
 
 }

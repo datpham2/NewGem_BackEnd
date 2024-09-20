@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Blog;
 import project.source.respones.ApiResponse;
 import project.source.services.BlogService;
@@ -48,5 +49,28 @@ public class BlogController {
     }
 
     @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse> updateStudent(@PathVariable Long id, @Valid @RequestBody Blog blog, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
+            ApiResponse apiResponse = ApiResponse.builder()
+                    .data(errors)
+                    .message("Validation failed")
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .build();
+            return ResponseEntity.badRequest().body(apiResponse);
+        }
+
+        Blog updatedBlog = blogService.updateBlog(id, blog);
+        if (updatedBlog == null) {
+            throw new NotFoundException("Can not resolve blog id: " + id);
+        }
+        ApiResponse apiResponse = ApiResponse.builder()
+                .data(updatedBlog)
+                .message("Updated successfully")
+                .status(HttpStatus.OK.value())
+                .build();
+        return ResponseEntity.ok().body(apiResponse);
+    }
+
 
 }

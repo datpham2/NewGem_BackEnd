@@ -53,4 +53,13 @@ public class BlogService implements BlogServiceInterface{
                 .build();
         return blogRepository.save(blog);
     }
+
+    @Override
+    public Blog updateBlog(Long id, Blog blog) {
+        Blog updatedBlog = getBlogById(id);
+        updatedBlog.setTitle(blog.getTitle());
+        updatedBlog.setContent(blog.getContent());
+        updatedBlog.setCreatedAt(blog.getCreatedAt());
+        return blogRepository.save(updatedBlog);
+    }
 }

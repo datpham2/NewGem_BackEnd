@@ -12,4 +12,5 @@ public interface BlogServiceInterface {
     Blog getBlogById(Long id);
     List<Blog> getBlogs();
     void deleteBlog(Long id);
+    public Blog updateBlog(Long id, Blog blog);
 }

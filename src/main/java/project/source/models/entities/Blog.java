@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Builder
 @Entity
@@ -25,10 +27,9 @@ public class Blog extends BaseEntity<Long>{
     @NotEmpty(message = "Blogs can not be empty!!")
     private String content;
 
-    //   @Column (name = "author_id", nullable = false)
-//    private int author_id;
+//    @Column (name = "author_id", referenceColumnName = "user_id", nullable = false)
+//    private User user;
 
-//    @ManyToOne
-//    @JoinColumn(name = "images", referencedColumnName = "image_id", nullable = false)
-//    private
+    @OneToMany
+    private List<Image> images;
 }
