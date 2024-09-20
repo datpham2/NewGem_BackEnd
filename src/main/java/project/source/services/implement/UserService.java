@@ -131,10 +131,11 @@ public class UserService implements IUserService {
         emailExisted(userDTO.getEmail());
     }
 
-    public User getByUsername(String username){
-        Optional<User> user = userRepository.findByUsername(username);
-        log.info("user " + user);
-        return userRepository.findByUsername(username).orElse(null);
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() ->
+                new NotFoundException("User not found with username: " + username)
+        );
     }
+
 
 }

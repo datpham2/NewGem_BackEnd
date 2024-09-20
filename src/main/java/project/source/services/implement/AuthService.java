@@ -13,7 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.source.exceptions.InvalidDataException;
-import project.source.exceptions.WrongPasswordException;
 import project.source.models.entities.Token;
 import project.source.models.entities.User;
 import project.source.models.enums.TokenType;
@@ -48,7 +47,7 @@ public class AuthService implements IAuthService {
         }
 
         if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
-            throw new WrongPasswordException("Wrong password");
+            throw new InvalidDataException("Wrong password");
         }
 
         String accessToken = jwtService.generateToken(user);
@@ -141,7 +140,7 @@ public class AuthService implements IAuthService {
             throw new InvalidDataException("Passwords do not match");
         }
 
-        User user = validateToken(request.getSecretKey());
+        User user = validateToken(request.getResetKey());
 
         log.info("Old: " + user.getPassword());
 
