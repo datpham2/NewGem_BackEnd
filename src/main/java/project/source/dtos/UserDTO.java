@@ -1,22 +1,20 @@
 package project.source.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.DateTimeFormat;
-import project.source.models.entities.Role;
+import project.source.dtos.validations.EnumPattern;
+import project.source.dtos.validations.PhoneNumber;
 import project.source.models.entities.User;
 import project.source.models.enums.Gender;
 import project.source.models.enums.UserStatus;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 
 @Getter
@@ -33,24 +31,27 @@ public class UserDTO {
     @Email(message = "Email invalid format")
     String email;
 
-
-//    @PhoneNumber(message = "phone invalid format")
+    @PhoneNumber(message = "Phone invalid format")
     String phone;
 
     @Past(message = "Date of birth must be in the past")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     LocalDate dateOfBirth;
 
-    //@Pattern(regexp = "^male|female|other$", message = "gender must be one in {male, female, other}")
-//    @GenderSubset(anyOf = {MALE, FEMALE, OTHER})
+    @EnumPattern(name = "Gender", regexp = "MALE|FEMALE|OTHER", message = "Gender must be MALE, FEMALE or OTHER")
     Gender gender;
 
-    @NotBlank(message = "username must be not null")
+    @NotBlank(message = "username must be not blank")
     String username;
 
-    @NotNull(message = "password must be not null")
-    @Size(min = 5, message = "password must be have at least 5 characters")
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotNull(message = "Password must not be null")
+    @Size(min = 8, message = "Password must have at least 8 characters")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+            message = "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character.")
     String password;
+
 
     UserStatus status;
 

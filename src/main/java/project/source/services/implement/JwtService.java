@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import project.source.models.enums.TokenType;
 import project.source.exceptions.InvalidDataException;
-import project.source.services.JwtService;
 
 import java.security.Key;
 import java.util.Date;
@@ -22,7 +21,7 @@ import static project.source.models.enums.TokenType.*;
 
 
 @Service
-public class IJwtService implements JwtService {
+public class JwtService implements project.source.services.IJwtService {
     @Value("${jwt.expiryHour}")
     private long expiryHour;
 

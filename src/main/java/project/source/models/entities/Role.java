@@ -1,20 +1,29 @@
 package project.source.models.entities;
 
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.Set;
 
-@Entity
+//@Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "roles")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Role extends BaseEntity<Long> {
-    private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, unique = true)
+    RoleType name;
 
-    private String description;
+
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<User> users;
+
+    public enum RoleType {
+        ROLE_ADMIN, ROLE_USER, ROLE_HOTEL
+    }
 }
-

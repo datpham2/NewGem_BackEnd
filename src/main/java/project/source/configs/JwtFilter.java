@@ -17,8 +17,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import project.source.models.enums.TokenType;
-import project.source.services.JwtService;
-import project.source.services.UserService;
+import project.source.services.implement.JwtService;
+import project.source.services.implement.UserService;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 

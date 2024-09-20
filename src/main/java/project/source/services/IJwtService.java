@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import project.source.models.enums.TokenType;
 
 @Service
-public interface JwtService {
+public interface IJwtService {
     String generateToken(UserDetails user);
 
     String generateRefreshToken(UserDetails user);

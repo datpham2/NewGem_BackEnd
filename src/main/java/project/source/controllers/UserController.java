@@ -8,8 +8,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import project.source.dtos.UserDTO;
 import project.source.models.entities.User;
+import project.source.models.enums.UserStatus;
+import project.source.requests.SignInRequest;
 import project.source.respones.ApiResponse;
-import project.source.services.UserService;
+import project.source.services.IUserService;
+import project.source.services.implement.UserService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -18,18 +24,19 @@ import project.source.services.UserService;
 public class UserController {
     private final UserService userService;
 
+
     @PostMapping("addUser")
     public ResponseEntity<ApiResponse> addUser(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            String errorMessage = bindingResult.getFieldErrors()
+            List<String> errors = bindingResult.getFieldErrors()
                     .stream()
                     .map(fieldError -> fieldError.getDefaultMessage())
-                    .reduce((msg1, msg2) -> msg1 + ", " + msg2)
-                    .orElse("Validation error");
+                    .collect(Collectors.toList());
 
             return ResponseEntity.badRequest().body(ApiResponse.builder()
-                    .status(400)
-                    .message(errorMessage)
+                    .status(HttpStatus.BAD_REQUEST.value())
+                            .message("Validation error")
+                            .data(errors)
                     .build());
         }
 
@@ -56,15 +63,15 @@ public class UserController {
     @PutMapping("updateUser/{id}")
     public ResponseEntity<ApiResponse> updateUser(@PathVariable long id, @Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            String errorMessage = bindingResult.getFieldErrors()
+            List<String> errors = bindingResult.getFieldErrors()
                     .stream()
                     .map(fieldError -> fieldError.getDefaultMessage())
-                    .reduce((msg1, msg2) -> msg1 + ", " + msg2)
-                    .orElse("Validation error");
+                    .collect(Collectors.toList());
 
             return ResponseEntity.badRequest().body(ApiResponse.builder()
                     .status(HttpStatus.BAD_REQUEST.value())
-                    .message(errorMessage)
+                    .message("Validation error")
+                    .data(errors)
                     .build());
         }
 
@@ -76,6 +83,17 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ApiResponse> updateUserStatus(@PathVariable Long id, @RequestBody UserStatus status) {
+        userService.changeStatus(id, status);
+        ApiResponse response = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("User status updated successfully")
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
 
     @DeleteMapping("deleteUser/{id}")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable long id) {

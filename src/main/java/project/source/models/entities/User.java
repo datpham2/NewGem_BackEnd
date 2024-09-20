@@ -3,6 +3,7 @@ package project.source.models.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import project.source.models.enums.Gender;
@@ -12,50 +13,53 @@ import java.time.LocalDate;
 import java.util.*;
 
 
+
 @Setter
 @Getter
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "users")
 public class User extends BaseEntity<Long> implements UserDetails {
     @Column(name = "first_name")
-    private String firstName;
+    String firstName;
 
     @Column(name = "last_name")
-    private String lastName;
+    String lastName;
 
     @Column(name = "date_of_birth")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate dateOfBirth;
+    LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
-    private Gender gender;
+    Gender gender;
 
     @Column(name = "phone", unique = true)
-    private String phone;
+    String phone;
 
     @Column(name = "email", unique = true)
-    private String email;
+    String email;
 
-    @Column(name = "username", unique = true)
-    private String username;
+    @Column(name = "username", unique = true, nullable = false)
+    String username;
 
     @Column(name = "password")
-    private String password;
+    String password;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private UserStatus status;
+    UserStatus status;
 
-    @OneToMany
-    private Set<Role> roles = new HashSet<>();
-
+//    @ManyToOne
+//    @JoinColumn(name = "role_id", nullable = false)
+//    Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return role != null ? List.of(() -> role.getName().name()) : List.of();
         return List.of();
     }
 
