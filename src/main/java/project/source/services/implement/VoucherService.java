@@ -31,7 +31,7 @@ public class VoucherService implements IVoucherService {
                     .hotel(hotel)
                     .startDate(voucherDTO.getStartDate())
                     .endDate(voucherDTO.getEndDate())
-                    .status(voucherDTO.getStatus())
+                    .status(Status.ACTIVE)
                     .discount(voucherDTO.getDiscount())
                     .build();
             voucherRepository.save(voucher);
