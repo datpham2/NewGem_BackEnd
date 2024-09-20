@@ -3,6 +3,8 @@ package project.source.dtos;
  * @autor An Nguyen
  */
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -20,6 +22,7 @@ public class ReviewsDTO {
     private Long hotelId;
     @NotNull(message = "Comment can't be empty")
     private String comment;
-    @Size(min = 1, max = 5, message = "Rate must between 1 and 5")
+    @Min(1)
+    @Max(5)
     private int rating;
 }

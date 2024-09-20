@@ -13,7 +13,6 @@ import project.source.models.entities.Reviews;
 import project.source.repositories.ReviewsRepository;
 
 import java.util.Collections;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +39,12 @@ public class ReviewService implements IReviewService{
     }
 
     @Override
-    public void updateReview(Long hotelId, Long userId, ReviewsDTO reviewsDTO) {
-
+    public void updateReview(Long id, ReviewsDTO reviewsDTO) {
+        Reviews reviews = (Reviews) reviewsRepository.findAllById(Collections.singleton(id));
+        reviews = Reviews.builder()
+                .rating(reviewsDTO.getRating())
+                .comment(reviewsDTO.getComment())
+                .hotel(hotelService.getHotelById(reviewsDTO.getHotelId()))
+                .build();
     }
 }

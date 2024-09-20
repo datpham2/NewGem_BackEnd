@@ -12,5 +12,5 @@ import java.util.List;
 public interface IReviewService {
     void saveReview(Long hotelId, Long userId, ReviewsDTO reviewsDTO);
     Page<Reviews> getAllReviews(Long id, PageRequest pageRequest);
-    void updateReview(Long hotelId, Long userId, ReviewsDTO reviewsDTO);
+    void updateReview(Long id, ReviewsDTO reviewsDTO);
 }

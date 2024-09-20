@@ -4,10 +4,13 @@ package project.source.models.entities;
  */
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Setter
@@ -35,4 +38,10 @@ public class Hotel extends BaseEntity<Long>{
     @Min(value = 1, message = "Number of rooms must be greater than 1")
     private int noRooms;
     private boolean status;
+
+    @OneToMany
+    private List<Reviews> reviews;
+
+    @OneToMany
+    private List<Voucher> voucher;
 }
