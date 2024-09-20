@@ -25,9 +25,9 @@ public class Reviews extends BaseEntity<Long>{
     @Min(1)
     @Max(5)
     private int rating;
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
