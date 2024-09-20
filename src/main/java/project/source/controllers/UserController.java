@@ -4,11 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import project.source.dtos.UserDTO;
 import project.source.models.entities.User;
-import project.source.models.enums.UserStatus;
+import project.source.models.enums.Status;
 import project.source.respones.ApiResponse;
 import project.source.services.implement.UserService;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
 
 
     @PostMapping("addUser")
@@ -46,6 +48,7 @@ public class UserController {
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
 
     @GetMapping("getUser/{id}")
     public ResponseEntity<ApiResponse> getUser(@PathVariable long id) {
@@ -83,7 +86,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<ApiResponse> updateUserStatus(@PathVariable Long id, @RequestBody UserStatus status) {
+    public ResponseEntity<ApiResponse> updateUserStatus(@PathVariable Long id, @RequestBody Status status) {
         userService.changeStatus(id, status);
         ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
@@ -93,6 +96,7 @@ public class UserController {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("deleteUser/{id}")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);

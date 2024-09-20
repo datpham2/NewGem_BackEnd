@@ -1,10 +1,10 @@
 package project.source.models.enums;
 
 public enum ImageDirectory {
-    User ("profile picture"),
-    Blog ("blog's background"),
-    Room ("room preview"),
-    Hotel ("hotel preview");
+    USER ("profile picture"),
+    BLOG ("blog's background"),
+    ROOM ("room preview"),
+    HOTEL ("hotel preview");
 
     private final String directoryReference;
 

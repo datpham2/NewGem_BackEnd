@@ -12,7 +12,7 @@ import project.source.exceptions.ExistedException;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Role;
 import project.source.models.entities.User;
-import project.source.models.enums.UserStatus;
+import project.source.models.enums.Status;
 //import project.source.repositories.RoleRepository;
 import project.source.repositories.RoleRepository;
 import project.source.repositories.UserRepository;
@@ -72,7 +72,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserDTO changeStatus(long userId, UserStatus status) {
+    public UserDTO changeStatus(long userId, Status status) {
         User user = getUser(userId);
         user.setStatus(status);
 

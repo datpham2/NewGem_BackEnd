@@ -1,4 +1,4 @@
-package project.source.services;
+package project.source.services.implement;
 
 
 import lombok.Builder;
@@ -6,16 +6,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import project.source.dtos.BlogDTO;
 import project.source.models.entities.Blog;
+import project.source.models.enums.Status;
 import project.source.repositories.BlogRepository;
+import project.source.services.IBlogService;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Builder
-public class BlogService implements BlogServiceInterface{
+public class BlogService implements IBlogService {
     private final BlogRepository blogRepository;
 
     @Override
@@ -30,7 +32,8 @@ public class BlogService implements BlogServiceInterface{
 
     @Override
     public void deleteBlog(Long id) {
-        blogRepository.deleteById(id);
+        Blog blog = getBlogById(id);
+        blog.setStatus(Status.INACTIVE);
     }
 
     @Override
@@ -39,27 +42,20 @@ public class BlogService implements BlogServiceInterface{
     }
 
     @Override
-    public Blog saveBlog(Blog blog){
-//        Blog blog = Blog.builder()
-//                .ten(studentDTO.getTen())
-//                .thanhPho(studentDTO.getThanhPho())
-//                .ngaySinh(studentDTO.getNgaySinh())
-//                .xepLoai(XepLoai.fromTen(studentDTO.getXepLoai()))
-//                .build();
-//        return studentRepository.save(student);
-            blog = Blog.builder()
-                .title(blog.getTitle())
-                .content(blog.getContent())
+    public Blog saveBlog(BlogDTO blogDTO){
+          Blog  blog = Blog.builder()
+                .title(blogDTO.getTitle())
+                .content(blogDTO.getContent())
                 .build();
         return blogRepository.save(blog);
     }
 
     @Override
-    public Blog updateBlog(Long id, Blog blog) {
+    public Blog updateBlog(Long id, BlogDTO blogDTO) {
         Blog updatedBlog = getBlogById(id);
-        updatedBlog.setTitle(blog.getTitle());
-        updatedBlog.setContent(blog.getContent());
-        updatedBlog.setCreatedAt(blog.getCreatedAt());
+        updatedBlog.setTitle(blogDTO.getTitle());
+        updatedBlog.setContent(blogDTO.getContent());
+        updatedBlog.setCreatedAt(blogDTO.getCreatedAt());
         return blogRepository.save(updatedBlog);
     }
 }

@@ -1,19 +1,20 @@
-package project.source.models.entities;
+package project.source.dtos;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import project.source.models.entities.Blog;
 import project.source.models.enums.ImageDirectory;
 import project.source.models.enums.Status;
 
-@Entity
-@Table(name="Gallery")
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class Image extends BaseEntity<Long>{
+public class ImageDTO {
 
 //    @ManyToOne
 //    @JoinColumn(name = "user_id")
@@ -27,22 +28,22 @@ public class Image extends BaseEntity<Long>{
 //    @JoinColumn(name = "room_id")
 //    private Room room;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
     @ManyToOne
-    @JoinColumn(name = "blog_id")
     private Blog blog;
 
-    @Column(name = "image_url", length = 300)
+
     private String imageURL;
 
     @NotNull(message = "Can not resolve this media directory path")
-    @Enumerated(EnumType.STRING)
     private ImageDirectory imageDirectory;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
     Status status;
 }
 
-//Id: 01, nguyễn Văn Mèo
-//studentImage
-//01, neo.jpg, 01

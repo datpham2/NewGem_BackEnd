@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.boot.autoconfigure.web.WebProperties;
+import project.source.models.enums.Status;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,4 +33,8 @@ public class Blog extends BaseEntity<Long>{
 
     @OneToMany
     private List<Image> images;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    Status status;
 }
