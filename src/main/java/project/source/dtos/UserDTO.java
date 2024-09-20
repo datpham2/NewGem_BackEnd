@@ -12,7 +12,7 @@ import project.source.dtos.validations.EnumPattern;
 import project.source.dtos.validations.PhoneNumber;
 import project.source.models.entities.User;
 import project.source.models.enums.Gender;
-import project.source.models.enums.UserStatus;
+import project.source.models.enums.Status;
 
 import java.time.LocalDate;
 
@@ -53,7 +53,7 @@ public class UserDTO {
     String password;
 
 
-    UserStatus status;
+    Status status;
 
     public static User toUser(UserDTO userDTO) {
         return User.builder()

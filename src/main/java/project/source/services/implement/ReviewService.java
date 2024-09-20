@@ -1,0 +1,49 @@
+package project.source.services.implement;
+/**
+ * @autor An Nguyen
+ */
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import project.source.dtos.ReviewsDTO;
+import project.source.models.entities.Hotel;
+import project.source.models.entities.Reviews;
+import project.source.repositories.ReviewsRepository;
+import project.source.services.IReviewService;
+
+import java.util.Collections;
+
+@Service
+@RequiredArgsConstructor
+public class ReviewService implements IReviewService {
+
+    private final ReviewsRepository reviewsRepository;
+    private final HotelService hotelService;
+
+    @Override
+    public void saveReview(Long hotelId, Long userId, ReviewsDTO reviewsDTO) {
+        Hotel hotel =hotelService.getHotelById(hotelId);
+        //User user = userService
+        Reviews reviews = Reviews.builder()
+                .comment(reviewsDTO.getComment())
+                .rating(reviewsDTO.getRating())
+                .hotel(hotel)
+                .build();
+        reviewsRepository.save(reviews);
+    }
+
+    @Override
+    public Page<Reviews> getAllReviews(Long id, PageRequest pageRequest) {
+        return reviewsRepository.findAllById(id, pageRequest);
+    }
+
+    @Override
+    public void updateReview(Long id, ReviewsDTO reviewsDTO) {
+        Reviews reviews = (Reviews) reviewsRepository.findAllById(Collections.singleton(id));
+        reviews.setRating(reviewsDTO.getRating());
+        reviews.setComment(reviewsDTO.getComment());
+        reviews.setHotel(hotelService.getHotelById(reviewsDTO.getHotelId()));
+    }
+}

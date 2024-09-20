@@ -8,7 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import project.source.dtos.UserDTO;
 import project.source.models.entities.User;
-import project.source.models.enums.UserStatus;
+import project.source.models.enums.Status;
 import project.source.respones.ApiResponse;
 import project.source.services.implement.UserService;
 
@@ -83,7 +83,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<ApiResponse> updateUserStatus(@PathVariable Long id, @RequestBody UserStatus status) {
+    public ResponseEntity<ApiResponse> updateUserStatus(@PathVariable Long id, @RequestBody Status status) {
         userService.changeStatus(id, status);
         ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
