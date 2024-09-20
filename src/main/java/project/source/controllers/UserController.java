@@ -1,7 +1,6 @@
 package project.source.controllers;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,15 +48,14 @@ public class UserController {
         ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.CREATED.value())
                 .message("User created successfully")
-                .data(UserDTO.fromUser(createdUser))
+                .data(createdUser)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
     @GetMapping("getUser/{id}")
     public ResponseEntity<ApiResponse> getUser(@PathVariable long id) {
-        User user = userService.getUserById(id);
+        User user = userService.getUser(id);
         ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("User retrieved successfully")
@@ -138,7 +136,7 @@ public class UserController {
         userService.deleteUser(id);
         ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
-                .message("User disabled successfully")
+                .message("User deleted successfully")
                 .build();
         return ResponseEntity.ok(response);
     }

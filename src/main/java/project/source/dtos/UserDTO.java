@@ -53,6 +53,8 @@ public class UserDTO {
     String password;
 
 
+    Status status;
+
     public static User toUser(UserDTO userDTO) {
         return User.builder()
                 .firstName(userDTO.firstName)
@@ -62,6 +64,7 @@ public class UserDTO {
                 .username(userDTO.username)
                 .password(userDTO.password)
                 .dateOfBirth(userDTO.dateOfBirth)
+                .status(userDTO.status)
                 .gender(userDTO.gender)
                 .build();
     }
@@ -76,6 +79,7 @@ public class UserDTO {
                 .gender(user.getGender())
                 .username(user.getUsername())
                 .password(user.getPassword())
+                .status(user.getStatus())
                 .build();
     }
 }

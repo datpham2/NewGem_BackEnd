@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import project.source.models.enums.Status;
 import project.source.models.entities.User;
 import project.source.dtos.UserDTO;
+import project.source.requests.SignInRequest;
 import project.source.respones.PageResponse;
 
 
@@ -18,7 +19,7 @@ public interface IUserService {
 
     User addUser(UserDTO userDTO);
 
-    User getUserById(long userId);
+    User getUser(long userId);
 
     void emailExisted(String email);
 
@@ -30,11 +31,11 @@ public interface IUserService {
 
     UserDTO updateUser(long userId, UserDTO userDTO);
 
-    UserDTO changeStatus(long userId);
+    UserDTO changeStatus(long userId, Status status);
 
     void deleteUser(long userId);
 
-    Page<User> getAllUsers(PageRequest request);
+    PageResponse<?> getAllUsers(int pageNo, int pageSize);
 
     long saveUser(User user);
 }
