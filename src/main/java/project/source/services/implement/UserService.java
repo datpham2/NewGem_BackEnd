@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -98,7 +97,7 @@ public class UserService implements IUserService {
 
 
     @Override
-    public UserDTO changeStatus(long userId) {
+    public void changeStatus(long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
         if (user.getStatus() == Status.ACTIVE){
@@ -108,7 +107,7 @@ public class UserService implements IUserService {
         }
         User updatedUser = userRepository.save(user);
         updatedUser.setPassword(null);
-        return UserDTO.fromUser(updatedUser);
+        UserDTO.fromUser(updatedUser);
     }
 
 
@@ -128,9 +127,8 @@ public class UserService implements IUserService {
 
 
     @Override
-    public long saveUser(User user) {
+    public void saveUser(User user) {
         userRepository.save(user);
-        return user.getId();
     }
 
 

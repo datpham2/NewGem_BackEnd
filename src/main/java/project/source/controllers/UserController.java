@@ -1,6 +1,7 @@
 package project.source.controllers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -55,7 +56,7 @@ public class UserController {
 
     @GetMapping("getUser/{id}")
     public ResponseEntity<ApiResponse> getUser(@PathVariable long id) {
-        User user = userService.getUser(id);
+        User user = userService.getUserById(id);
         ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("User retrieved successfully")
