@@ -4,11 +4,13 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class RoomDTO {
     @NotNull(message = "Price must not be null")
     @DecimalMin(value = "0.0", message = "Price must be greater than 0")
