@@ -2,15 +2,14 @@ package project.source.models.entities;
 /**
  * @autor An Nguyen
  */
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import project.source.models.enums.Status;
 
 @AllArgsConstructor
 @Data
@@ -25,10 +24,14 @@ public class Reviews extends BaseEntity<Long>{
     @Min(1)
     @Max(5)
     private int rating;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @JsonIgnore
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }

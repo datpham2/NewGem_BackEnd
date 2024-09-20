@@ -1,4 +1,4 @@
-package project.source.services;
+package project.source.services.implement;
 /**
  * @autor An Nguyen
  */
@@ -11,12 +11,13 @@ import project.source.dtos.ReviewsDTO;
 import project.source.models.entities.Hotel;
 import project.source.models.entities.Reviews;
 import project.source.repositories.ReviewsRepository;
+import project.source.services.IReviewService;
 
 import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
-public class ReviewService implements IReviewService{
+public class ReviewService implements IReviewService {
 
     private final ReviewsRepository reviewsRepository;
     private final HotelService hotelService;

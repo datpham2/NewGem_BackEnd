@@ -3,12 +3,10 @@ package project.source.models.entities;
  * @autor An Nguyen
  */
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import project.source.models.enums.Status;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -40,7 +38,8 @@ public class Hotel extends BaseEntity<Long>{
     @JsonProperty(value = "no_rooms")
     @Min(value = 1, message = "Number of rooms must be greater than 1")
     private int noRooms;
-    private boolean status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "hotel")
     private Set<Reviews> reviews = new HashSet<Reviews>(0);

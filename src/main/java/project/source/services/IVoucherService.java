@@ -13,4 +13,5 @@ public interface IVoucherService {
     void saveVoucher(Long hotelId, VoucherDTO voucherDTO);
     Page<Voucher> getAllVoucher(Long id, PageRequest pageRequest);
     void updateVoucher(Long id, VoucherDTO voucherDTO);
+    void disableVoucher(Long id);
 }

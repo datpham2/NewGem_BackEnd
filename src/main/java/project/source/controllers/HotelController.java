@@ -17,7 +17,7 @@ import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Hotel;
 import project.source.respones.ApiResponse;
 import project.source.respones.HotelResponse;
-import project.source.services.HotelService;
+import project.source.services.implement.HotelService;
 
 import java.util.List;
 
@@ -102,6 +102,18 @@ public class HotelController {
             return ResponseEntity.ok(apiResponse);
         }
     }
+
+    @PatchMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse> disableHotel(@PathVariable(value = "id")Long id){
+        hotelService.disableHotel(id);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Disable successfully")
+                .data(null)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
     @GetMapping("/searchHotelByName")
     public ResponseEntity<ApiResponse> searchByNameHotel(@RequestParam(value = "name", defaultValue = "%")String name,
                                                          @RequestParam(value = "page",defaultValue = "0")int page,

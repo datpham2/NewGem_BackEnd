@@ -3,10 +3,9 @@ package project.source.services;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-import project.source.models.enums.UserStatus;
+import project.source.models.enums.Status;
 import project.source.models.entities.User;
 import project.source.dtos.UserDTO;
-import project.source.requests.SignInRequest;
 import project.source.respones.PageResponse;
 
 
@@ -29,7 +28,7 @@ public interface IUserService {
 
     UserDTO updateUser(long userId, UserDTO userDTO);
 
-    UserDTO changeStatus(long userId, UserStatus status);
+    UserDTO changeStatus(long userId, Status status);
 
     void deleteUser(long userId);
 

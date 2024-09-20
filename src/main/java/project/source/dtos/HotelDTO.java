@@ -5,6 +5,7 @@ package project.source.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import project.source.models.enums.Status;
 
 import java.math.BigDecimal;
 
@@ -32,5 +33,5 @@ public class HotelDTO {
     @JsonProperty(value = "no_rooms")
     @Min(value = 1, message = "Number of rooms must be greater than 1")
     private int noRooms;
-    private boolean status;
+    private Status status;
 }

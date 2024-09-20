@@ -13,7 +13,7 @@ import project.source.models.entities.Role;
 import project.source.models.entities.User;
 import project.source.repositories.RoleRepository;
 import project.source.repositories.UserRepository;
-import project.source.models.enums.UserStatus;
+import project.source.models.enums.Status;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class ApplicationInitConfig {
     @Bean
     ApplicationRunner applicationRunner() {
         return args -> {
-            List<String> roles = List.of(Role.ADMIN,Role.USER,Role.HOTEL);
+            List<String> roles = List.of(Role.ADMIN,Role.USER);
             for (String roleType : roles) {
                 if (!roleRepository.existsByName(roleType)) {
                     Role role = Role.builder()
@@ -46,7 +46,7 @@ public class ApplicationInitConfig {
                 User adminUser = User.builder()
                         .username(ADMIN_USERNAME)
                         .password(passwordEncoder.encode(ADMIN_PASSWORD))
-                        .status(UserStatus.ACTIVE)
+                        .status(Status.ACTIVE)
                         .build();
 
                 Role role = roleRepository.findByName(Role.ADMIN).orElseThrow(() -> new NotFoundException("Role not found"));

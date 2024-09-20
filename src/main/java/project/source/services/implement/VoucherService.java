@@ -1,4 +1,4 @@
-package project.source.services;
+package project.source.services.implement;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -8,13 +8,15 @@ import project.source.dtos.VoucherDTO;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Hotel;
 import project.source.models.entities.Voucher;
+import project.source.models.enums.Status;
 import project.source.repositories.VoucherRepository;
+import project.source.services.IVoucherService;
 
 import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
-public class VoucherService implements IVoucherService{
+public class VoucherService implements IVoucherService {
 
     private final VoucherRepository voucherRepository;
     private final HotelService hotelService;
@@ -29,7 +31,7 @@ public class VoucherService implements IVoucherService{
                     .hotel(hotel)
                     .startDate(voucherDTO.getStartDate())
                     .endDate(voucherDTO.getEndDate())
-                    .active(voucherDTO.isActive())
+                    .status(voucherDTO.getStatus())
                     .discount(voucherDTO.getDiscount())
                     .build();
             voucherRepository.save(voucher);
@@ -43,12 +45,24 @@ public class VoucherService implements IVoucherService{
 
     @Override
     public void updateVoucher(Long id, VoucherDTO voucherDTO) {
-        Voucher voucher = (Voucher) voucherRepository.findAllById(Collections.singleton(id));
-        voucher.setActive(voucherDTO.isActive());
+        Voucher voucher = voucherRepository.findById(id).orElseThrow(()-> new NotFoundException("Voucher not found by Id = "+ id));
+        voucher.setStatus(voucherDTO.getStatus());
         voucher.setDiscount(voucherDTO.getDiscount());
         voucher.setEndDate(voucherDTO.getEndDate());
         voucher.setStartDate(voucherDTO.getStartDate());
         voucher.setHotel(hotelService.getHotelById(id));
         voucherRepository.save(voucher);
     }
+
+    @Override
+    public void disableVoucher(Long id) {
+        Voucher voucher =  voucherRepository.findById(id).orElseThrow(()-> new NotFoundException("Voucher not found by Id = "+ id));
+        if(voucher.getStatus() == Status.ACTIVE){
+            voucher.setStatus(Status.INACTIVE);
+        }else {
+            voucher.setStatus(Status.ACTIVE);
+        }
+        voucherRepository.save(voucher);
+    }
+
 }

@@ -1,4 +1,4 @@
-package project.source.services;
+package project.source.services.implement;
 /**
  * @autor An Nguyen
  */
@@ -9,14 +9,13 @@ import org.springframework.stereotype.Service;
 import project.source.dtos.HotelDTO;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Hotel;
+import project.source.models.enums.Status;
 import project.source.repositories.HotelRepository;
-
-import java.util.Collections;
-import java.util.List;
+import project.source.services.IHotelService;
 
 @Service
 @RequiredArgsConstructor
-public class HotelService implements IHotelService{
+public class HotelService implements IHotelService {
 
     private final HotelRepository hotelRepository;
 
@@ -35,7 +34,7 @@ public class HotelService implements IHotelService{
         Hotel hotel = Hotel.builder()
                 .location(hotelDTO.getLocation())
                 .noRooms(hotelDTO.getNoRooms())
-                .status(hotelDTO.isStatus())
+                .status(hotelDTO.getStatus())
                 .maxPrice(hotelDTO.getMaxPrice())
                 .minPrice(hotelDTO.getMinPrice())
                 .name(hotelDTO.getName())
@@ -50,7 +49,7 @@ public class HotelService implements IHotelService{
             throw new NotFoundException("Can't find hotel by id = "+ id);
         }else {
             hotel1.setLocation(hotelDTO.getLocation());
-            hotel1.setStatus(hotelDTO.isStatus());
+            hotel1.setStatus(hotelDTO.getStatus());
             hotel1.setNoRooms(hotelDTO.getNoRooms());
             hotel1.setMaxPrice(hotelDTO.getMaxPrice());
             hotel1.setMinPrice(hotelDTO.getMinPrice());
@@ -62,5 +61,16 @@ public class HotelService implements IHotelService{
     @Override
     public Page<Hotel> searchHotelByName(String name, PageRequest pageRequest) {
         return hotelRepository.searchByName(name, pageRequest);
+    }
+
+    @Override
+    public void disableHotel(Long id) {
+        Hotel hotel = getHotelById(id);
+        if(hotel.getStatus() == Status.ACTIVE){
+            hotel.setStatus(Status.INACTIVE);
+        }else {
+            hotel.setStatus(Status.ACTIVE);
+        }
+        hotelRepository.save(hotel);
     }
 }

@@ -12,7 +12,7 @@ import project.source.dtos.ReviewsDTO;
 import project.source.models.entities.Reviews;
 import project.source.respones.ApiResponse;
 import project.source.respones.ReviewResponse;
-import project.source.services.ReviewService;
+import project.source.services.implement.ReviewService;
 
 @RestController
 @RequiredArgsConstructor
