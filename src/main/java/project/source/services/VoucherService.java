@@ -25,7 +25,14 @@ public class VoucherService implements IVoucherService{
         if(hotel == null){
             throw new NotFoundException("Hotel is not Exist with id = " + hotelId);
         }else {
-            saveVoucher(hotelId, voucherDTO);
+            Voucher voucher = Voucher.builder()
+                    .hotel(hotel)
+                    .startDate(voucherDTO.getStartDate())
+                    .endDate(voucherDTO.getEndDate())
+                    .active(voucherDTO.isActive())
+                    .discount(voucherDTO.getDiscount())
+                    .build();
+            voucherRepository.save(voucher);
         }
     }
 
@@ -37,13 +44,11 @@ public class VoucherService implements IVoucherService{
     @Override
     public void updateVoucher(Long id, VoucherDTO voucherDTO) {
         Voucher voucher = (Voucher) voucherRepository.findAllById(Collections.singleton(id));
-        voucher = Voucher.builder()
-                .active(voucherDTO.isActive())
-                .discount(voucherDTO.getDiscount())
-                .endDate(voucherDTO.getEndDate())
-                .startDate(voucherDTO.getStartDate())
-                .hotel(hotelService.getHotelById(id))
-                .build();
+        voucher.setActive(voucherDTO.isActive());
+        voucher.setDiscount(voucherDTO.getDiscount());
+        voucher.setEndDate(voucherDTO.getEndDate());
+        voucher.setStartDate(voucherDTO.getStartDate());
+        voucher.setHotel(hotelService.getHotelById(id));
         voucherRepository.save(voucher);
     }
 }

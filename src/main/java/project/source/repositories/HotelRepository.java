@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import project.source.models.entities.Hotel;
 
+import java.util.List;
+
 @Repository
 public interface HotelRepository extends JpaRepository<Hotel, Long> {
     @Query("select s from Hotel s where s.name like ?1%")

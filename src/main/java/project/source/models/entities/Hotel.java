@@ -4,13 +4,16 @@ package project.source.models.entities;
  */
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -39,9 +42,9 @@ public class Hotel extends BaseEntity<Long>{
     private int noRooms;
     private boolean status;
 
-    @OneToMany
-    private List<Reviews> reviews;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "hotel")
+    private Set<Reviews> reviews = new HashSet<Reviews>(0);
 
-    @OneToMany
-    private List<Voucher> voucher;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "hotel")
+    private Set<Voucher> vouchers = new HashSet<Voucher>(0);
 }

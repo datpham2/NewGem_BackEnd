@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import project.source.dtos.HotelDTO;
+import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Hotel;
 import project.source.repositories.HotelRepository;
 
@@ -26,7 +27,7 @@ public class HotelService implements IHotelService{
 
     @Override
     public Hotel getHotelById(Long id) {
-        return (Hotel) hotelRepository.findAllById(Collections.singleton(id));
+        return hotelRepository.findById(id).orElseThrow(() -> new NotFoundException("Hotel not found by id = "+id));
     }
 
     @Override
@@ -45,15 +46,17 @@ public class HotelService implements IHotelService{
     @Override
     public void updateHotel(HotelDTO hotelDTO, Long id) {
         Hotel hotel1 = getHotelById(id);
-        hotel1 = Hotel.builder()
-                .location(hotelDTO.getLocation())
-                .status(hotelDTO.isStatus())
-                .noRooms(hotelDTO.getNoRooms())
-                .maxPrice(hotelDTO.getMaxPrice())
-                .minPrice(hotelDTO.getMinPrice())
-                .name(hotelDTO.getName())
-                .build();
-        hotelRepository.save(hotel1);
+        if(hotel1 == null){
+            throw new NotFoundException("Can't find hotel by id = "+ id);
+        }else {
+            hotel1.setLocation(hotelDTO.getLocation());
+            hotel1.setStatus(hotelDTO.isStatus());
+            hotel1.setNoRooms(hotelDTO.getNoRooms());
+            hotel1.setMaxPrice(hotelDTO.getMaxPrice());
+            hotel1.setMinPrice(hotelDTO.getMinPrice());
+            hotel1.setName(hotelDTO.getName());
+            hotelRepository.save(hotel1);
+        }
     }
 
     @Override

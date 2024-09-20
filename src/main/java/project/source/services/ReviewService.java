@@ -41,10 +41,8 @@ public class ReviewService implements IReviewService{
     @Override
     public void updateReview(Long id, ReviewsDTO reviewsDTO) {
         Reviews reviews = (Reviews) reviewsRepository.findAllById(Collections.singleton(id));
-        reviews = Reviews.builder()
-                .rating(reviewsDTO.getRating())
-                .comment(reviewsDTO.getComment())
-                .hotel(hotelService.getHotelById(reviewsDTO.getHotelId()))
-                .build();
+        reviews.setRating(reviewsDTO.getRating());
+        reviews.setComment(reviewsDTO.getComment());
+        reviews.setHotel(hotelService.getHotelById(reviewsDTO.getHotelId()));
     }
 }

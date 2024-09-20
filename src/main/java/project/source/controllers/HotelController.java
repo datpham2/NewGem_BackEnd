@@ -15,12 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import project.source.dtos.HotelDTO;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Hotel;
-import project.source.models.entities.Reviews;
 import project.source.respones.ApiResponse;
 import project.source.respones.HotelResponse;
-import project.source.respones.ReviewResponse;
 import project.source.services.HotelService;
-import project.source.services.ReviewService;
 
 import java.util.List;
 
@@ -48,6 +45,18 @@ public class HotelController {
                 .build();
         return ResponseEntity.ok(apiResponse);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse> getHotelDetail(@PathVariable(value = "id")Long id){
+        Hotel hotel = hotelService.getHotelById(id);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get Hotel Successfully by id = "+ id)
+                .data(hotel)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
     @PostMapping("/createHotel")
     public ResponseEntity<ApiResponse> createHotel(@Valid @RequestBody HotelDTO hotelDTO, BindingResult result){
         if(result.hasErrors()){

@@ -21,9 +21,9 @@ import java.util.Date;
 public class Voucher extends BaseEntity<Long>{
     @Min(value = 1, message = "Discount must to greater than 1")
     private int discount;
-    @Past(message = "Start Date must to one day in future")
+    //@Past(message = "Start Date must to one day in future")
     private Date startDate;
-    @Past(message = "End Date must to one day in future")
+    //@Past(message = "End Date must to one day in future")
     private Date endDate;
     private boolean active;
     @ManyToOne
