@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.source.exceptions.InvalidDataException;
+import project.source.exceptions.WrongPasswordException;
 import project.source.models.entities.Token;
 import project.source.models.entities.User;
 import project.source.models.enums.TokenType;
@@ -46,6 +47,10 @@ public class AuthService implements IAuthService {
             throw new InvalidDataException("User not active");
         }
 
+        if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
+            throw new WrongPasswordException("Wrong password");
+        }
+
         String accessToken = jwtService.generateToken(user);
 
         String refreshToken = jwtService.generateRefreshToken(user);
@@ -53,6 +58,7 @@ public class AuthService implements IAuthService {
         tokenService.save(Token.builder().username(user.getUsername())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .user(user)
                 .build());
 
         return TokenResponse.builder()
@@ -64,18 +70,16 @@ public class AuthService implements IAuthService {
 
 
     public TokenResponse refreshToken(HttpServletRequest request) {
-
-
         final String refreshToken = request.getHeader(REFERER);
         if (StringUtils.isBlank(refreshToken)) {
             throw new InvalidDataException("Token must be not blank");
         }
         final String userName = jwtService.extractUsername(refreshToken, TokenType.REFRESH_TOKEN);
-        var user = userService.getByUsername(userName);
+        User user = userService.getByUsername(userName);
+        log.info(user.getUsername());
         if (!jwtService.isValid(refreshToken, TokenType.REFRESH_TOKEN, user)) {
             throw new InvalidDataException("Not allow access with this token");
         }
-
 
         String accessToken = jwtService.generateToken(user);
 
@@ -94,12 +98,11 @@ public class AuthService implements IAuthService {
     }
 
     public String removeToken(HttpServletRequest request) {
-
-
         final String token = request.getHeader(REFERER);
         if (StringUtils.isBlank(token)) {
             throw new InvalidDataException("Token must be not blank");
         }
+        log.info(token);
 
         final String userName = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
 
@@ -109,7 +112,6 @@ public class AuthService implements IAuthService {
     }
 
     public String forgotPassword(String username) {
-
         User user = userService.getByUsername(username);
 
         String resetToken = jwtService.generateResetToken(user);
@@ -141,20 +143,21 @@ public class AuthService implements IAuthService {
 
         User user = validateToken(request.getSecretKey());
 
+        log.info("Old: " + user.getPassword());
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        long id = userService.saveUser(user);
+        userService.saveUser(user);
 
-        log.info(String.valueOf(id));
+        log.info("New " + user.getPassword());
 
-        return "Changed";
+        return user.getFirstName();
     }
 
 
     private User validateToken(String token) {
-        var userName = jwtService.extractUsername(token, TokenType.RESET_TOKEN);
+        String userName = jwtService.extractUsername(token, TokenType.RESET_TOKEN);
 
-        var user = userService.getByUsername(userName);
+        User user = userService.getByUsername(userName);
         if (!user.isEnabled()) {
             throw new InvalidDataException("User not active");
         }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import project.source.models.enums.Gender;
 import project.source.models.enums.UserStatus;
@@ -53,14 +54,15 @@ public class User extends BaseEntity<Long> implements UserDetails {
     @Column(name = "status")
     UserStatus status;
 
-//    @ManyToOne
-//    @JoinColumn(name = "role_id", nullable = false)
-//    Role role;
+    @ManyToOne
+    @JoinColumn(name="role_id", nullable = false)
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return role != null ? List.of(() -> role.getName().name()) : List.of();
-        return List.of();
+        List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
+        authorityList.add(new SimpleGrantedAuthority(getRole().getName().toUpperCase()));
+        return authorityList;
     }
 
     @Override

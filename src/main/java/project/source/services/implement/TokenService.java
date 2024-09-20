@@ -1,5 +1,6 @@
 package project.source.services.implement;
 
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -31,6 +32,7 @@ public class TokenService {
                 .orElseGet(() -> tokenRepository.save(token).getId());
     }
 
+    @Transactional
     public void delete(String username) {
         if (tokenRepository.existsByUsername(username)) {
             tokenRepository.deleteByUsername(username);

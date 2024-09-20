@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import project.source.dtos.UserDTO;
 import project.source.models.entities.User;
 import project.source.models.enums.UserStatus;
-import project.source.requests.SignInRequest;
 import project.source.respones.ApiResponse;
-import project.source.services.IUserService;
 import project.source.services.implement.UserService;
 
 import java.util.List;
@@ -46,7 +44,7 @@ public class UserController {
                 .message("User created successfully")
                 .data(createdUser)
                 .build();
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("getUser/{id}")

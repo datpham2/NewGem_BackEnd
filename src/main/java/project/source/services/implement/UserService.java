@@ -3,6 +3,7 @@ package project.source.services.implement;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +14,7 @@ import project.source.models.entities.Role;
 import project.source.models.entities.User;
 import project.source.models.enums.UserStatus;
 //import project.source.repositories.RoleRepository;
+import project.source.repositories.RoleRepository;
 import project.source.repositories.UserRepository;
 import project.source.dtos.UserDTO;
 import project.source.respones.PageResponse;
@@ -20,13 +22,14 @@ import project.source.services.IUserService;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class UserService implements IUserService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
-//    RoleRepository roleRepository;
+    RoleRepository roleRepository;
 
     @Override
     public UserDetailsService userDetailsService() {
@@ -39,11 +42,8 @@ public class UserService implements IUserService {
         existed(userDTO);
         User user = UserDTO.toUser(userDTO);
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-
-//        Role role = roleRepository.findByName(Role.RoleType.ROLE_USER)
-//                .orElseThrow(() -> new IllegalStateException("Role not found"));
-//
-//        user.setRole(role);
+        Role role = roleRepository.findByName(Role.USER).orElseThrow(() -> new NotFoundException("Role not found"));
+        user.setRole(role);
         return userRepository.save(user);
     }
 
@@ -132,6 +132,8 @@ public class UserService implements IUserService {
     }
 
     public User getByUsername(String username){
+        Optional<User> user = userRepository.findByUsername(username);
+        log.info("user " + user);
         return userRepository.findByUsername(username).orElse(null);
     }
 

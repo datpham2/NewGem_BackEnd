@@ -59,13 +59,12 @@ public class JwtService implements project.source.services.IJwtService {
 
     @Override
     public boolean isValid(String token, TokenType type, UserDetails userDetails) {
-
         final String username = extractUsername(token, type);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token, type));
     }
 
-    private String generateToken(Map<String, Object> claims, UserDetails userDetails) {
 
+    private String generateToken(Map<String, Object> claims, UserDetails userDetails) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())

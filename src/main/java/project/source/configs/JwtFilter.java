@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -26,6 +27,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JwtFilter extends OncePerRequestFilter {
     private final UserService userService;
@@ -33,7 +35,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        log.info("---------- doFilterInternal ----------");
+
         final String authorization = request.getHeader(AUTHORIZATION);
+        log.info("Authorization: {}", authorization);
 
         if (StringUtils.isBlank(authorization) || !authorization.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -41,7 +46,6 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         final String token = authorization.substring("Bearer ".length());
-
 
         final String userName = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
 
