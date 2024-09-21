@@ -41,9 +41,9 @@ public class Hotel extends BaseEntity<Long>{
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "hotel")
-    private Set<Reviews> reviews = new HashSet<Reviews>(0);
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "hotel", cascade = CascadeType.ALL)
+    private Set<Reviews> reviews = new HashSet<Reviews>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "hotel")
-    private Set<Voucher> vouchers = new HashSet<Voucher>(0);
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "hotel", cascade = CascadeType.ALL)
+    private Set<Voucher> vouchers = new HashSet<Voucher>();
 }

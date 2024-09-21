@@ -21,14 +21,19 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class VoucherDTO {
+
     @Min(value = 1, message = "Discount must be greater than 1")
     private int discount;
+
     @FutureOrPresent(message = "Start Date must be one day in future")
     private LocalDate startDate;
+
     @FutureOrPresent(message = "End Date must be one day in future")
     private LocalDate endDate;
+
     @Enumerated(EnumType.STRING)
     private Status status;
+
     @JsonProperty(value = "hotel_id")
     private Long hotelId;
 }

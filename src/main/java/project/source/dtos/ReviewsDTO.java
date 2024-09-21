@@ -19,15 +19,20 @@ import project.source.models.enums.Status;
 @Getter
 @Builder
 public class ReviewsDTO {
+
     @JsonProperty(value = "user_id")
     private Long userId;
+
     @JsonProperty(value = "hotel_id")
     private Long hotelId;
+
     @NotNull(message = "Comment can't be empty")
     private String comment;
+
     @Min(1)
     @Max(5)
     private int rating;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 }
