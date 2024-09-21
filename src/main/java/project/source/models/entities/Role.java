@@ -11,7 +11,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Data
 @Table(name="roles")
 @Builder
 public class Role extends BaseEntity<Long>{

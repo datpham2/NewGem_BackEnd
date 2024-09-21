@@ -63,6 +63,7 @@ public class WebSecurityConfig {
                         .requestMatchers(WHITE_LIST_URL).permitAll()
                         .requestMatchers("/auth/**", "/rooms/**", "/bookings/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"user/confirm/**").permitAll()
                         .requestMatchers("/roles/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
 

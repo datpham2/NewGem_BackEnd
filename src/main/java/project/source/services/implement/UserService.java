@@ -26,6 +26,7 @@ import project.source.dtos.UserDTO;
 import project.source.services.IUserService;
 
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -36,6 +37,8 @@ public class UserService implements IUserService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
+
+
 
 
     @Override
@@ -50,10 +53,21 @@ public class UserService implements IUserService {
         existed(userDTO);
         User user = UserDTO.toUser(userDTO);
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setStatus(Status.ACTIVE);
+        user.setStatus(Status.INACTIVE);
         Role role = roleRepository.findByName(Role.USER).orElseThrow(() -> new NotFoundException("Role not found"));
         user.setRole(role);
+
         return userRepository.save(user);
+    }
+
+    @Override
+    public void confirmUser(Long userId, String verifyCode) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+        if (Objects.equals(verifyCode, "12345")){
+            user.setStatus(Status.ACTIVE);
+            userRepository.save(user);
+        }
     }
 
 
@@ -112,7 +126,7 @@ public class UserService implements IUserService {
 
 
     @Override
-    public void deleteUser(long userId) {
+    public void disableUser(long userId) {
         User user = getUserById(userId);
         user.setStatus(Status.INACTIVE);
         userRepository.save(user);
@@ -123,6 +137,16 @@ public class UserService implements IUserService {
     @Override
     public Page<User> getAllUsers(PageRequest request) {
         return userRepository.findAll(request);
+    }
+
+    @Override
+    public Page<User> getActiveUsersWithoutAdmins(PageRequest request) {
+        return userRepository.findActiveUsersExcludingAdmins(Status.ACTIVE, Role.ADMIN, request);
+    }
+
+    @Override
+    public Page<User> getInactiveUsersWithoutAdmins(PageRequest request) {
+        return userRepository.findInactiveUsersExcludingAdmins(Status.INACTIVE, Role.ADMIN, request);
     }
 
 
@@ -168,6 +192,7 @@ public class UserService implements IUserService {
                 new NotFoundException("User not found with username: " + username)
         );
     }
+
 
 
 }

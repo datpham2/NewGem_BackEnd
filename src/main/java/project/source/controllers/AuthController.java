@@ -27,13 +27,13 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<TokenResponse> signIn(@Valid @RequestBody SignInRequest signInRequest) {
-        return new ResponseEntity<>(authService.signIn(signInRequest), HttpStatus.OK);
+        return new ResponseEntity<>(authService.signIn(signInRequest), HttpStatus.ACCEPTED);
     }
 
 
     @PostMapping("/refresh-token")
     public ResponseEntity<TokenResponse> refreshToken(HttpServletRequest request) {
-        return new ResponseEntity<>(authService.refreshToken(request), HttpStatus.OK);
+        return new ResponseEntity<>(authService.refreshToken(request), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/remove-token")
