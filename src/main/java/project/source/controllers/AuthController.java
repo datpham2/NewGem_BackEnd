@@ -49,9 +49,9 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse> forgotPassword(@RequestBody String username) {
         String resetToken = authService.forgotPassword(username);
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body(ApiResponse.builder()
-                        .status(HttpStatus.CREATED.value())
+                        .status(HttpStatus.ACCEPTED.value())
                         .message("Reset token createad successfull")
                         .data(resetToken)
                         .build());

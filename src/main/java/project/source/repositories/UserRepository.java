@@ -25,4 +25,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("SELECT u FROM User u WHERE u.status != :status AND u.role.name != :adminRole")
     Page<User> findInactiveUsersExcludingAdmins(@Param("status") Status status, @Param("adminRole") String adminRole, Pageable pageable);
+
 }

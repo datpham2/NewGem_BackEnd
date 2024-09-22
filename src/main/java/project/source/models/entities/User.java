@@ -41,17 +41,17 @@ public class User extends BaseEntity<Long> implements UserDetails {
     @Column(name = "phone", unique = true)
     String phone;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email", unique = true, nullable = false)
     String email;
 
     @Column(name = "username", unique = true, nullable = false)
     String username;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     Status status;
 
     @ManyToOne

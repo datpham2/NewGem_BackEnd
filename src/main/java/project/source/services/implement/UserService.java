@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -160,7 +161,7 @@ public class UserService implements IUserService {
     public void emailExisted(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()){
-            throw new ExistedException("Email existed");
+            throw new ExistedException("Email");
         }
     }
 
@@ -168,7 +169,7 @@ public class UserService implements IUserService {
     public void usernameExisted(String username) {
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()){
-            throw new ExistedException("Username existed");
+            throw new ExistedException("Username");
         }
     }
 
@@ -176,7 +177,7 @@ public class UserService implements IUserService {
     public void phoneExisted(String phone) {
         Optional<User> user = userRepository.findByPhone(phone);
         if (user.isPresent()){
-            throw new ExistedException("Phone existed");
+            throw new ExistedException("Phone");
         }
     }
 
@@ -192,7 +193,4 @@ public class UserService implements IUserService {
                 new NotFoundException("User not found with username: " + username)
         );
     }
-
-
-
 }

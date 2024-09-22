@@ -26,7 +26,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/hotel")
 public class HotelController {
-
     private final HotelService hotelService;
 
     @GetMapping("/allHotel")

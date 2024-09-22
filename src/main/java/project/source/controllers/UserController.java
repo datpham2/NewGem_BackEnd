@@ -63,10 +63,9 @@ public class UserController {
         User createdUser = userService.addUser(userDTO);
         ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.CREATED.value())
-                .message("User created successfully")
-                .data(createdUser)
+                .message("User created successfully.")
+                .data("Please activate account through your email")
                 .build();
-
 
         if (createdUser != null) {
             sendValidationEmail(createdUser);

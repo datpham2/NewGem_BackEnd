@@ -10,9 +10,12 @@ import org.springframework.stereotype.Repository;
 import project.source.models.entities.Hotel;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HotelRepository extends JpaRepository<Hotel, Long> {
     @Query("select s from Hotel s where s.name like ?1%")
     Page<Hotel> searchByName(String name, PageRequest pageRequest);
+
+    Optional<Hotel> findByName(String name);
 }
