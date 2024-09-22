@@ -19,9 +19,9 @@ public interface IReservationService {
 
     Page<Reservation> getAllReservationByRoomId(Long roomId, PageRequest pageRequest);
 
-    void saveReservations(List<Reservation> reservations);
+    List<Reservation> saveReservations(List<Reservation> reservations);
 
-    void saveReservation(Reservation reservation);
+    Reservation saveReservation(Reservation reservation);
 
     void updateReservation(Reservation reservation, Long reservationId);
 

@@ -43,8 +43,7 @@ public class UserController {
     @Operation(
             method = "POST",
             summary = "Add new user",
-            description = "Send a request via this API to create a new user"
-    )
+            description = "Send a request via this API to create a new user then go to your email to activate the account")
     @PostMapping("addUser")
     public ResponseEntity<ApiResponse> addUser(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) throws MessagingException, UnsupportedEncodingException {
         if (bindingResult.hasErrors()) {

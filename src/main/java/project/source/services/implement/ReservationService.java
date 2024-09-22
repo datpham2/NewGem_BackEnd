@@ -51,12 +51,14 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
-    public void saveReservations(List<Reservation> reservations) {
+    public List<Reservation> saveReservations(List<Reservation> reservations) {
         List<Exception> exceptions = new ArrayList<>();
+        List<Reservation> newReservations = new ArrayList<>();
 
         for (Reservation reservation : reservations) {
             try {
-                saveReservation(reservation);
+                Reservation newReservation = saveReservation(reservation);
+                newReservations.add(newReservation);
             } catch (ConflictException | NotFoundException e) {
                 exceptions.add(e);
             }
@@ -64,14 +66,15 @@ public class ReservationService implements IReservationService {
         if (!exceptions.isEmpty()) {
             throw new MultipleException(exceptions);
         }
+        return newReservations;
     }
 
     @Override
-    public void saveReservation(Reservation reservation) {
+    public Reservation saveReservation(Reservation reservation) {
         Room room = roomService.getRoomById(reservation.getRoom().getId());
         boolean booked = room.bookRoom(reservation);
         if(booked){
-            reservationRepository.save(reservation);
+            return reservationRepository.save(reservation);
         }else {
             throw new ConflictException("Can not book room " + reservation.getRoom().getRoomNumber()
                     + " of " + reservation.getRoom().getHotel().getName()

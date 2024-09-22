@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import project.source.dtos.BillDTO;
 import project.source.models.entities.Bill;
 
 
@@ -56,7 +57,7 @@ public class BillController {
                 .message("Get all bills successfully").message("Get all bills by user id "
                         + bill.getUser().getId() + " hotel name " +
                         bill.getHotel().getName() + " successfully")
-                .data(bill)
+                .data(BillDTO.fromBill(bill))
                 .build();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
@@ -69,7 +70,7 @@ public class BillController {
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("Get bill successfully")
-                .data(bill)
+                .data(BillDTO.fromBill(bill))
                 .build();
 
         return ResponseEntity.ok(apiResponse);
@@ -82,7 +83,7 @@ public class BillController {
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("Pay bill successfully by id = "+ payRequest.getBillId())
-                .data(bill)
+                .data(BillDTO.fromBill(bill))
                 .build();
         return ResponseEntity.ok(apiResponse);
     }

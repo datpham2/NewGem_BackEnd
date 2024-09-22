@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,14 +32,14 @@ public class Bill extends BaseEntity<Long>{
     Hotel hotel;
 
     @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
-    Set<Reservation> reservations;
+    Set<Reservation> reservations = new HashSet<Reservation>();
 
     @Digits(integer = 5, fraction = 2)
     @Column(name = "total_fee", nullable = false)
     BigDecimal totalFee;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "voucher_id")
+    @JoinColumn(name = "voucher_id", nullable = true)
     Voucher voucher;
 
     @Column(name = "check_out")

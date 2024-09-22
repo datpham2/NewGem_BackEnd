@@ -36,20 +36,20 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public void saveRoom(Room room) {
+    public Room saveRoom(Room room) {
         Hotel hotel = hotelService.getHotelById(room.getHotel().getId());
         hotel.setNoRooms(hotel.getRooms().size());
-        roomRepository.save(room);
+        return roomRepository.save(room);
     }
 
     @Override
-    public void updateRoom(Room room, Long id) {
+    public Room updateRoom(Room room, Long id) {
         Room updatedRoom = getRoomById(id);
         updatedRoom.setRoomNumber(room.getRoomNumber());
         updatedRoom.setGuests(room.getGuests());
         updatedRoom.setType(room.getType());
         updatedRoom.setPrice(room.getPrice());
 
-        roomRepository.save(updatedRoom);
+        return roomRepository.save(updatedRoom);
     }
 }

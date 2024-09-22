@@ -3,6 +3,7 @@ package project.source.services.implement;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Bill;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
@@ -35,21 +37,25 @@ public class BillService implements IBillService {
         Hotel hotel = hotelService.getHotelById(billRequest.getHotelId());
         long userId = billRequest.getUserId();
 
+
         Bill bill = Bill.builder()
                 .user(userService.getUserById(userId))
                 .hotel(hotel)
-                .voucher(voucherService.getVoucherById(billRequest.getVoucherId()))
                 .isPaid(false)
                 .checkOut(billRequest.getCheckOut())
                 .build();
+        Long voucherId = billRequest.getVoucherId();
+        if (voucherId != null){
+            bill.setVoucher(voucherService.getVoucherById(voucherId));
+        }
 
         Set<Reservation> reservations = reservationService.getAllReservationByUserId(userId);
-
         reservations = reservations.stream()
-                .filter(reservation -> !reservation.getRoom().getHotel().equals(hotel))
-                        .collect(Collectors.toSet());
+                .filter(reservation -> reservation.getRoom().getHotel().equals(hotel))
+                .collect(Collectors.toSet());
 
         bill.setReservations(reservations);
+
         bill.calculateTotalFee();
 
         return billRepository.save(bill);

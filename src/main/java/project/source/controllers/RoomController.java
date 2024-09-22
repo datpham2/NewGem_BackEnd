@@ -12,12 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import project.source.dtos.HotelDTO;
-import project.source.exceptions.NotFoundException;
-import project.source.models.entities.Hotel;
+import project.source.dtos.RoomDTO;
 import project.source.models.entities.Room;
 import project.source.respones.ApiResponse;
-import project.source.respones.HotelResponse;
+
 import project.source.respones.PageResponse;
 import project.source.services.implement.RoomService;
 
@@ -53,12 +51,13 @@ public class RoomController {
 
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Room> rooms = roomService.getAllRoomByHotelId(hotelId, pageRequest);
+        List<RoomDTO> items = rooms.stream().map(RoomDTO::fromRoom).toList();
 
-        PageResponse<List<Room>> response = PageResponse.<List<Room>>builder()
+        PageResponse<List<RoomDTO>> response = PageResponse.<List<RoomDTO>>builder()
                 .totalPage(rooms.getTotalPages())
                 .pageNo(rooms.getNumber())
                 .pageSize(rooms.getSize())
-                .items(rooms.getContent())
+                .items(items)
                 .build();
 
         ApiResponse apiResponse = ApiResponse.builder()
@@ -76,7 +75,7 @@ public class RoomController {
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("Get room successfully by id = "+ id)
-                .data(room)
+                .data(RoomDTO.fromRoom(room))
                 .build();
         return ResponseEntity.ok(apiResponse);
     }
@@ -92,9 +91,10 @@ public class RoomController {
                     .build();
             return ResponseEntity.badRequest().body(apiResponse);
         }else {
-            roomService.saveRoom(room);
+            Room newRoom = roomService.saveRoom(room);
             ApiResponse apiResponse = ApiResponse.builder()
                     .message("Create successfully")
+                    .data(RoomDTO.fromRoom(newRoom))
                     .status(HttpStatus.CREATED.value())
                     .build();
             return ResponseEntity.ok(apiResponse);
@@ -113,9 +113,10 @@ public class RoomController {
                     .build();
             return ResponseEntity.badRequest().body(apiResponse);
         }else {
-            roomService.updateRoom(room,id);
+            Room updatedRoom = roomService.updateRoom(room,id);
             ApiResponse apiResponse = ApiResponse.builder()
                     .message("Update successfully")
+                    .data(RoomDTO.fromRoom(updatedRoom))
                     .status(HttpStatus.ACCEPTED.value())
                     .build();
             return ResponseEntity.ok(apiResponse);

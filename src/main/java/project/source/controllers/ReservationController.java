@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import project.source.dtos.ReservationDTO;
 import project.source.models.entities.Reservation;
 import project.source.models.entities.Room;
 import project.source.respones.ApiResponse;
@@ -52,11 +53,13 @@ public class ReservationController {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Reservation> reservations = reservationService.getAllReservationByRoomId(roomId, pageRequest);
 
-        PageResponse<List<Reservation>> response = PageResponse.<List<Reservation>>builder()
+        List<ReservationDTO> items = reservations.getContent().stream().map(ReservationDTO::fromReservation).toList();
+
+        PageResponse<List<ReservationDTO>> response = PageResponse.<List<ReservationDTO>>builder()
                 .totalPage(reservations.getTotalPages())
                 .pageNo(reservations.getNumber())
                 .pageSize(reservations.getSize())
-                .items(reservations.getContent())
+                .items(items)
                 .build();
 
         ApiResponse apiResponse = ApiResponse.builder()
@@ -90,11 +93,12 @@ public class ReservationController {
 
         PageRequest pageRequest = PageRequest.of(page, size);
         Set<Reservation> reservations = reservationService.getAllReservationByUserId(userId);
+        Set<ReservationDTO> response = reservations.stream().map(ReservationDTO::fromReservation).collect(Collectors.toSet());
 
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("Get all reservations successfully")
-                .data(reservations)
+                .data(response)
                 .build();
 
         return ResponseEntity.ok(apiResponse);
@@ -106,7 +110,7 @@ public class ReservationController {
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("Get reservation successfully by id = "+ id)
-                .data(reservation)
+                .data(ReservationDTO.fromReservation(reservation))
                 .build();
         return ResponseEntity.ok(apiResponse);
     }
@@ -122,9 +126,10 @@ public class ReservationController {
                     .build();
             return ResponseEntity.badRequest().body(apiResponse);
         }else {
-            reservationService.saveReservation(reservation);
+            Reservation newReservation = reservationService.saveReservation(reservation);
                 ApiResponse apiResponse = ApiResponse.builder()
                         .message("Create successfully")
+                        .data(ReservationDTO.fromReservation(newReservation))
                         .status(HttpStatus.CREATED.value())
                         .build();
                 return ResponseEntity.ok(apiResponse);

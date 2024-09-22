@@ -14,7 +14,7 @@ public interface IRoomService {
 
     Page<Room> getAllRoomByHotelId(Long hotelId, PageRequest pageRequest);
 
-    void saveRoom(Room room);
+    Room saveRoom(Room room);
 
-    void updateRoom(Room room, Long id);
+    Room updateRoom(Room room, Long id);
 }
