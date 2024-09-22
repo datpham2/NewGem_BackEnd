@@ -22,5 +22,4 @@ public class BillRequest {
     LocalDate checkOut;
 
     Long voucherId;
-
 }

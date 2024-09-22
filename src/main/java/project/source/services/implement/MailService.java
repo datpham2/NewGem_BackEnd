@@ -2,7 +2,9 @@ package project.source.services.implement;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -21,13 +23,13 @@ import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MailService {
-
-    private final JavaMailSender mailSender;
-    private final SpringTemplateEngine templateEngine;
+    JavaMailSender mailSender;
+    SpringTemplateEngine templateEngine;
 
     @Async
-    public void sendEmail(
+    public void sendConfirmEmail(
             String to,
             String username,
             String emailTemplate,

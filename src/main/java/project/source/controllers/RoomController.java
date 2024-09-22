@@ -82,7 +82,7 @@ public class RoomController {
     }
 
     @PostMapping("/createRoom")
-    public ResponseEntity<ApiResponse> createHotel(@Valid @RequestBody Room room, BindingResult result){
+    public ResponseEntity<ApiResponse> addRoom(@Valid @RequestBody Room room, BindingResult result){
         if(result.hasErrors()){
             List<String> err = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
             ApiResponse apiResponse = ApiResponse.builder()

@@ -3,8 +3,6 @@ package project.source.services.implement;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Bill;
@@ -43,7 +41,6 @@ public class BillService implements IBillService {
                 .voucher(voucherService.getVoucherById(billRequest.getVoucherId()))
                 .isPaid(false)
                 .checkOut(billRequest.getCheckOut())
-                .payAmount(null)
                 .build();
 
         Set<Reservation> reservations = reservationService.getAllReservationByUserId(userId);
@@ -56,16 +53,6 @@ public class BillService implements IBillService {
         bill.calculateTotalFee();
 
         return billRepository.save(bill);
-    }
-
-
-    @Override
-    public Page<Bill> getAllBill(PageRequest pageRequest) {
-        Page<Bill> bills = billRepository.findAll(pageRequest);
-        for (Bill bill : bills){
-            bill.calculateTotalFee();
-        }
-        return bills;
     }
 
     @Override
@@ -87,23 +74,17 @@ public class BillService implements IBillService {
     }
 
     @Override
-    public void updateBill(Bill bill, Long id) {
-        Bill updateBill = getBillById(id);
-        updateBill.setVoucher(bill.getVoucher());
-        for (String description : bill.getDescriptions()){
-            updateBill.getDescriptions().add(description);
-        }
-        billRepository.save(updateBill);
-    }
-
-    @Override
-    public void payBill(PayRequest payRequest){
+    public Bill payBill(PayRequest payRequest){
         Bill bill = getBillById(payRequest.getBillId());
         bill.setPaid(true);
-        bill.setPayAmount(payRequest.getPayAmount());
+        bill.setReceivedAmount(payRequest.getReceivedAmount());
+        if (payRequest.getNewFee() != null){
+            bill.setNewFee(payRequest.getNewFee());
+        }
+        bill.calculateAmountReturn();
         for (String description : payRequest.getDescriptions()){
             bill.getDescriptions().add(description);
         }
-        billRepository.save(bill);
+        return billRepository.save(bill);
     }
 }

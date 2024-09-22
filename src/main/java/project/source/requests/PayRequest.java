@@ -16,7 +16,9 @@ public class PayRequest {
     Long billId;
 
     @DecimalMin(value = "0.0", message = "Price must be greater than 0")
-    BigDecimal payAmount;
+    BigDecimal receivedAmount;
+
+    BigDecimal newFee;
 
     List<String> descriptions;
 }

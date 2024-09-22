@@ -1,6 +1,7 @@
 package project.source.models.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,7 +27,7 @@ public class Room extends BaseEntity<Long>{
     int roomNumber;
 
     @Column(name="price", nullable = false)
-    Double price;
+    double price;
 
     @Column(name = "room_type",nullable = false)
     @Enumerated(EnumType.STRING)

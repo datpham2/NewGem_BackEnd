@@ -10,7 +10,6 @@ import project.source.models.enums.Status;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -46,4 +45,7 @@ public class Hotel extends BaseEntity<Long>{
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "hotel", cascade = CascadeType.ALL)
     private Set<Voucher> vouchers = new HashSet<Voucher>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "hotel", cascade = CascadeType.ALL)
+    private Set<Room> rooms = new HashSet<Room>();
 }

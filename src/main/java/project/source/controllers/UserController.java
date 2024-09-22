@@ -205,7 +205,7 @@ public class UserController {
         long userId = user.getId();
         String activationUrl = "http://localhost:8080/user/confirm/" + userId + "?verifyCode=" + verifyCode;
 
-        mailService.sendEmail(
+        mailService.sendConfirmEmail(
                 user.getEmail(),
                 user.getFirstName() + " " + user.getLastName(),
                 "confirm-email",

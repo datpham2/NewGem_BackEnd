@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import project.source.exceptions.NotFoundException;
+import project.source.models.entities.Hotel;
 import project.source.models.entities.Room;
 import project.source.repositories.RoomRepository;
 import project.source.services.IRoomService;
@@ -36,7 +37,8 @@ public class RoomService implements IRoomService {
 
     @Override
     public void saveRoom(Room room) {
-        hotelService.getHotelById(room.getHotel().getId());
+        Hotel hotel = hotelService.getHotelById(room.getHotel().getId());
+        hotel.setNoRooms(hotel.getRooms().size());
         roomRepository.save(room);
     }
 

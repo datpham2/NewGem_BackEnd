@@ -48,8 +48,16 @@ public class Bill extends BaseEntity<Long>{
     boolean isPaid;
 
     @Digits(integer = 5, fraction = 2)
-    @Column(name = "pay_amount", updatable = false)
-    BigDecimal payAmount;
+    @Column(name = "received_amount")
+    BigDecimal receivedAmount;
+
+    @Digits(integer = 5, fraction = 2)
+    @Column(name = "new_fee")
+    BigDecimal newFee;
+
+    @Digits(integer = 5, fraction = 2)
+    @Column(name = "changed_amount")
+    BigDecimal changedAmount;
 
     @Column(name = "descriptions")
     List<String> descriptions;
@@ -60,5 +68,13 @@ public class Bill extends BaseEntity<Long>{
             total = total * voucher.getDiscount();
         }
         this.totalFee = BigDecimal.valueOf(total);
+    }
+
+    public void calculateAmountReturn(){
+        if (newFee == null){
+            this.changedAmount = receivedAmount.subtract(totalFee);
+        } else {
+            this.changedAmount = receivedAmount.subtract(newFee);
+        }
     }
 }

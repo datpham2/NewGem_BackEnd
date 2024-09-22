@@ -28,6 +28,12 @@ public class SwaggerConfig {
         apiGroups.put("all", "/**");
         apiGroups.put("user", "/user/**");
         apiGroups.put("auth", "/auth/**");
+        apiGroups.put("hotel", "/hotel/**");
+        apiGroups.put("room", "/room/**");
+        apiGroups.put("bill", "/bill/**");
+        apiGroups.put("reservation", "/reservation/**");
+        apiGroups.put("reviews", "/reviews/**");
+        apiGroups.put("voucher", "/voucher/**");
         return apiGroups;
     }
 

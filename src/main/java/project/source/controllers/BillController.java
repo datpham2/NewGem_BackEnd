@@ -13,6 +13,7 @@ import project.source.models.entities.Bill;
 
 
 import project.source.requests.BillRequest;
+import project.source.requests.PayRequest;
 import project.source.respones.ApiResponse;
 import project.source.services.implement.BillService;
 import project.source.services.implement.HotelService;
@@ -45,7 +46,8 @@ public class BillController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @PostMapping("/addBill")
+
+    @PostMapping("/createBill")
     public ResponseEntity<ApiResponse> getBillByUserId(@Valid @RequestBody BillRequest billRequest){
         Bill bill = billService.addBill(billRequest);
 
@@ -60,7 +62,7 @@ public class BillController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
-    @GetMapping("/addBill/{billId}")
+    @GetMapping("/getBill/{billId}")
     public ResponseEntity<ApiResponse> getBillId(@PathVariable(name = "billId") long billId){
         Bill bill = billService.getBillById(billId);
 
@@ -73,12 +75,13 @@ public class BillController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse> getBillById(@PathVariable(value = "id")Long id){
-        Bill bill = billService.getBillById(id);
+
+    @PostMapping("/payBill")
+    public ResponseEntity<ApiResponse> getBillById(@RequestBody @Valid PayRequest payRequest){
+        Bill bill = billService.payBill(payRequest);
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
-                .message("Get bill successfully by id = "+ id)
+                .message("Pay bill successfully by id = "+ payRequest.getBillId())
                 .data(bill)
                 .build();
         return ResponseEntity.ok(apiResponse);

@@ -15,13 +15,10 @@ import java.util.List;
 public interface IBillService {
     Bill addBill(BillRequest billRequest);
 
-    Page<Bill> getAllBill(PageRequest pageRequest);
 
     Bill getBillById(Long id);
 
     List<Bill> getAllBillByUserIdAndHotelId(Long userId, Long hotelId);
 
-    void updateBill(Bill bill, Long id);
-
-    void payBill(PayRequest payRequest);
+    Bill payBill(PayRequest payRequest);
 }
