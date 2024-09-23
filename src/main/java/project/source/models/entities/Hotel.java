@@ -30,7 +30,7 @@ public class Hotel extends BaseEntity<Long>{
     private BigDecimal minPrice;
     @Digits(integer = 5, fraction = 2)
     @JsonProperty(value = "max_price")
-    @Min(value = 1, message = "Price must be greater than 1")
+    @Min(value = 0, message = "Price must be greater than 1")
     private BigDecimal maxPrice;
     //private Image images;
     private int rating;

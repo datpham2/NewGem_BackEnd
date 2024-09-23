@@ -7,6 +7,7 @@
 
  :: Spring Boot ::                (v3.3.3)
 
+ Made by Duy Khanh
+
  Backend: https://github.com/datpham2/NewGem_BackEnd
  Frontend: https://github.com/datpham2/NewGem_FrontEnd
-

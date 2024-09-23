@@ -46,9 +46,7 @@ public class AuthController {
             description = "Post the refresh token in the header Referer to get a new access token")
     @Parameter(name = "Referer", in = ParameterIn.HEADER, required = true, description = "JWT token")
     @PostMapping("/refreshtoken")
-    public ResponseEntity<TokenResponse> refreshToken(HttpServletRequest request,
-                                                      @RequestHeader(value = "Referer", required = true) String referer) {
-        log.info(referer);
+    public ResponseEntity<TokenResponse> refreshToken(HttpServletRequest request) {
         return new ResponseEntity<>(authService.refreshToken(request), HttpStatus.ACCEPTED);
     }
 
