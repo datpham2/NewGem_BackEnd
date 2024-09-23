@@ -17,7 +17,7 @@ import java.util.Set;
 @Setter
 public class Room extends BaseEntity<Long>{
     @ManyToOne
-    @JoinColumn(name = "hotel-id", nullable = false)
+    @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
 
     @NotNull(message = "Price must not be null")

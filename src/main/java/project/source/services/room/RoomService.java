@@ -3,9 +3,11 @@ package project.source.services.room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.source.dtos.RoomDTO;
+import project.source.models.entities.Hotel;
 import project.source.models.entities.Room;
 import project.source.models.enums.RoomType;
 import project.source.repositories.RoomRepository;
+import project.source.services.implement.HotelService;
 
 import java.util.List;
 
@@ -13,13 +15,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoomService implements IRoomService {
     private final RoomRepository roomRepository;
+    private final HotelService hotelService;
     @Override
-    public Room addRoom(RoomDTO roomDTO) {
-        Room room = Room.builder()
-                .price(roomDTO.getPrice())
-                .type(RoomType.valueOf(roomDTO.getType()))
-                .guests(roomDTO.getGuests())
-                .build();
+    public Room addRoom(Room room, Long hotelId) {
+        Hotel hotel = hotelService.getHotelById(hotelId);
+        hotel.setNoRooms(hotel.getNoRooms());
+        room.setHotel(hotel);
         return roomRepository.save(room);
     }
 

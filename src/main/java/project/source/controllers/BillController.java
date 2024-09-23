@@ -18,8 +18,8 @@ import java.util.List;
 @RequestMapping("/bill")
 @RequiredArgsConstructor
 public class BillController {
-    BillService billService;
-    HotelService hotelService;
+    private final BillService billService;
+    private final HotelService hotelService;
 
     @GetMapping("/getAllBill")
     public ResponseEntity<ApiResponse> getAllBillByUserId(

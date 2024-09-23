@@ -32,7 +32,7 @@ public class BillService implements IBillService {
 
     @Override
     public Bill addBill(BillRequest billRequest) {
-        Hotel hotel = new Hotel();
+        Hotel hotel = hotelService.getHotelById(billRequest.getHotelId());
         long userId = billRequest.getUserId();
         Bill bill = Bill.builder()
                 .isPaid(false)
