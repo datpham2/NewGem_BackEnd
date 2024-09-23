@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import project.source.models.enums.Status;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -51,12 +52,14 @@ public class Reservation extends BaseEntity<Long> {
     @JoinColumn(name = "bill_id")
     Bill bill;
 
+    @Column(name = "status")
+    Status status;
+
     public double getTotalPrice() {
         if (checkOut.isBefore(checkIn)) {
             throw new IllegalArgumentException("Check-out date cannot be before check-in date.");
         }
-        long daysBetween = ChronoUnit.DAYS.between(checkIn, checkOut);
-        log.info(String.valueOf(daysBetween));
+        long daysBetween = ChronoUnit.DAYS.between(checkIn, checkOut);;
         return room.getPrice() * daysBetween;
     }
 }

@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import project.source.models.enums.RoomType;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
@@ -33,8 +34,9 @@ public class Room extends BaseEntity<Long>{
     @Enumerated(EnumType.STRING)
     RoomType type;
 
+
     @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<Reservation> reservations;
+    Set<Reservation> reservations = new HashSet<>();
 
     @Column(name="guests")
     int guests;

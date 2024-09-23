@@ -2,7 +2,6 @@ package project.source.models.entities;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -31,15 +30,15 @@ public class Bill extends BaseEntity<Long>{
     @JoinColumn(name = "hotel_id", nullable = false)
     Hotel hotel;
 
-    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
-    Set<Reservation> reservations = new HashSet<Reservation>();
+    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    Set<Reservation> reservations = new HashSet<>();
 
     @Digits(integer = 5, fraction = 2)
     @Column(name = "total_fee", nullable = false)
     BigDecimal totalFee;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "voucher_id", nullable = true)
+    @JoinColumn(name = "voucher_id")
     Voucher voucher;
 
     @Column(name = "check_out")

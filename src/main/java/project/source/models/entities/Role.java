@@ -15,7 +15,6 @@ import java.util.Set;
 @Builder
 public class Role extends BaseEntity<Long>{
     @Column(nullable = false)
-
     private String name;
 
     public static String ADMIN = "ROLE_ADMIN";
