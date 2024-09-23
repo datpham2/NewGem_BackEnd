@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 public class ResetPasswordRequest {
-    @NotBlank(message = "secretKey must be not blank")
+    @NotBlank(message = "resetKey must be not blank")
     private String resetKey;
 
     @NotNull(message = "Password must not be null")

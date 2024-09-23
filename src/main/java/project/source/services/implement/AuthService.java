@@ -96,71 +96,43 @@ public class AuthService implements IAuthService {
                 .build();
     }
 
-    public String removeToken(HttpServletRequest request) {
+    public void removeToken(HttpServletRequest request) {
         final String token = request.getHeader(REFERER);
         if (StringUtils.isBlank(token)) {
             throw new InvalidDataException("Token must be not blank");
         }
-        log.info(token);
 
         final String userName = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
-
         tokenService.delete(userName);
-
-        return "Removed!";
     }
 
     public String forgotPassword(String username) {
         User user = userService.getByUsername(username);
-
         String resetToken = jwtService.generateResetToken(user);
-
-        tokenService.save(Token.builder().username(user.getUsername()).resetToken(resetToken).build());
-
-        String confirmLink = String.format("curl --location 'http://localhost:8080/auth/reset-password' \\\n" +
-                "--header 'accept: */*' \\\n" +
-                "--header 'Content-Type: application/json' \\\n" +
-                "--data '%s'", resetToken);
-        log.info("--> confirmLink: {}", confirmLink);
+        tokenService.save(Token.builder()
+                .username(user.getUsername())
+                .resetToken(resetToken)
+                .build());
         return resetToken;
     }
 
-    public String resetPassword(String secretKey) {
 
-        var user = validateToken(secretKey);
-
-        tokenService.getByUsername(user.getUsername());
-
-        return "Reset";
-    }
-
-    public String changePassword(ResetPasswordRequest request) {
-
+    public void changePassword(ResetPasswordRequest request) {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new InvalidDataException("Passwords do not match");
         }
-
         User user = validateToken(request.getResetKey());
-
-        log.info("Old: " + user.getPassword());
-
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userService.saveUser(user);
-
-        log.info("New " + user.getPassword());
-
-        return user.getFirstName();
     }
 
 
     private User validateToken(String token) {
         String userName = jwtService.extractUsername(token, TokenType.RESET_TOKEN);
-
         User user = userService.getByUsername(userName);
         if (!user.isEnabled()) {
             throw new InvalidDataException("User not active");
         }
-
         return user;
     }
 }

@@ -2,17 +2,22 @@ package project.source.controllers;
 /**
  * @autor An Nguyen
  */
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import project.source.dtos.ReviewsDTO;
 import project.source.models.entities.Reviews;
 import project.source.respones.ApiResponse;
 import project.source.respones.ReviewResponse;
 import project.source.services.implement.ReviewService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +30,7 @@ public class ReviewController {
     public ResponseEntity<ApiResponse> createReview(@RequestParam(value = "hotelId")Long hotelId,
                                                     @RequestParam(value = "userId")Long userId,
                                                     @RequestBody ReviewsDTO reviewsDTO){
-        reviewService.saveReview(hotelId, 1L, reviewsDTO);
+        reviewService.saveReview(hotelId, userId, reviewsDTO);
         return ResponseEntity.ok(ApiResponse.builder()
                         .data(reviewsDTO)
                         .message("Saved review successfully")
@@ -47,6 +52,38 @@ public class ReviewController {
                 .status(HttpStatus.OK.value())
                 .message("Get all reviews successfully")
                 .data(reviewResponse)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+    @PostMapping("/update/{id}")
+    public ResponseEntity<ApiResponse> updateReview(@Valid @PathVariable Long id,
+                                                     @RequestBody ReviewsDTO reviewsDTO,
+                                                     BindingResult result){
+        if(result.hasErrors()){
+            List<String> err = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
+            ApiResponse apiResponse = ApiResponse.builder()
+                    .message("Can't Update Review")
+                    .data(err)
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .build();
+            return ResponseEntity.badRequest().body(apiResponse);
+        }else {
+            reviewService.updateReview(id, reviewsDTO);
+            ApiResponse apiResponse = ApiResponse.builder()
+                    .data(reviewsDTO)
+                    .message("Update review successfully")
+                    .status(HttpStatus.OK.value())
+                    .build();
+            return ResponseEntity.ok(apiResponse);
+        }
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponse> disableReview(@PathVariable Long id){
+        reviewService.disableReview(id);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Disable Review Successfully")
+                .data(null)
                 .build();
         return ResponseEntity.ok(apiResponse);
     }

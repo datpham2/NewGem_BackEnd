@@ -25,6 +25,7 @@ public class SwaggerConfig {
         apiGroups.put("all", "/**");
         apiGroups.put("user", "/user/**");
         apiGroups.put("auth", "/auth/**");
+
         return apiGroups;
     }
 
