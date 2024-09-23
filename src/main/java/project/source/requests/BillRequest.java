@@ -10,4 +10,5 @@ public class BillRequest {
     long userId;
     LocalDate checkOut;
     Long voucherId;
+    long reservationId;
 }

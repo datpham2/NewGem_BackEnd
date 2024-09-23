@@ -7,7 +7,9 @@ import project.source.requests.PayRequest;
 import java.util.List;
 
 public interface IBillService {
-    Bill addBill(BillRequest billRequest);
+
+    Bill addBill(BillRequest billRequest, Long userId, Long hotelId, Long reservationId, Long voucherId);
+
     Bill getBillById(Long id);
 
     List<Bill> getAllBillByUserIdAndHotelId(Long userId, Long hotelId);

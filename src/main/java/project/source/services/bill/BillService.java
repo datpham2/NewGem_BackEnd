@@ -31,27 +31,22 @@ public class BillService implements IBillService {
 
 
     @Override
-    public Bill addBill(BillRequest billRequest) {
-        Hotel hotel = hotelService.getHotelById(billRequest.getHotelId());
-        long userId = billRequest.getUserId();
+    public Bill addBill(BillRequest billRequest, Long userId, Long hotelId, Long reservationId, Long voucherId) {
+        Hotel hotel = hotelService.getHotelById(hotelId);
         Bill bill = Bill.builder()
+                .user(userService.getUserById(userId))
+                .hotel(hotel)
                 .isPaid(false)
                 .checkOut(billRequest.getCheckOut())
-                .hotel(hotel)
-                .user(userRepository.findById(userId).orElse(null))
                 .build();
-        Long voucherId = billRequest.getVoucherId();
-        if (voucherId != null) {
+        if (voucherId != null){
             bill.setVoucher(voucherService.getVoucherById(voucherId));
         }
-
         Set<Reservation> reservations = reservationService.getAllReservationByUserId(userId);
         reservations = reservations.stream()
                 .filter(reservation -> reservation.getRoom().getHotel().equals(hotel))
                 .collect(Collectors.toSet());
-
         bill.setReservations(reservations);
-
         bill.calculateTotalFee();
         return billRepository.save(bill);
     }

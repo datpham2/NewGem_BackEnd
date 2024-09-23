@@ -19,7 +19,6 @@ public class BillDTO {
     Set<ReservationDTO> reservations;
     Long voucherId;
     boolean isPaid;
-    LocalDate checkOut;
     BigDecimal totalFee;
     Double totalPrice;
 
@@ -30,7 +29,6 @@ public class BillDTO {
                 .hotelId(bill.getHotel().getId())
                 .userId(bill.getUser().getId())
                 .totalFee(bill.getTotalFee())
-                .checkOut(bill.getCheckOut())
                 .reservations(reservations)
                 .isPaid(bill.isPaid())
                 .build();

@@ -38,14 +38,11 @@ public class BillController {
 
     @PostMapping("/createBill")
     public ResponseEntity<ApiResponse> getBillByUserId(@Valid @RequestBody BillRequest billRequest){
-        Bill bill = billService.addBill(billRequest);
-
+        Bill bill = billService.addBill(billRequest, billRequest.getUserId(), billRequest.getHotelId(), billRequest.getReservationId(), billRequest.getVoucherId());
         ApiResponse apiResponse = ApiResponse.builder()
-                .status(HttpStatus.CREATED.value())
-                .message("Get all bills successfully").message("Get all bills by user id "
-                        + bill.getUser().getId() + " hotel name " +
-                        bill.getHotel().getName() + " successfully")
-                .data(BillDTO.fromBill(bill))
+                .status(HttpStatus.OK.value())
+                .message("Create bill successfully")
+                .data(bill)
                 .build();
         return ResponseEntity.ok(apiResponse);
     }
