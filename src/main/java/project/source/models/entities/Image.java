@@ -27,14 +27,17 @@ public class Image extends BaseEntity<Long>{
 //    @JoinColumn(name = "room_id")
 //    private Room room;
 
-    @ManyToOne
-    @JoinColumn(name = "blog_id")
-    private Blog blog;
+//    @ManyToOne
+//    @JoinColumn(name = "blog_id")
+//    private Blog blog;
 
-    @Column(name = "image_url", length = 300)
-    private String imageURL;
+//    @Column(name = "image_url", length = 300)
+//    private String imageURL;
 
-    @NotNull(message = "Can not resolve this media directory path")
+    @Column(name = "image_name", length = 300)
+    private String imageName;
+
+//    @NotNull(message = "Can not resolve this media directory path")
     @Enumerated(EnumType.STRING)
     private ImageDirectory imageDirectory;
 

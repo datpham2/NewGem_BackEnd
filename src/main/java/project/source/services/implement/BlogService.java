@@ -7,11 +7,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import project.source.dtos.BlogDTO;
+import project.source.dtos.ImageDTO;
 import project.source.models.entities.Blog;
+import project.source.models.entities.Image;
+import project.source.models.enums.ImageDirectory;
 import project.source.models.enums.Status;
 import project.source.repositories.BlogRepository;
+import project.source.repositories.ImageRepository;
 import project.source.services.IBlogService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,6 +24,7 @@ import java.util.List;
 @Builder
 public class BlogService implements IBlogService {
     private final BlogRepository blogRepository;
+    private final ImageService imageService;
 
     @Override
     public Blog getBlogById(Long id){
@@ -43,11 +49,27 @@ public class BlogService implements IBlogService {
 
     @Override
     public Blog saveBlog(BlogDTO blogDTO){
-          Blog  blog = Blog.builder()
+        List<Image> images = blogDTO.getImages();
+        List<Image> temp = new ArrayList<>();
+
+        for (Image image : images){
+            ImageDTO imageDTO = ImageDTO.builder()
+                    .imageDirectory(ImageDirectory.Blog)
+                    .imageURL(image.getImageURL())
+                    .status(Status.ACTIVE)
+                    .build();
+            Image newImage = imageService.saveImage(imageDTO,ImageDirectory.Blog);
+            temp.add(newImage);
+        }
+
+          Blog  newblog = Blog.builder()
                 .title(blogDTO.getTitle())
+                  .status(Status.ACTIVE)
                 .content(blogDTO.getContent())
+                  .images(temp)
+
                 .build();
-        return blogRepository.save(blog);
+        return blogRepository.save(newblog);
     }
 
     @Override

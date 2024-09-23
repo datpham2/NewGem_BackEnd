@@ -55,7 +55,12 @@ public class BlogController {
             return ResponseEntity.badRequest().body(errors);
         }
         Blog blog = blogService.saveBlog(blogDTO);
-        return ResponseEntity.ok( "Blog submit successfully " + blog.toString());
+        return ResponseEntity.ok().body(ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                        .message("Blog submit successfully ")
+                .data(blog)
+                .build());
+//        return ResponseEntity.ok( "Blog submit successfully " + blog.toString());
     }
 
     @PutMapping("/updateBlog/{id}")

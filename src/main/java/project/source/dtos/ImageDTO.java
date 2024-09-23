@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ImageDTO {
 
 //    @ManyToOne
@@ -38,9 +39,9 @@ public class ImageDTO {
     private Blog blog;
 
 
-    private String imageURL;
+//    private String imageURL;
+    private String imageName;
 
-    @NotNull(message = "Can not resolve this media directory path")
     private ImageDirectory imageDirectory;
 
     @Enumerated(EnumType.STRING)

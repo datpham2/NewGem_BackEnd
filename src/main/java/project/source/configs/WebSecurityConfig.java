@@ -64,6 +64,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/auth/**", "/rooms/**", "/bookings/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
                         .requestMatchers("/roles/**").hasRole("ADMIN")
+                        .requestMatchers("/image/**").permitAll()
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());

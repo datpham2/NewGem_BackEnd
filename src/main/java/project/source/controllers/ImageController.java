@@ -19,6 +19,7 @@ import project.source.dtos.ImageDTO;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Blog;
 import project.source.models.entities.Image;
+import project.source.models.enums.ImageDirectory;
 import project.source.respones.ApiResponse;
 import project.source.services.implement.BlogService;
 import project.source.services.implement.ImageService;
@@ -52,13 +53,13 @@ public class ImageController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createImage(@Valid @RequestBody ImageDTO imageDTO, BindingResult result) {
+    public ResponseEntity<?> createImage(@Valid @RequestBody ImageDTO imageDTO, ImageDirectory imageDirectory, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = result.getFieldErrors().stream()
                     .map(FieldError::getDefaultMessage).toList();
             return ResponseEntity.badRequest().body(errors);
         }
-        Image image = imageService.saveImage(imageDTO);
+        Image image = imageService.saveImage(imageDTO, ImageDirectory.Blog);
         return ResponseEntity.ok( "Add picture successfully " + image.toString());
     }
 
@@ -96,6 +97,7 @@ public class ImageController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("upload")
     private String storeFile(MultipartFile file) throws IOException {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String uniqueFileName = UUID.randomUUID().toString() +  "_" + fileName;
@@ -104,6 +106,7 @@ public class ImageController {
             Files.createDirectory(uploadDir);
         }
         Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
+
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFileName;
     }

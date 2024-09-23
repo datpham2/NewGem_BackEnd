@@ -21,10 +21,11 @@ public class ImageService implements IImageService {
     private final ImageRepository imageRepository;
 
     @Override
-    public Image saveImage (ImageDTO imageDTO){
+    public Image saveImage (ImageDTO imageDTO, ImageDirectory imageDirectory){
         Image newImage = Image.builder()
-                .imageURL(imageDTO.getImageURL())
-//                .imageDirectory(newImageDirectory)
+                .imageName(imageDTO.getImageName())
+                .imageDirectory(imageDirectory)
+                .status(Status.ACTIVE)
                 .build();
         return imageRepository.save(newImage);
     };
@@ -48,14 +49,14 @@ public class ImageService implements IImageService {
     @Override
     public Image updateImage(Long id, ImageDTO imageDTO){
         Image updatedImage = getImageById(id);
-        updatedImage.setImageURL(imageDTO.getImageURL());
+        updatedImage.setImageName(imageDTO.getImageName());
         return imageRepository.save(updatedImage);
     };
 
-    @Override
-    public Image setImageDirectory(Image updatedImage, ImageDirectory currentImageDirectory) {
-        updatedImage.setImageDirectory(currentImageDirectory);
-        return imageRepository.save(updatedImage);
-    };
+//    @Override
+//    public Image setImageDirectory(Image updatedImage, ImageDirectory currentImageDirectory) {
+//        updatedImage.setImageDirectory(currentImageDirectory);
+//        return imageRepository.save(updatedImage);
+//    };
 
 }
