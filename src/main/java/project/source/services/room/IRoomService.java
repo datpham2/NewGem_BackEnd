@@ -11,4 +11,8 @@ public interface IRoomService {
     Room getRoomById(Long id);
     Room updateRoom(Long id, RoomDTO roomDTO);
     void deleteRoom(Long id);
+
+    Object getRoomByType(String type);
+
+    Object getRoomByHotelId(Long hotelId);
 }

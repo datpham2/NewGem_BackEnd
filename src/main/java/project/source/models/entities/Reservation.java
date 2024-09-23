@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
@@ -17,16 +15,23 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Reservation extends BaseEntity<Long>{
     // start date of the reservation
-    @Column(name="start_date")
+    @Column(name="check_in")
     @Future(message = "Start date must be in the future")
     private LocalDate checkIn; /* old column name: startDate */
 
     // end date of the reservation
-    @Column(name="end_date")
+    @Column(name="check_out")
     @Future(message = "End date must be in the future")
     private LocalDate checkOut; /* old column name: endDate */
+
+    // hotel where the reservation is made
+    @ManyToOne
+    @JoinColumn(name = "hotel_id")
+    private Hotel hotel;
 
     // room in the range of room available in Room class
     @ManyToOne
@@ -51,6 +56,15 @@ public class Reservation extends BaseEntity<Long>{
     @Min(value = 0, message = "Number of children must be greater than or equal to 0")
     @Max(value = 10, message = "Number of children must be less than or equal to 10")
     private int children; /* old column name: noChild */
+
+    // bill for the reservation
+    @ManyToOne
+    @JoinColumn(name = "bill_id")
+    private Bill bill;
+
+    // status of the reservation
+    @Column(name="status")
+    private String status;
 
     // total price
     // is paid

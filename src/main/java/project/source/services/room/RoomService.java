@@ -47,4 +47,14 @@ public class RoomService implements IRoomService {
     public void deleteRoom(Long id) {
         roomRepository.deleteById(id);
     }
+
+    @Override
+    public Object getRoomByType(String type) {
+        return roomRepository.findByType(RoomType.valueOf(type));
+    }
+
+    @Override
+    public Object getRoomByHotelId(Long hotelId) {
+        return null;
+    }
 }

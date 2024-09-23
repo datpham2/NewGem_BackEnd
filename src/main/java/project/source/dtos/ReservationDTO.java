@@ -7,10 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import project.source.models.entities.Reservation;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ReservationDTO {
     @JsonProperty("room_id")
     private Long roomId;
@@ -28,4 +30,15 @@ public class ReservationDTO {
 
     @Min(value = 0, message = "Number of children must be greater than or equal to 0")
     private int children;
+
+    public static ReservationDTO fromReservation(Reservation reservation) {
+        return ReservationDTO.builder()
+                .roomId(reservation.getRoom().getId())
+                .userId(reservation.getUser().getId())
+                .checkIn(reservation.getCheckIn().toString())
+                .checkOut(reservation.getCheckOut().toString())
+                .adults(reservation.getAdults())
+                .children(reservation.getChildren())
+                .build();
+    }
 }

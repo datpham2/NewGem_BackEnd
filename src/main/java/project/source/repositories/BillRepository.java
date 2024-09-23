@@ -6,5 +6,6 @@ import project.source.models.entities.Bill;
 import java.util.List;
 
 public interface BillRepository extends JpaRepository<Bill, Long> {
-    List<Bill> findByRoomId(Long roomId);
+
+    List<Bill> findAllBillByUserIdAndHotelId(Long userId, Long hotelId);
 }

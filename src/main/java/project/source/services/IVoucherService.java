@@ -11,6 +11,7 @@ import project.source.models.entities.Voucher;
 
 public interface IVoucherService {
     void saveVoucher(Long hotelId, VoucherDTO voucherDTO);
+    Voucher getVoucherById(Long id);
     Page<Voucher> getAllVoucher(Long id, PageRequest pageRequest);
     void updateVoucher(Long id, VoucherDTO voucherDTO);
     void disableVoucher(Long id);
