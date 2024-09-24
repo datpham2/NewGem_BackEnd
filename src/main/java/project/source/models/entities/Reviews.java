@@ -16,6 +16,7 @@ import java.time.LocalDate;
  */
 @Getter
 @Setter
+@Table(name = "reviews")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

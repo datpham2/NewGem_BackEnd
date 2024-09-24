@@ -38,7 +38,7 @@ public class RoomService implements IRoomService {
     public Room updateRoom(Long id, RoomDTO roomDTO) {
         Room room = getRoomById(id);
         room.setPrice(roomDTO.getPrice());
-        room.setType(RoomType.valueOf(roomDTO.getType()));
+        room.setType(roomDTO.getType());
         room.setGuests(roomDTO.getGuests());
         roomRepository.save(room);
         return room;

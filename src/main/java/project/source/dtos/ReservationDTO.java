@@ -7,7 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 import project.source.models.entities.Reservation;
+
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -18,12 +21,14 @@ public class ReservationDTO {
     private Long roomId;
     @JsonProperty("user_id")
     private Long userId;
+    @JsonProperty("hotel_id")
+    private Long hotelId;
 
     @Future(message = "Start date must be in the future")
-    private String checkIn;
+    private LocalDate checkIn;
 
     @Future(message = "End date must be in the future")
-    private String checkOut;
+    private LocalDate checkOut;
 
     @Min(value = 1, message = "Number of adults must be greater than 0")
     private int adults;
@@ -35,8 +40,8 @@ public class ReservationDTO {
         return ReservationDTO.builder()
                 .roomId(reservation.getRoom().getId())
                 .userId(reservation.getUser().getId())
-                .checkIn(reservation.getCheckIn().toString())
-                .checkOut(reservation.getCheckOut().toString())
+                .checkIn(reservation.getCheckIn())
+                .checkOut(reservation.getCheckOut())
                 .adults(reservation.getAdults())
                 .children(reservation.getChildren())
                 .build();

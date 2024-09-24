@@ -3,6 +3,7 @@ package project.source.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -10,12 +11,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.source.models.enums.RoomType;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class RoomDTO {
+    @NotNull
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    private Long id;
+
     @JsonProperty("hotel_id")
     @NotNull(message = "Hotel id must not be null")
     private Long hotelId;
@@ -26,8 +32,7 @@ public class RoomDTO {
     //
 
     @NotNull(message = "Type must not be null")
-    @Enumerated(EnumType.STRING)
-    private String type;
+    private RoomType type;
 
     @Min(value = 1, message = "Guests must be at least 1")
     private int guests;

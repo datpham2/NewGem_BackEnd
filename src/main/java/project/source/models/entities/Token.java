@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "token")
+@Table(name = "tokens")
 public class Token extends BaseEntity<Long> {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

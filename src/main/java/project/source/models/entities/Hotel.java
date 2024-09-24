@@ -17,6 +17,7 @@ import java.util.Set;
 @Setter
 @Getter
 @Data
+@Table(name = "hotels")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,7 +35,7 @@ public class Hotel extends BaseEntity<Long>{
     @Min(value = 1, message = "Price must be greater than 1")
     private BigDecimal maxPrice;
     //private Image images;
-    private int rating;
+    private double rating;
     @JsonProperty(value = "no_rooms")
     @Min(value = 1, message = "Number of rooms must be greater than 1")
     private int noRooms;
