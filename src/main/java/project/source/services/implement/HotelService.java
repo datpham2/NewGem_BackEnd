@@ -5,6 +5,7 @@ package project.source.services.implement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import project.source.dtos.HotelDTO;
 import project.source.exceptions.ExistedException;
@@ -33,6 +34,7 @@ public class HotelService implements IHotelService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public Hotel saveHotel(HotelDTO hotelDTO) {
         existed(hotelDTO);
         Hotel hotel = Hotel.builder()
@@ -47,6 +49,7 @@ public class HotelService implements IHotelService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public Hotel updateHotel(HotelDTO hotelDTO, Long id) {
         Hotel hotel1 = getHotelById(id);
         if(hotel1 == null){
@@ -68,6 +71,7 @@ public class HotelService implements IHotelService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void disableHotel(Long id) {
         Hotel hotel = getHotelById(id);
         if(hotel.getStatus() == Status.ACTIVE){

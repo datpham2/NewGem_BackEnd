@@ -6,6 +6,7 @@ package project.source.services.implement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import project.source.dtos.ReviewsDTO;
 import project.source.exceptions.NotFoundException;
@@ -25,6 +26,7 @@ public class ReviewService implements IReviewService {
     private final UserService userService;
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public void saveReview(Long hotelId, Long userId, ReviewsDTO reviewsDTO) {
         Hotel hotel =hotelService.getHotelById(hotelId);
         User user = userService.getUserById(userId);
@@ -44,6 +46,7 @@ public class ReviewService implements IReviewService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public void updateReview(Long id, ReviewsDTO reviewsDTO) {
         Reviews reviews = reviewsRepository.findById(id).orElseThrow(()-> new NotFoundException("Review not found by Id = "+id));
         reviews.setRating(reviewsDTO.getRating());
@@ -55,6 +58,7 @@ public class ReviewService implements IReviewService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public void disableReview(Long id) {
         Reviews reviews = reviewsRepository.findById(id).orElseThrow(()-> new NotFoundException("Review not found by Id = "+id));
         if(reviews.getStatus() == Status.ACTIVE){
