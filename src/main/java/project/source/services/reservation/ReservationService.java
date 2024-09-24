@@ -6,10 +6,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.source.dtos.ReservationDTO;
+import project.source.models.entities.Hotel;
 import project.source.models.entities.Reservation;
 import project.source.models.entities.Room;
 import project.source.models.entities.User;
 import project.source.repositories.ReservationRepository;
+import project.source.services.implement.HotelService;
 import project.source.services.implement.UserService;
 import project.source.services.room.RoomService;
 
@@ -24,6 +26,7 @@ public class ReservationService implements IReservationService{
     private final ReservationRepository reservationRepository;
     private final UserService userService;
     private final RoomService roomService;
+    private final HotelService hotelService;
 
     @Override
     public Page<Reservation> getAllReservation(PageRequest pageRequest) {
@@ -72,8 +75,10 @@ public class ReservationService implements IReservationService{
     public Reservation saveReservation(Reservation reservation, Long userId, Long roomId, Long hotelId) {
         User user = userService.getUserById(userId);
         Room room = roomService.getRoomById(roomId, hotelId);
+        Hotel hotel = hotelService.getHotelById(hotelId);
         reservation.setUser(user);
         reservation.setRoom(room);
+        reservation.setHotel(hotel);
         return reservationRepository.save(reservation);
     }
 
