@@ -12,11 +12,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.*;
+import project.source.models.enums.Gender;
 import project.source.models.enums.RoomType;
 import project.source.repositories.*;
 import project.source.models.enums.Status;
 import project.source.services.implement.ReservationService;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -51,14 +53,18 @@ public class ApplicationInitConfig {
             }
 
             // Add admin in db
-            final String ADMIN_USERNAME = "admin";
-            final String ADMIN_PASSWORD = "admin";
+            final String ADMIN_USERNAME = "john";
+            final String ADMIN_PASSWORD = "123456";
 
             User adminUser = User.builder()
                     .username(ADMIN_USERNAME)
                     .password(passwordEncoder.encode(ADMIN_PASSWORD))
-                    .email("admin@newgem.com")
-                    .phone("3725985432")
+                    .email("john@harvard.edu")
+                    .firstName("John")
+                    .lastName("Harvard")
+                    .dateOfBirth(LocalDate.of(1636, 1, 1))
+                    .gender(Gender.MALE)
+                    .phone("+1-949-468-2750")
                     .status(Status.ACTIVE)
                     .build();
 
@@ -74,9 +80,12 @@ public class ApplicationInitConfig {
 
             // Add hotels in db
             Hotel hotel = Hotel.builder()
-                    .name("New Gem")
-                    .location("HCM city")
-                    .noRooms(2)
+                    .name("Hilton Boston Logan Airport")
+                    .location("One Hotel Dr, Boston, MA 02128, United States")
+                    .minPrice(new BigDecimal(135))
+                    .maxPrice(new BigDecimal(650))
+                    .numberOfRooms(604)
+                    .rating(4.1f)
                     .status(Status.ACTIVE)
                     .build();
 
@@ -91,9 +100,9 @@ public class ApplicationInitConfig {
             Room room = Room.builder()
                     .guests(4)
                     .hotel(hotel)
-                    .price(10d)
+                    .price(650d)
                     .type(RoomType.VIP)
-                    .roomNumber(101)
+                    .roomNumber(237)
                     .build();
 
             // Save the room if it does not exist

@@ -10,7 +10,6 @@ import project.source.models.entities.Hotel;
 import project.source.models.enums.Status;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 @Setter
 @Getter
@@ -32,7 +31,7 @@ public class HotelDTO {
     @Min(value = 1, message = "Price must be greater than 1")
     private BigDecimal maxPrice;
     //private Image images;
-    private int rating;
+    private Float rating;
     @JsonProperty(value = "no_rooms")
     @Min(value = 1, message = "Number of rooms must be greater than 1")
     private int noRooms;
@@ -45,7 +44,7 @@ public class HotelDTO {
                 .minPrice(hotel.getMinPrice())
                 .maxPrice(hotel.getMaxPrice())
                 .rating(hotel.getRating())
-                .noRooms(hotel.getNoRooms())
+                .noRooms(hotel.getNumberOfRooms())
                 .status(hotel.getStatus())
                 .build();
     }

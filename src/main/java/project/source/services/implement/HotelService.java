@@ -14,8 +14,6 @@ import project.source.models.enums.Status;
 import project.source.repositories.HotelRepository;
 import project.source.services.IHotelService;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class HotelService implements IHotelService {
@@ -37,7 +35,7 @@ public class HotelService implements IHotelService {
         existed(hotelDTO);
         Hotel hotel = Hotel.builder()
                 .location(hotelDTO.getLocation())
-                .noRooms(hotelDTO.getNoRooms())
+                .numberOfRooms(hotelDTO.getNoRooms())
                 .status(Status.ACTIVE)
                 .maxPrice(hotelDTO.getMaxPrice())
                 .minPrice(hotelDTO.getMinPrice())
@@ -54,7 +52,7 @@ public class HotelService implements IHotelService {
         }else {
             hotel1.setLocation(hotelDTO.getLocation());
             hotel1.setStatus(hotelDTO.getStatus());
-            hotel1.setNoRooms(hotelDTO.getNoRooms());
+            hotel1.setNumberOfRooms(hotelDTO.getNoRooms());
             hotel1.setMaxPrice(hotelDTO.getMaxPrice());
             hotel1.setMinPrice(hotelDTO.getMinPrice());
             hotel1.setName(hotelDTO.getName());

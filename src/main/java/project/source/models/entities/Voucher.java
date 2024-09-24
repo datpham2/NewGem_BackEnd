@@ -17,6 +17,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(name = "vouchers")
 public class Voucher extends BaseEntity<Long>{
     @DecimalMin(value = "0.5", message = "Discount must be at least 0.5")
     @DecimalMax(value = "1.0", message = "Discount must not exceed 1.0")

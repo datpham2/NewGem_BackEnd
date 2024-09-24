@@ -51,7 +51,7 @@ public class RoomService implements IRoomService {
     public Room saveRoom(RoomDTO roomDTO) {
         Hotel hotel = hotelService.getHotelById(roomDTO.getHotelId());
         existed(hotel,roomDTO.getRoomNumber());
-        hotel.setNoRooms(hotel.getRooms().size());
+        hotel.setNumberOfRooms(hotel.getRooms().size());
         Room room = Room.builder()
                 .price(roomDTO.getPrice())
                 .guests(roomDTO.getGuests())
