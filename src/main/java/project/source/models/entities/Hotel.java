@@ -36,7 +36,7 @@ public class Hotel extends BaseEntity<Long>{
     //private Image images;
     private int rating;
     @JsonProperty(value = "no_rooms")
-    @Min(value = 1, message = "Number of rooms must be greater than 1")
+    @Min(value = 0, message = "Number of rooms must be greater than 1")
     private int noRooms;
     @Enumerated(EnumType.STRING)
     private Status status;
