@@ -15,7 +15,6 @@ import java.util.List;
 public interface IBillService {
     Bill addBill(BillRequest billRequest);
 
-
     Bill getBillById(Long id);
 
     List<Bill> getAllBillByUserIdAndHotelId(Long userId, Long hotelId);
