@@ -35,7 +35,7 @@ public class HotelService implements IHotelService {
         existed(hotelDTO);
         Hotel hotel = Hotel.builder()
                 .location(hotelDTO.getLocation())
-                .numberOfRooms(hotelDTO.getNoRooms())
+                .numberOfRooms(hotelDTO.getNumberOfRooms())
                 .status(Status.ACTIVE)
                 .maxPrice(hotelDTO.getMaxPrice())
                 .minPrice(hotelDTO.getMinPrice())
@@ -52,7 +52,7 @@ public class HotelService implements IHotelService {
         }else {
             hotel1.setLocation(hotelDTO.getLocation());
             hotel1.setStatus(hotelDTO.getStatus());
-            hotel1.setNumberOfRooms(hotelDTO.getNoRooms());
+            hotel1.setNumberOfRooms(hotelDTO.getNumberOfRooms());
             hotel1.setMaxPrice(hotelDTO.getMaxPrice());
             hotel1.setMinPrice(hotelDTO.getMinPrice());
             hotel1.setName(hotelDTO.getName());

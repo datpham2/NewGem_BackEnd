@@ -32,9 +32,9 @@ public class HotelDTO {
     private BigDecimal maxPrice;
     //private Image images;
     private Float rating;
-    @JsonProperty(value = "no_rooms")
+    @JsonProperty(value = "number_of_rooms")
     @Min(value = 1, message = "Number of rooms must be greater than 1")
-    private int noRooms;
+    private int numberOfRooms;
     private Status status;
 
     public static HotelDTO fromHotel(Hotel hotel){
@@ -44,7 +44,7 @@ public class HotelDTO {
                 .minPrice(hotel.getMinPrice())
                 .maxPrice(hotel.getMaxPrice())
                 .rating(hotel.getRating())
-                .noRooms(hotel.getNumberOfRooms())
+                .numberOfRooms(hotel.getNumberOfRooms())
                 .status(hotel.getStatus())
                 .build();
     }
