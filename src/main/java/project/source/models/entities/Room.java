@@ -1,41 +1,45 @@
 package project.source.models.entities;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import project.source.models.enums.RoomType;
 
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "rooms")
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Getter
 @Setter
+@Getter
+@Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(name = "rooms")
 public class Room extends BaseEntity<Long>{
     @ManyToOne
-    @JoinColumn(name = "hotel-id", nullable = false)
-    private Hotel hotel;
+    @JoinColumn(name = "hotel-id", nullable = false, updatable = false)
+    Hotel hotel;
 
-    @NotNull(message = "Price must not be null")
-    @DecimalMin(value = "0.0", message = "Price must be greater than 0")
-    @Column(name="price")
-    private Double price;
+    @Column(name = "room_number", nullable = false)
+    int roomNumber;
 
-    @NotNull(message = "Type must not be null")
+    @Column(name="price", nullable = false)
+    double price;
+
+    @Column(name = "room_type",nullable = false)
     @Enumerated(EnumType.STRING)
-    private RoomType type; /* old column name: typeRoom */
-
-    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER)
-    private Set<Reservation> reservations; /* old column name: bookrooms */
+    RoomType type;
 
 
-    // numbers of guests that can stay in the room
+    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    Set<Reservation> reservations = new HashSet<>();
+
     @Column(name="guests")
-    private int guests; /* old column name: noGuests */
+    int guests;
 
     public boolean bookRoom(Reservation reservation) {
         if (isConflict(reservation)) {
@@ -46,12 +50,37 @@ public class Room extends BaseEntity<Long>{
         }
     }
 
-    private boolean isConflict(Reservation reservation) {
-        for (Reservation r : reservations) {
-            if (r.getCheckIn().isBefore(reservation.getCheckOut()) && r.getCheckOut().isAfter(reservation.getCheckIn())) {
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Room ID: ").append(id).append("\n");
+        sb.append("Reservations:\n");
+        for (Reservation reservation : reservations) {
+            sb.append("Reservation ID: ").append(reservation.getId()).append(", ");
+            sb.append("Check in: ").append(reservation.getCheckIn()).append(", ");
+            sb.append("Check out: ").append(reservation.getCheckOut()).append(", ");
+            sb.append("Customer ID: ").append(reservation.getUser()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public boolean isBooked(LocalDate date) {
+        for (Reservation booking : reservations) {
+            if (!date.isBefore(booking.getCheckOut()) && !date.isAfter(booking.getCheckOut())) {
                 return true;
             }
         }
         return false;
     }
+
+    private boolean isConflict(Reservation reservation) {
+        for (Reservation room : reservations) {
+            if (!(reservation.getCheckOut().isBefore(room.getCheckIn()) ||
+                    reservation.getCheckIn().isAfter(room.getCheckOut()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -3,6 +3,7 @@ package project.source.services.implement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import project.source.dtos.VoucherDTO;
 import project.source.exceptions.NotFoundException;
@@ -24,6 +25,13 @@ public class VoucherService implements IVoucherService {
 
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public Voucher getVoucherById(Long Id){
+        return voucherRepository.findById(Id).orElseThrow(()-> new NotFoundException("Voucher"));
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void saveVoucher(Long hotelId, VoucherDTO voucherDTO) {
         Hotel hotel = hotelService.getHotelById(hotelId);
         if(hotel == null){
@@ -40,17 +48,16 @@ public class VoucherService implements IVoucherService {
         }
     }
 
-    @Override
-    public Voucher getVoucherById(Long id) {
-        return voucherRepository.findById(id).orElseThrow(()-> new NotFoundException("Voucher"));
-    }
+
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Page<Voucher> getAllVoucher(Long id, PageRequest pageRequest) {
         return voucherRepository.findAllById(id, pageRequest);
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void updateVoucher(Long id, VoucherDTO voucherDTO) {
         Voucher voucher = voucherRepository.findById(id).orElseThrow(()-> new NotFoundException("Voucher not found by Id = "+ id));
         voucher.setStatus(voucherDTO.getStatus());
@@ -62,6 +69,7 @@ public class VoucherService implements IVoucherService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void disableVoucher(Long id) {
         Voucher voucher =  voucherRepository.findById(id).orElseThrow(()-> new NotFoundException("Voucher not found by Id = "+ id));
         if(voucher.getStatus() == Status.ACTIVE){

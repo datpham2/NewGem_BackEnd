@@ -1,8 +1,10 @@
 package project.source.models.entities;
 
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,64 +13,67 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "bills")
+@Getter
+@Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
-@Setter
-public class Bill extends BaseEntity<Long> {
-    // ???
-    // reservation
-    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+@Table(name = "bills")
+public class Bill extends BaseEntity<Long>{
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    User user;
+
+    @ManyToOne
+    @JoinColumn(name = "hotel_id", nullable = false, updatable = false)
+    Hotel hotel;
+
+    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
     Set<Reservation> reservations = new HashSet<>();
-    // room
-    // total price
-    @Column(name="total_price")
-    private Double totalPrice;
-
-    // user who made the reservation
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    // hotel where the reservation was made
-    @ManyToOne
-    @JoinColumn(name = "hotel_id")
-    private Hotel hotel;
 
     @Digits(integer = 5, fraction = 2)
     @Column(name = "total_fee", nullable = false)
-    private BigDecimal totalFee;
+    BigDecimal totalFee;
 
-    // voucher
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "voucher_id")
-    private Voucher voucher;
+    Voucher voucher;
 
-    // paid?
-    @Column(name = "is_paid")
-    private boolean isPaid;
-
-    // check out date
     @Column(name = "check_out")
-    private LocalDate checkOut;
+    LocalDate checkOut;
+
+    @Column(name = "is_paid")
+    boolean isPaid;
+
+    @Digits(integer = 5, fraction = 2)
+    @Column(name = "received_amount")
+    BigDecimal receivedAmount;
+
+    @Digits(integer = 5, fraction = 2)
+    @Column(name = "new_fee")
+    BigDecimal newFee;
+
+    @Digits(integer = 5, fraction = 2)
+    @Column(name = "changed_amount")
+    BigDecimal changedAmount;
+
+    @Column(name = "descriptions")
+    List<String> descriptions;
 
     public void calculateTotalFee() {
-        // calculate total fee
-        double totalFee = 0;
-        for (Reservation reservation : reservations) {
-            totalFee += reservation.getRoom().getPrice();
+        double total = reservations.stream().mapToDouble(Reservation::getTotalPrice).sum();
+        if (voucher != null) {
+            total = total * voucher.getDiscount();
         }
-        this.totalFee = BigDecimal.valueOf(totalFee);
-
+        this.totalFee = BigDecimal.valueOf(total);
     }
-    // is paid
-    // is canceled
-    // is checked in
-    // is checked out
-    // is active
-    // is deleted
-    // created at
-    // updated at
+
+    public void calculateAmountReturn(){
+        if (newFee == null){
+            this.changedAmount = receivedAmount.subtract(totalFee);
+        } else {
+            this.changedAmount = receivedAmount.subtract(newFee);
+        }
+    }
 }

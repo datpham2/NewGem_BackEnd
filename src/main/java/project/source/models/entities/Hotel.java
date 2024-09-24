@@ -10,7 +10,6 @@ import project.source.models.enums.Status;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -31,7 +30,7 @@ public class Hotel extends BaseEntity<Long>{
     private BigDecimal minPrice;
     @Digits(integer = 5, fraction = 2)
     @JsonProperty(value = "max_price")
-    @Min(value = 1, message = "Price must be greater than 1")
+    @Min(value = 0, message = "Price must be greater than 1")
     private BigDecimal maxPrice;
     //private Image images;
     private int rating;
@@ -46,4 +45,7 @@ public class Hotel extends BaseEntity<Long>{
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "hotel", cascade = CascadeType.ALL)
     private Set<Voucher> vouchers = new HashSet<Voucher>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "hotel", cascade = CascadeType.ALL)
+    private Set<Room> rooms = new HashSet<Room>();
 }

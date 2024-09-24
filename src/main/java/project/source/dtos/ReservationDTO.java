@@ -1,44 +1,59 @@
 package project.source.dtos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.Min;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import project.source.models.entities.Reservation;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import project.source.models.entities.*;
+import project.source.models.enums.Status;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+import java.time.LocalDate;
+
 @Builder
+@Setter
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReservationDTO {
-    @JsonProperty("room_id")
-    private Long roomId;
-    @JsonProperty("user_id")
-    private Long userId;
+    Long reservationId;
 
-    @Future(message = "Start date must be in the future")
-    private String checkIn;
+    @Future(message = "Check in date must be in the future")
+    LocalDate checkIn;
 
-    @Future(message = "End date must be in the future")
-    private String checkOut;
+    @Future(message = "Check out date must be in the future")
+    LocalDate checkOut;
 
-    @Min(value = 1, message = "Number of adults must be greater than 0")
-    private int adults;
+    @NotNull
+    Long hotelId;
 
-    @Min(value = 0, message = "Number of children must be greater than or equal to 0")
-    private int children;
+    @NonNull
+    Long roomId;
 
-    public static ReservationDTO fromReservation(Reservation reservation) {
-        return ReservationDTO.builder()
+    @NonNull
+    Long userId;
+
+    int adults;
+    int children;
+    Long billId;
+
+    Status status;
+
+    public static ReservationDTO fromReservation(Reservation reservation){
+        ReservationDTO reservationDTO = ReservationDTO.builder()
+                .reservationId(reservation.getId())
+                .checkIn(reservation.getCheckIn())
+                .checkOut(reservation.getCheckOut())
+                .hotelId(reservation.getHotel().getId())
                 .roomId(reservation.getRoom().getId())
                 .userId(reservation.getUser().getId())
-                .checkIn(reservation.getCheckIn().toString())
-                .checkOut(reservation.getCheckOut().toString())
                 .adults(reservation.getAdults())
                 .children(reservation.getChildren())
+                .status(reservation.getStatus())
                 .build();
+
+        if (reservation.getBill() != null){
+                reservationDTO.setBillId(reservation.getBill().getId());
+        }
+
+        return reservationDTO;
     }
 }
