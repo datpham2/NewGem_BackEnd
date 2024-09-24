@@ -1,14 +1,11 @@
 package project.source.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import project.source.models.entities.*;
+import project.source.models.enums.Status;
 
 import java.time.LocalDate;
 
@@ -17,6 +14,8 @@ import java.time.LocalDate;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReservationDTO {
+    Long reservationId;
+
     @Future(message = "Check in date must be in the future")
     LocalDate checkIn;
 
@@ -24,27 +23,31 @@ public class ReservationDTO {
     LocalDate checkOut;
 
     @NotNull
-    Long hotel;
+    Long hotelId;
 
     @NonNull
-    Long room;
+    Long roomId;
 
     @NonNull
-    Long user;
+    Long userId;
 
     int adults;
     int children;
     Long bill;
 
+    Status status;
+
     public static ReservationDTO fromReservation(Reservation reservation){
         return ReservationDTO.builder()
+                .reservationId(reservation.getId())
                 .checkIn(reservation.getCheckIn())
                 .checkOut(reservation.getCheckOut())
-                .hotel(reservation.getHotel().getId())
-                .room(reservation.getRoom().getId())
-                .user(reservation.getUser().getId())
+                .hotelId(reservation.getHotel().getId())
+                .roomId(reservation.getRoom().getId())
+                .userId(reservation.getUser().getId())
                 .adults(reservation.getAdults())
                 .children(reservation.getChildren())
+                .status(reservation.getStatus())
                 .build();
     }
 }

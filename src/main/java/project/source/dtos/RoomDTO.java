@@ -5,12 +5,14 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import project.source.dtos.validations.EnumPattern;
 import project.source.models.entities.Reservation;
 import project.source.models.entities.Room;
 import project.source.models.enums.RoomType;
 import project.source.services.implement.HotelService;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Setter
@@ -20,8 +22,7 @@ import java.util.Set;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoomDTO {
-    @NotNull
-    Long id;
+    Long roomId;
 
     @NonNull
     Long hotelId;
@@ -34,17 +35,24 @@ public class RoomDTO {
     double price;
 
     @NotNull(message = "Type must not be null")
+    @EnumPattern(name = "Room type", regexp = "SINGLE|DOUBLE|VIP", message = "Room type must be SINGLE, DOUBLE or VIP")
     RoomType type;
 
     int guests;
 
+    Set<ReservationDTO> reservationDTOS;
+
     public static RoomDTO fromRoom(Room room){
+        Set<ReservationDTO> reservations = room.getReservations().stream()
+                .map(ReservationDTO::fromReservation).collect(Collectors.toSet());
+
         return RoomDTO.builder()
-                .id(room.getId())
+                .roomId(room.getId())
                 .hotelId(room.getHotel().getId())
                 .roomNumber(room.getRoomNumber())
                 .price(room.getPrice())
                 .type(room.getType())
+                .reservationDTOS(reservations)
                 .build();
     }
 }

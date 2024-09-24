@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BillDTO {
+    Long billId;
+
     @NonNull
     Long userId;
 
@@ -45,7 +47,11 @@ public class BillDTO {
     public static BillDTO fromBill(Bill bill){
         Set<ReservationDTO> reservations = bill.getReservations().stream().map(ReservationDTO::fromReservation).collect(Collectors.toSet());
 
+        bill.getTotalFee();
+
+
         BillDTO billDTO = BillDTO.builder()
+                .billId(bill.getId())
                 .hotelId(bill.getHotel().getId())
                 .userId(bill.getUser().getId())
                 .totalFee(bill.getTotalFee())

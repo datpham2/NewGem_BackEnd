@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,7 +43,6 @@ public class UserService implements IUserService {
 
 
 
-
     @Override
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByUsername(username)
@@ -70,7 +71,6 @@ public class UserService implements IUserService {
             userRepository.save(user);
         }
     }
-
 
     @Override
     public User getUserById(long userId) {
@@ -155,7 +155,6 @@ public class UserService implements IUserService {
     public void saveUser(User user) {
         userRepository.save(user);
     }
-
 
     @Override
     public void emailExisted(String email) {

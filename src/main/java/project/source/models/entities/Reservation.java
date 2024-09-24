@@ -52,6 +52,7 @@ public class Reservation extends BaseEntity<Long> {
     @JoinColumn(name = "bill_id")
     Bill bill;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     Status status;
 

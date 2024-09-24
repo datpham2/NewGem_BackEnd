@@ -15,7 +15,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -66,10 +66,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/auth/**", "/reviews/**", "/reservation/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "user/confirm/**").permitAll()
-                        .requestMatchers("/hotel/**", "voucher/**", "room/**","bill/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

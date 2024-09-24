@@ -21,10 +21,10 @@ import java.util.Set;
 @Table(name = "rooms")
 public class Room extends BaseEntity<Long>{
     @ManyToOne
-    @JoinColumn(name = "hotel-id", nullable = false)
+    @JoinColumn(name = "hotel-id", nullable = false, updatable = false)
     Hotel hotel;
 
-    @Column(name = "room_number", nullable = false, unique = true)
+    @Column(name = "room_number", nullable = false)
     int roomNumber;
 
     @Column(name="price", nullable = false)
@@ -35,7 +35,7 @@ public class Room extends BaseEntity<Long>{
     RoomType type;
 
 
-    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     Set<Reservation> reservations = new HashSet<>();
 
     @Column(name="guests")

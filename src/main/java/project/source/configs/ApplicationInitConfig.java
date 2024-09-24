@@ -114,6 +114,7 @@ public class ApplicationInitConfig {
                     .room(room)
                     .checkIn(LocalDate.of(2024, 10, 1))
                     .checkOut(LocalDate.of(2024, 10, 5))
+                    .status(Status.ACTIVE)
                     .build();
 
             Reservation reservation2 = Reservation.builder()
@@ -124,12 +125,14 @@ public class ApplicationInitConfig {
                     .room(room)
                     .checkIn(LocalDate.of(2024, 9, 25))
                     .checkOut(LocalDate.of(2024, 9, 30))
+                    .status(Status.ACTIVE)
                     .build();
 
             // Save the reservation if it does not exist
             Page<Reservation> reservations = reservationRepository.findAllReservationByRoomId(room.getId(), pageRequest);
             if (reservations.getContent().isEmpty()) {
-                reservationService.saveReservations(List.of(reservation1,reservation2));
+                reservationRepository.save(reservation1);
+                reservationRepository.save(reservation2);
             }
         };
     }

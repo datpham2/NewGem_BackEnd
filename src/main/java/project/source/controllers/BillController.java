@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import project.source.dtos.BillDTO;
 import project.source.models.entities.Bill;
@@ -32,6 +33,7 @@ public class BillController {
     BillService billService;
     HotelService hotelService;
 
+
     @GetMapping("/getAllBill")
     public ResponseEntity<ApiResponse> getAllBillByUserId(
             @RequestParam(value = "user") Long userId,
@@ -48,19 +50,25 @@ public class BillController {
     }
 
 
+
     @PostMapping("/createBill")
     public ResponseEntity<ApiResponse> getBillByUserId(@Valid @RequestBody BillRequest billRequest){
         Bill bill = billService.addBill(billRequest);
-
-        ApiResponse apiResponse = ApiResponse.builder()
-                .status(HttpStatus.CREATED.value())
-                .message("Get all bills successfully").message("Get all bills by user id "
-                        + bill.getUser().getId() + " hotel name " +
-                        bill.getHotel().getName() + " successfully")
-                .data(BillDTO.fromBill(bill))
-                .build();
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+        if (bill != null){
+            ApiResponse apiResponse = ApiResponse.builder()
+                    .status(HttpStatus.CREATED.value())
+                    .message("Get all bills successfully").message("Get all bills by user id "
+                            + bill.getUser().getId() + " hotel name " +
+                            bill.getHotel().getName() + " successfully")
+                    .data(BillDTO.fromBill(bill))
+                    .build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+        }
+        return ResponseEntity.status(HttpStatus.ALREADY_REPORTED.value())
+                .body(ApiResponse.builder()
+                        .status(HttpStatus.ALREADY_REPORTED.value())
+                        .message("Bill already printed or there are no reservations")
+                        .build());
     }
 
     @GetMapping("/getBill/{billId}")

@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> handleConflictException(ConflictException ex) {
         ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.CONFLICT.value())
-                .message(Arrays.toString(ex.getStackTrace())+ " : " + ex.getMessage())
+                .message(ex.getMessage())
                 .data(null)
                 .build();
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);

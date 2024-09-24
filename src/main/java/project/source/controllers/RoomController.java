@@ -20,7 +20,7 @@ import project.source.respones.PageResponse;
 import project.source.services.implement.RoomService;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -33,22 +33,7 @@ public class RoomController {
     public ResponseEntity<ApiResponse> getAllRoomByHotelId(
             @PathVariable(value = "hotelId") Long hotelId,
             @RequestParam(value = "page", defaultValue = "0") @Min(value = 0, message = "Page must be more than zero") int page,
-            @RequestParam(value = "size", defaultValue = "8") @Min(value = 1, message = "Page must be more than one") int size,
-            BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getFieldErrors()
-                    .stream()
-                    .map(fieldError -> fieldError.getDefaultMessage())
-                    .collect(Collectors.toList());
-
-            return ResponseEntity.badRequest().body(ApiResponse.builder()
-                    .status(HttpStatus.BAD_REQUEST.value())
-                    .message(null)
-                    .data(errors)
-                    .build());
-        }
-
+            @RequestParam(value = "size", defaultValue = "8") @Min(value = 1, message = "Page must be more than one") int size){
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Room> rooms = roomService.getAllRoomByHotelId(hotelId, pageRequest);
         List<RoomDTO> items = rooms.stream().map(RoomDTO::fromRoom).toList();
@@ -81,7 +66,7 @@ public class RoomController {
     }
 
     @PostMapping("/createRoom")
-    public ResponseEntity<ApiResponse> addRoom(@Valid @RequestBody Room room, BindingResult result){
+    public ResponseEntity<ApiResponse> addRoom(@Valid @RequestBody RoomDTO roomDTO, BindingResult result){
         if(result.hasErrors()){
             List<String> err = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
             ApiResponse apiResponse = ApiResponse.builder()
@@ -91,7 +76,7 @@ public class RoomController {
                     .build();
             return ResponseEntity.badRequest().body(apiResponse);
         }else {
-            Room newRoom = roomService.saveRoom(room);
+            Room newRoom = roomService.saveRoom(roomDTO);
             ApiResponse apiResponse = ApiResponse.builder()
                     .message("Create successfully")
                     .data(RoomDTO.fromRoom(newRoom))
@@ -102,7 +87,7 @@ public class RoomController {
     }
 
     @PutMapping("/updateRoom/{id}")
-    public ResponseEntity<ApiResponse> updateRoom(@Valid @RequestBody Room room, @PathVariable(value = "id")Long id,
+    public ResponseEntity<ApiResponse> updateRoom(@Valid @RequestBody RoomDTO roomDTO, @PathVariable(value = "id")Long id,
                                                    BindingResult result){
         if(result.hasErrors()){
             List<String> err = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
@@ -113,7 +98,7 @@ public class RoomController {
                     .build();
             return ResponseEntity.badRequest().body(apiResponse);
         }else {
-            Room updatedRoom = roomService.updateRoom(room,id);
+            Room updatedRoom = roomService.updateRoom(roomDTO,id);
             ApiResponse apiResponse = ApiResponse.builder()
                     .message("Update successfully")
                     .data(RoomDTO.fromRoom(updatedRoom))

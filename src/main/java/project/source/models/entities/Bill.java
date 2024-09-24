@@ -23,14 +23,14 @@ import java.util.Set;
 @Table(name = "bills")
 public class Bill extends BaseEntity<Long>{
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
     User user;
 
     @ManyToOne
-    @JoinColumn(name = "hotel_id", nullable = false)
+    @JoinColumn(name = "hotel_id", nullable = false, updatable = false)
     Hotel hotel;
 
-    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
     Set<Reservation> reservations = new HashSet<>();
 
     @Digits(integer = 5, fraction = 2)

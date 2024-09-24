@@ -4,18 +4,23 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Bill;
 import project.source.models.entities.Hotel;
 import project.source.models.entities.Reservation;
 
+import project.source.models.enums.Status;
 import project.source.repositories.BillRepository;
 
+import project.source.repositories.ReservationRepository;
 import project.source.requests.BillRequest;
 import project.source.requests.PayRequest;
 import project.source.services.IBillService;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,6 +35,7 @@ public class BillService implements IBillService {
     HotelService hotelService;
     VoucherService voucherService;
     ReservationService reservationService;
+    ReservationRepository reservationRepository;
 
 
     @Override
@@ -37,38 +43,50 @@ public class BillService implements IBillService {
         Hotel hotel = hotelService.getHotelById(billRequest.getHotelId());
         long userId = billRequest.getUserId();
 
-
         Bill bill = Bill.builder()
                 .user(userService.getUserById(userId))
                 .hotel(hotel)
                 .isPaid(false)
                 .checkOut(billRequest.getCheckOut())
+                .descriptions(new ArrayList<>())
                 .build();
-        Long voucherId = billRequest.getVoucherId();
-        if (voucherId != null){
-            bill.setVoucher(voucherService.getVoucherById(voucherId));
+
+        if (billRequest.getVoucherId() != null) {
+            bill.setVoucher(voucherService.getVoucherById(billRequest.getVoucherId()));
         }
 
         Set<Reservation> reservations = reservationService.getAllReservationByUserId(userId);
-        reservations = reservations.stream()
-                .filter(reservation -> reservation.getRoom().getHotel().equals(hotel))
+        Set<Reservation> activeReservations = reservations.stream()
+                .filter(reservation -> reservation.getRoom().getHotel().equals(hotel) && reservation.getStatus().equals(Status.ACTIVE))
                 .collect(Collectors.toSet());
 
-        bill.setReservations(reservations);
+        if (activeReservations.isEmpty()) {
+            return null;
+        }
 
+        activeReservations.forEach(reservation -> {
+            reservation.setStatus(Status.INACTIVE);
+            reservation.setBill(bill);
+        });
+
+        bill.setReservations(activeReservations);
         bill.calculateTotalFee();
+        Bill newBill = billRepository.save(bill);
+        reservationRepository.saveAll(activeReservations);
 
-        return billRepository.save(bill);
+        return newBill;
     }
 
+
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Bill getBillById(Long id) {
         Bill bill = billRepository.findById(id).orElseThrow(()-> new NotFoundException("Can not find bill with id: " + id));
-        bill.calculateTotalFee();
         return bill;
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public List<Bill> getAllBillByUserIdAndHotelId(Long userId, Long hotelId) {
         userService.getUserById(userId);
         hotelService.getHotelById(hotelId);
@@ -80,6 +98,7 @@ public class BillService implements IBillService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Bill payBill(PayRequest payRequest){
         Bill bill = getBillById(payRequest.getBillId());
         bill.setPaid(true);
@@ -88,6 +107,9 @@ public class BillService implements IBillService {
             bill.setNewFee(payRequest.getNewFee());
         }
         bill.calculateAmountReturn();
+        for (Reservation reservation : bill.getReservations()){
+            reservation.setStatus(Status.INACTIVE);
+        }
         for (String description : payRequest.getDescriptions()){
             bill.getDescriptions().add(description);
         }

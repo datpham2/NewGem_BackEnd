@@ -20,6 +20,8 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDTO {
+    Long userId;
+
     @NotBlank(message = "firstName must be not blank")
     String firstName;
 
@@ -66,6 +68,7 @@ public class UserDTO {
 
     public static UserDTO fromUser(User user) {
         return UserDTO.builder()
+                .userId(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .phone(user.getPhone())
