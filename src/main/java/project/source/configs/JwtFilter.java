@@ -40,6 +40,11 @@ public class JwtFilter extends OncePerRequestFilter {
         final String authorization = request.getHeader(AUTHORIZATION);
         log.info("Authorization: {}", authorization);
 
+        if (request.getRequestURI().contains("**/oauth2/**")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (StringUtils.isBlank(authorization) || !authorization.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;

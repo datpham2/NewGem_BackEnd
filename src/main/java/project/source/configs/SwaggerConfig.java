@@ -1,10 +1,13 @@
 package project.source.configs;
 
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,8 +28,12 @@ public class SwaggerConfig {
         apiGroups.put("all", "/**");
         apiGroups.put("user", "/user/**");
         apiGroups.put("auth", "/auth/**");
-        apiGroups.put("blog", "/blog/**");
-        apiGroups.put("image", "/image/**");
+        apiGroups.put("hotel", "/hotel/**");
+        apiGroups.put("room", "/room/**");
+        apiGroups.put("bill", "/bill/**");
+        apiGroups.put("reservation", "/reservation/**");
+        apiGroups.put("reviews", "/reviews/**");
+        apiGroups.put("voucher", "/voucher/**");
         return apiGroups;
     }
 
@@ -47,9 +54,19 @@ public class SwaggerConfig {
             @Value("${openapi.service.server}") String serverUrl) {
         return new OpenAPI()
                 .servers(List.of(new Server().url(serverUrl)))
+                .components(
+                        new Components()
+                                .addSecuritySchemes(
+                                        "bearerAuth",
+                                        new SecurityScheme()
+                                                .type(SecurityScheme.Type.HTTP)
+                                                .scheme("bearer")
+                                                .bearerFormat("JWT")))
+                .security(List.of(new SecurityRequirement().addList("bearerAuth")))
                 .info(new Info().title(title)
                         .description("API documents")
                         .version(version)
                         .license(new License().name("Apache 2.0").url("https://springdoc.org")));
+
     }
 }

@@ -4,6 +4,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,13 +21,15 @@ import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Role;
 import project.source.models.entities.User;
 import project.source.models.enums.Status;
-//import project.source.repositories.RoleRepository;
+
 import project.source.repositories.RoleRepository;
 import project.source.repositories.UserRepository;
 import project.source.dtos.UserDTO;
-import project.source.respones.PageResponse;
+
 import project.source.services.IUserService;
 
+
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -31,80 +41,126 @@ public class UserService implements IUserService {
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
 
+
+
     @Override
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
+
     @Override
     public User addUser(UserDTO userDTO) {
         existed(userDTO);
         User user = UserDTO.toUser(userDTO);
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setStatus(Status.INACTIVE);
         Role role = roleRepository.findByName(Role.USER).orElseThrow(() -> new NotFoundException("Role not found"));
         user.setRole(role);
+
         return userRepository.save(user);
     }
 
+    @Override
+    public void confirmUser(Long userId, String verifyCode) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+        if (Objects.equals(verifyCode, "12345")){
+            user.setStatus(Status.ACTIVE);
+            userRepository.save(user);
+        }
+    }
 
     @Override
-    public User getUser(long userId) {
-        return userRepository.findById(userId)
+    public User getUserById(long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        if (user.getUsername().equals(currentUsername)) {
+            return user;
+        } else {
+            throw new AccessDeniedException("You do not have permission to access this user.");
+        }
     }
 
 
     @Override
     public UserDTO updateUser(long userId, UserDTO userDTO) {
-        User user = getUser(userId);
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setPhone(userDTO.getPhone());
-        user.setEmail(userDTO.getEmail());
-        user.setDateOfBirth(userDTO.getDateOfBirth());
-        user.setGender(userDTO.getGender());
-        user.setUsername(userDTO.getUsername());
+        User user = getUserById(userId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        if (user.getUsername().equals(currentUsername)) {
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
+            user.setPhone(userDTO.getPhone());
+            user.setEmail(userDTO.getEmail());
+            user.setDateOfBirth(userDTO.getDateOfBirth());
+            user.setGender(userDTO.getGender());
+            user.setUsername(userDTO.getUsername());
 
+            User updatedUser = userRepository.save(user);
+            updatedUser.setPassword(null);
+            return UserDTO.fromUser(updatedUser);
+        } else {
+            throw new AccessDeniedException("You do not have permission to access this user.");
+        }
+    }
+
+
+    @Override
+    public void changeStatus(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+        if (user.getStatus() == Status.ACTIVE){
+            user.setStatus(Status.INACTIVE);
+        } else {
+            user.setStatus(Status.ACTIVE);
+        }
         User updatedUser = userRepository.save(user);
         updatedUser.setPassword(null);
-        return UserDTO.fromUser(updatedUser);
+        UserDTO.fromUser(updatedUser);
     }
 
-    @Override
-    public UserDTO changeStatus(long userId, Status status) {
-        User user = getUser(userId);
-        user.setStatus(status);
-
-        User updatedUser = userRepository.save(user);
-        updatedUser.setPassword(null);
-        return UserDTO.fromUser(updatedUser);
-    }
 
     @Override
-    public void deleteUser(long userId) {
-        User user = getUser(userId);
-        userRepository.delete(user);
-    }
-
-    @Override
-    public PageResponse<?> getAllUsers(int pageNo, int pageSize) {
-        // Implement pagination logic if required
-        return null; // Placeholder for now
-    }
-
-    @Override
-    public long saveUser(User user) {
+    public void disableUser(long userId) {
+        User user = getUserById(userId);
+        user.setStatus(Status.INACTIVE);
         userRepository.save(user);
-        return user.getId();
+//        userRepository.delete(user);
     }
 
+
+    @Override
+    public Page<User> getAllUsers(PageRequest request) {
+        return userRepository.findAll(request);
+    }
+
+    @Override
+    public Page<User> getActiveUsersWithoutAdmins(PageRequest request) {
+        return userRepository.findActiveUsersExcludingAdmins(Status.ACTIVE, Role.ADMIN, request);
+    }
+
+    @Override
+    public Page<User> getInactiveUsersWithoutAdmins(PageRequest request) {
+        return userRepository.findInactiveUsersExcludingAdmins(Status.INACTIVE, Role.ADMIN, request);
+    }
+
+
+    @Override
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
 
     @Override
     public void emailExisted(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()){
-            throw new ExistedException("Email existed");
+            throw new ExistedException("Email");
         }
     }
 
@@ -112,7 +168,7 @@ public class UserService implements IUserService {
     public void usernameExisted(String username) {
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()){
-            throw new ExistedException("Username existed");
+            throw new ExistedException("Username");
         }
     }
 
@@ -120,7 +176,7 @@ public class UserService implements IUserService {
     public void phoneExisted(String phone) {
         Optional<User> user = userRepository.findByPhone(phone);
         if (user.isPresent()){
-            throw new ExistedException("Phone existed");
+            throw new ExistedException("Phone");
         }
     }
 
@@ -136,6 +192,4 @@ public class UserService implements IUserService {
                 new NotFoundException("User not found with username: " + username)
         );
     }
-
-
 }
