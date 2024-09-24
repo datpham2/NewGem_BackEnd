@@ -14,10 +14,6 @@ import java.util.Set;
 public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     Page<Reservation> findAllReservationByRoomId(Long roomId, PageRequest pageRequest);
 
-    Page<Reservation> findAllReservationByUserId(Long userId, PageRequest pageRequest);
-
-    List<Reservation> findAllReservationByUserId(Long userId, PageRequest pageRequest);
-
     List<Reservation> findByStatus(Status status);
 
     @Modifying
