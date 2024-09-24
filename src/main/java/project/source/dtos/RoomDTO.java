@@ -1,39 +1,54 @@
 package project.source.dtos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
+
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import project.source.dtos.validations.EnumPattern;
+
+import project.source.models.entities.Reservation;
+import project.source.models.entities.Room;
 import project.source.models.enums.RoomType;
 
-@Data
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+
+@Setter
+@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoomDTO {
-    @NotNull
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long id;
+    Long roomId;
 
-    @JsonProperty("hotel_id")
-    @NotNull(message = "Hotel id must not be null")
-    private Long hotelId;
+    @NonNull
+    Long hotelId;
+
+    @NotNull
+    int roomNumber;
 
     @NotNull(message = "Price must not be null")
     @DecimalMin(value = "0.0", message = "Price must be greater than 0")
-    private double price;
-    //
+    double price;
 
     @NotNull(message = "Type must not be null")
-    private RoomType type;
+    @EnumPattern(name = "Room type", regexp = "SINGLE|DOUBLE|VIP", message = "Room type must be SINGLE, DOUBLE or VIP")
+    RoomType type;
 
-    @Min(value = 1, message = "Guests must be at least 1")
-    private int guests;
+    int guests;
+
+    public static RoomDTO fromRoom(Room room){
+        return RoomDTO.builder()
+                .roomId(room.getId())
+                .hotelId(room.getHotel().getId())
+                .roomNumber(room.getRoomNumber())
+                .price(room.getPrice())
+                .type(room.getType())
+                .build();
+    }
 }

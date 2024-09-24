@@ -12,16 +12,16 @@ import project.source.dtos.validations.EnumPattern;
 import project.source.dtos.validations.PhoneNumber;
 import project.source.models.entities.User;
 import project.source.models.enums.Gender;
-import project.source.models.enums.Status;
 
 import java.time.LocalDate;
-
 
 @Getter
 @Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDTO {
+    Long userId;
+
     @NotBlank(message = "firstName must be not blank")
     String firstName;
 
@@ -53,8 +53,6 @@ public class UserDTO {
     String password;
 
 
-    Status status;
-
     public static User toUser(UserDTO userDTO) {
         return User.builder()
                 .firstName(userDTO.firstName)
@@ -64,13 +62,13 @@ public class UserDTO {
                 .username(userDTO.username)
                 .password(userDTO.password)
                 .dateOfBirth(userDTO.dateOfBirth)
-                .status(userDTO.status)
                 .gender(userDTO.gender)
                 .build();
     }
 
     public static UserDTO fromUser(User user) {
         return UserDTO.builder()
+                .userId(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .phone(user.getPhone())
@@ -79,7 +77,6 @@ public class UserDTO {
                 .gender(user.getGender())
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .status(user.getStatus())
                 .build();
     }
 }

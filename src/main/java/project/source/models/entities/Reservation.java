@@ -1,80 +1,65 @@
 package project.source.models.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+
 import lombok.*;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import project.source.models.enums.Status;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 
-@Entity
-@Table(name = "reservations") /* old table name: bookrooms */
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Getter
+@Slf4j
 @Setter
-public class Reservation extends BaseEntity<Long>{
-    // start date of the reservation
-    @Column(name="check_in")
-    @Future(message = "Start date must be in the future")
-    private LocalDate checkIn; /* old column name: startDate */
+@Getter
+@Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(name = "reservations")
+public class Reservation extends BaseEntity<Long> {
+    @Column(name = "check_in", nullable = false)
+    LocalDate checkIn;
 
-    // end date of the reservation
-    @Column(name="check_out")
-    @Future(message = "End date must be in the future")
-    private LocalDate checkOut; /* old column name: endDate */
+    @Column(name = "check_out", nullable = false)
+    LocalDate checkOut;
 
-    // hotel where the reservation is made
     @ManyToOne
-    @JoinColumn(name = "hotel_id")
-    private Hotel hotel;
+    @JoinColumn(name = "hotel_id", nullable = false)
+    Hotel hotel;
 
-    // room in the range of room available in Room class
     @ManyToOne
-    @JoinColumn(name = "room_id")
-    @JsonBackReference
-    private Room room;
+    @JoinColumn(name = "room_id", nullable = false)
+    Room room;
 
-    // user who made the reservation
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonBackReference
-    private User user;
+    @JoinColumn(name = "user_id", nullable = false)
+    User user;
 
-    // number of adults
-    @Column(name="adults")
-    @Min(value = 1, message = "Number of adults must be greater than or equal to 1")
-    @Value("1")
-    private int adults; /* old column name: noAdults */
+    @Column(name = "adults")
+    int adults;
 
-    // number of children
-    @Column(name="children")
-    @Value("0")
-    @Min(value = 0, message = "Number of children must be greater than or equal to 0")
-    @Max(value = 10, message = "Number of children must be less than or equal to 10")
-    private int children; /* old column name: noChild */
+    @Column(name = "children")
+    int children;
 
-    // bill for the reservation
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "bill_id")
-    private Bill bill;
+    Bill bill;
 
-    // status of the reservation
-    @Column(name="status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    Status status;
 
-    // total price
-    // is paid
-    // is canceled
-    // is checked in
-    // is checked out
-    // is active
-    // is deleted
-    // created at
-    // updated at
+    public double getTotalPrice() {
+        if (checkOut.isBefore(checkIn)) {
+            throw new IllegalArgumentException("Check-out date cannot be before check-in date.");
+        }
+        long daysBetween = ChronoUnit.DAYS.between(checkIn, checkOut);;
+        return room.getPrice() * daysBetween;
+    }
 }

@@ -24,6 +24,11 @@ public class VoucherService implements IVoucherService {
 
 
     @Override
+    public Voucher getVoucherById(Long Id){
+        return voucherRepository.findById(Id).orElseThrow(()-> new NotFoundException("Voucher"));
+    }
+
+    @Override
     public void saveVoucher(Long hotelId, VoucherDTO voucherDTO) {
         Hotel hotel = hotelService.getHotelById(hotelId);
         if(hotel == null){
@@ -40,10 +45,7 @@ public class VoucherService implements IVoucherService {
         }
     }
 
-    @Override
-    public Voucher getVoucherById(Long id) {
-        return voucherRepository.findById(id).orElseThrow(()-> new NotFoundException("Voucher"));
-    }
+
 
     @Override
     public Page<Voucher> getAllVoucher(Long id, PageRequest pageRequest) {

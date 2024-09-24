@@ -97,7 +97,6 @@ public class JwtService implements project.source.services.IJwtService {
     }
 
     private Key getKey(TokenType type) {
-
         switch (type) {
             case ACCESS_TOKEN -> {
                 return Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessKey));

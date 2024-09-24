@@ -5,7 +5,8 @@ import project.source.models.entities.Bill;
 
 import java.util.List;
 
-public interface BillRepository extends JpaRepository<Bill, Long> {
+public interface BillRepository extends JpaRepository<Bill,Long> {
+    List<Bill> findAllByUserIdAndHotelId(Long userId, Long hotelId);
 
-    List<Bill> findAllBillByUserIdAndHotelId(Long userId, Long hotelId);
+    List<Bill> findAllByUserIdAndHotelIdAndIsPaid(Long userId, Long hotelId, boolean isPaid);
 }

@@ -13,8 +13,8 @@ import java.util.List;
 public interface IHotelService {
     Page<Hotel> getAllHotel(PageRequest pageRequest);
     Hotel getHotelById(Long id);
-    void saveHotel(HotelDTO hotelDTO);
-    void updateHotel(HotelDTO hotelDTO, Long id);
+    Hotel saveHotel(HotelDTO hotelDTO);
+    Hotel updateHotel(HotelDTO hotelDTO, Long id);
     Page<Hotel> searchHotelByName(String name, PageRequest pageRequest);
     void disableHotel(Long id);
 }

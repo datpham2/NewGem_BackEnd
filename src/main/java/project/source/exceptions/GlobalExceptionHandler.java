@@ -1,5 +1,6 @@
 package project.source.exceptions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -8,10 +9,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.ResourceAccessException;
 import project.source.respones.ApiResponse;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGeneralException(Exception ex) {
+        ex.printStackTrace();
         ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .message("An unexpected error occurred: " + ex.getMessage())
@@ -43,5 +50,38 @@ public class GlobalExceptionHandler {
                 .data(null)
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(ExistedException.class)
+    public ResponseEntity<ApiResponse> handleExistedException(ExistedException ex) {
+        ApiResponse response = ApiResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage() + " existed")
+                .data(null)
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ApiResponse> handleConflictException(ConflictException ex) {
+        ApiResponse response = ApiResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(MultipleException.class)
+    public ResponseEntity<ApiResponse> handleMultipleException(MultipleException ex) {
+        String errorMessage = "Multiple errors occurred: " + ex.getExceptions().size();
+        List<String> errors = ex.getExceptions().stream().map(Throwable::getMessage).toList();
+
+        ApiResponse response = ApiResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .message(errorMessage)
+                .data(errors)
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 }
