@@ -4,6 +4,7 @@ package project.source.respones;
  */
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import project.source.dtos.HotelDTO;
 import project.source.models.entities.Hotel;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 @Builder
 @Data
 public class HotelResponse {
-    private List<Hotel> hotel;
+    private List<HotelDTO> hotel;
     @JsonProperty(value = "total_page")
     private int totalPage;
 }

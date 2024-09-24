@@ -1,23 +1,54 @@
 package project.source.dtos;
 
+
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import project.source.dtos.validations.EnumPattern;
 
-@Data
+import project.source.models.entities.Reservation;
+import project.source.models.entities.Room;
+import project.source.models.enums.RoomType;
+
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+
+@Setter
+@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoomDTO {
+    Long roomId;
+
+    @NonNull
+    Long hotelId;
+
+    @NotNull
+    int roomNumber;
+
     @NotNull(message = "Price must not be null")
     @DecimalMin(value = "0.0", message = "Price must be greater than 0")
-    private double price;
+    double price;
 
     @NotNull(message = "Type must not be null")
-    private String type;
+    @EnumPattern(name = "Room type", regexp = "SINGLE|DOUBLE|VIP", message = "Room type must be SINGLE, DOUBLE or VIP")
+    RoomType type;
 
-    private int guests;
+    int guests;
+
+    public static RoomDTO fromRoom(Room room){
+        return RoomDTO.builder()
+                .roomId(room.getId())
+                .hotelId(room.getHotel().getId())
+                .roomNumber(room.getRoomNumber())
+                .price(room.getPrice())
+                .type(room.getType())
+                .build();
+    }
 }

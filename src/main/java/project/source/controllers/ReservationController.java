@@ -1,116 +1,153 @@
 package project.source.controllers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import project.source.dtos.ReservationDTO;
+import project.source.exceptions.ConflictException;
 import project.source.models.entities.Reservation;
 import project.source.respones.ApiResponse;
 import project.source.respones.PageResponse;
-import project.source.services.reservation.ReservationService;
+import project.source.services.implement.ReservationService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/reservation")
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
 public class ReservationController {
-    private final ReservationService reservationService;
+    ReservationService reservationService;
 
     @GetMapping("/allRooms/{roomId}")
-    public ResponseEntity<?> getAllRoomByRoomId(
-        @PathVariable(value = "roomId") Long roomId,
-        @RequestParam(value = "page", defaultValue = "0") int page,
-        @RequestParam(value = "size", defaultValue = "8") int size,
-        BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("Error");
-        }
+    public ResponseEntity<ApiResponse> getAllRoomByRoomId(
+            @PathVariable(value = "roomId") Long roomId,
+            @RequestParam(value = "page", defaultValue = "0") @Min(value = 0, message = "Page must be more than zero") int page,
+            @RequestParam(value = "size", defaultValue = "8") @Min(value = 1, message = "Page must be more than one") int size) {
+
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Reservation> reservations = reservationService.getAllReservationByRoomId(roomId, pageRequest);
 
         List<ReservationDTO> items = reservations.getContent().stream().map(ReservationDTO::fromReservation).toList();
 
         PageResponse<List<ReservationDTO>> response = PageResponse.<List<ReservationDTO>>builder()
-            .totalPage(reservations.getTotalPages())
-            .pageNo(reservations.getNumber()).pageSize(reservations.getSize())
-            .items(items)
-            .build();
+                .totalPage(reservations.getTotalPages())
+                .pageNo(reservations.getNumber())
+                .pageSize(reservations.getSize())
+                .items(items)
+                .build();
 
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatus(200);
-        apiResponse.setMessage("Success");
-        apiResponse.setData(response);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get all reservations successfully")
+                .data(response)
+                .build();
+
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping("/allUsers/{roomId}")
-    public ResponseEntity<?> getAllUserByRoomId(
-        @PathVariable(value = "roomId") Long roomId,
-        @RequestParam(value = "page", defaultValue = "0") int page,
-        @RequestParam(value = "size", defaultValue = "8") int size,
-        BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("Error");
-        }
+    @GetMapping("/allUsers/{userId}")
+    public ResponseEntity<ApiResponse> getAllRoomByUserId(
+            @PathVariable(value = "userId") Long userId,
+            @RequestParam(value = "page", defaultValue = "0") @Min(value = 0, message = "Page must be more than zero") int page,
+            @RequestParam(value = "size", defaultValue = "8") @Min(value = 1, message = "Page must be more than one") int size) {
+
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Reservation> reservations = reservationService.getAllReservationByRoomId(roomId, pageRequest);
+        List<Reservation> reservations = reservationService.getAllReservationByUserId(userId, pageRequest);
+        List<ReservationDTO> response = reservations.stream().map(ReservationDTO::fromReservation).collect(Collectors.toList());
 
-        List<ReservationDTO> items = reservations.getContent().stream().map(ReservationDTO::fromReservation).toList();
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get all reservations successfully")
+                .data(response)
+                .build();
 
-        PageResponse<List<ReservationDTO>> response = PageResponse.<List<ReservationDTO>>builder()
-            .totalPage(reservations.getTotalPages())
-            .pageNo(reservations.getNumber()).pageSize(reservations.getSize())
-            .items(items)
-            .build();
-
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatus(200);
-        apiResponse.setMessage("Success");
-        apiResponse.setData(response);
         return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getReservationById(@PathVariable(value = "id")Long id){
         Reservation reservation = reservationService.getReservationById(id);
-        ReservationDTO reservationDTO = ReservationDTO.fromReservation(reservation);
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatus(200);
-        apiResponse.setMessage("Get reservation successfully");
-        apiResponse.setData(reservationDTO);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get reservation successfully by id = "+ id)
+                .data(ReservationDTO.fromReservation(reservation))
+                .build();
         return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("/bookRoom")
-    public ResponseEntity<ApiResponse> makeReservation(@Valid @RequestBody Reservation reservation, BindingResult result){
-        if (result.hasErrors()) {
-            List<String> errors = result.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList();
-            ApiResponse apiResponse = new ApiResponse();
-            apiResponse.setStatus(400);
-            apiResponse.setMessage("Error");
-            apiResponse.setData(errors);
+    public ResponseEntity<ApiResponse> makeReservation(@Valid @RequestBody ReservationDTO reservationDTO, BindingResult result){
+        if(result.hasErrors()){
+            List<String> err = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
+            ApiResponse apiResponse = ApiResponse.builder()
+                    .message("Can't create reservation")
+                    .data(err)
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .build();
             return ResponseEntity.badRequest().body(apiResponse);
+        }else {
+            Reservation newReservation = reservationService.saveReservation(reservationDTO);
+                ApiResponse apiResponse = ApiResponse.builder()
+                        .message("Create successfully")
+                        .data(ReservationDTO.fromReservation(newReservation))
+                        .status(HttpStatus.CREATED.value())
+                        .build();
+                return ResponseEntity.ok(apiResponse);
+            }
         }
-        Reservation newReservation = reservationService.saveReservation(reservation);
-        ReservationDTO reservationDTO = ReservationDTO.fromReservation(newReservation);
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatus(200);
-        apiResponse.setMessage("Book room successfully");
-        apiResponse.setData(reservationDTO);
+
+    @PostMapping("/bookRooms")
+    public ResponseEntity<ApiResponse> makeReservations(@Valid @RequestBody List<ReservationDTO> reservationDTOs, BindingResult result){
+        if(result.hasErrors()){
+            List<String> err = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
+            ApiResponse apiResponse = ApiResponse.builder()
+                    .message("Can't create reservation")
+                    .data(err)
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .build();
+            return ResponseEntity.badRequest().body(apiResponse);
+        }else {
+            List<Reservation> newReservations = reservationService.saveReservations(reservationDTOs);
+            List<ReservationDTO> data = newReservations.stream().map(ReservationDTO::fromReservation).toList();
+            ApiResponse apiResponse = ApiResponse.builder()
+                    .message("Create successfully")
+                    .data(data)
+                    .status(HttpStatus.CREATED.value())
+                    .build();
+            return ResponseEntity.ok(apiResponse);
+        }
+    }
+
+    @DeleteMapping("/cancel/{id}")
+    public ResponseEntity<ApiResponse> cancelReservation(@PathVariable(value = "id")Long id){
+        reservationService.deleteReservation(id);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Delete reservation successfully")
+                .data(null)
+                .build();
         return ResponseEntity.ok(apiResponse);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse> cancelReservation(@PathVariable(value = "id")Long id){
-        reservationService.deleteReservation(id);
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatus(200);
-        apiResponse.setMessage("Cancel reservation successfully");
+    @DeleteMapping("/cancels")
+    public ResponseEntity<ApiResponse> cancelReservations(@RequestBody List<Long> ids) {
+        reservationService.deleteReservations(ids);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Deleted reservations successfully")
+                .data(null)
+                .build();
         return ResponseEntity.ok(apiResponse);
     }
 }

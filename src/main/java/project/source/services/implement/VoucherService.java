@@ -24,6 +24,11 @@ public class VoucherService implements IVoucherService {
 
 
     @Override
+    public Voucher getVoucherById(Long voucherId){
+        return voucherRepository.findById(voucherId).orElseThrow(()-> new NotFoundException("Voucher"));
+    }
+
+    @Override
     public void saveVoucher(Long hotelId, VoucherDTO voucherDTO) {
         Hotel hotel = hotelService.getHotelById(hotelId);
         if(hotel == null){

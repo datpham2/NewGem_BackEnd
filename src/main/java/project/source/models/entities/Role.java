@@ -11,12 +11,10 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Data
 @Table(name="roles")
 @Builder
 public class Role extends BaseEntity<Long>{
     @Column(nullable = false)
-
     private String name;
 
     public static String ADMIN = "ROLE_ADMIN";
