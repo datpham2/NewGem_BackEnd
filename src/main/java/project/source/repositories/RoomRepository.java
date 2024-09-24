@@ -7,4 +7,6 @@ import project.source.models.enums.RoomType;
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
     Object findByType(RoomType roomType);
+
+    Room findByHotelIdAndType(Long hotelId, RoomType roomType);
 }

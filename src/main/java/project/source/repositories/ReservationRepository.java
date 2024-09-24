@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    Set<Reservation> findAllReservationByUserId(Long userId);
+    Page<Reservation> findAllReservationByUserId(Long userId, PageRequest pageRequest);
 
     Page<Reservation> findAllReservationByRoomId(Long roomId, PageRequest pageRequest);
 }

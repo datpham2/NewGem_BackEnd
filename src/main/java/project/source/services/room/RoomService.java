@@ -34,6 +34,11 @@ public class RoomService implements IRoomService {
         return roomRepository.findById(id).orElse(null);
     }
 
+
+    public Room getRoomByHotelIdAndRoomType(Long hotelId, RoomType roomType) {
+        return roomRepository.findByHotelIdAndType(hotelId, roomType);
+    }
+
     @Override
     public Room updateRoom(Long id, RoomDTO roomDTO) {
         Room room = getRoomById(id);
@@ -56,6 +61,15 @@ public class RoomService implements IRoomService {
 
     @Override
     public Object getRoomByHotelId(Long hotelId) {
+        return null;
+    }
+
+    @Override
+    public Room getRoomById(Long roomId, Long hotelId) {
+        Room room = getRoomById(roomId);
+        if (room.getHotel().getId() == hotelId) {
+            return room;
+        }
         return null;
     }
 }

@@ -42,13 +42,7 @@ public class BillService implements IBillService {
         if (voucherId != null){
             bill.setVoucher(voucherService.getVoucherById(voucherId));
         }
-        Set<Reservation> reservations = reservationService.getAllReservationByUserId(userId);
-        reservations = reservations.stream()
-                .filter(reservation -> reservation.getRoom().getHotel().equals(hotel))
-                .collect(Collectors.toSet());
-        bill.setReservations(reservations);
-        bill.calculateTotalFee();
-        return billRepository.save(bill);
+        return null;
     }
 
     @Override

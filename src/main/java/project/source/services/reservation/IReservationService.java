@@ -13,7 +13,7 @@ public interface IReservationService {
 
     Reservation getReservationById(Long reservationId);
 
-    Set<Reservation> getAllReservationByUserId(Long userId);
+    Page<Reservation> getAllReservationByUserId(Long userId, PageRequest pageRequest);
 
     Page<Reservation> getAllReservationByRoomId(Long roomId, PageRequest pageRequest);
 

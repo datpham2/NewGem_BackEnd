@@ -15,4 +15,6 @@ public interface IRoomService {
     Object getRoomByType(String type);
 
     Object getRoomByHotelId(Long hotelId);
+    Room getRoomById(Long roomId, Long hotelId);
+
 }

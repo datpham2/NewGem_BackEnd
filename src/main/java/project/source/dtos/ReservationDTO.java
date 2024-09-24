@@ -46,4 +46,13 @@ public class ReservationDTO {
                 .children(reservation.getChildren())
                 .build();
     }
+
+    public Reservation toReservation() {
+        return Reservation.builder()
+                .checkIn(checkIn)
+                .checkOut(checkOut)
+                .adults(adults)
+                .children(children)
+                .build();
+    }
 }

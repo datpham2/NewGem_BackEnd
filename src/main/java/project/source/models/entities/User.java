@@ -87,4 +87,8 @@ public class User extends BaseEntity<Long> implements UserDetails {
     public boolean isEnabled() {
         return Status.ACTIVE.equals(status);
     }
+
+    // Get reservations
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Set<Reservation> reservations = new HashSet<Reservation>(0);
 }

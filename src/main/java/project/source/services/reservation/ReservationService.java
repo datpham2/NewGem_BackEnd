@@ -36,9 +36,9 @@ public class ReservationService implements IReservationService{
     }
 
     @Override
-    public Set<Reservation> getAllReservationByUserId(Long userId) {
+    public Page<Reservation> getAllReservationByUserId(Long userId, PageRequest pageRequest) {
         userService.getUserById(userId);
-        return reservationRepository.findAllReservationByUserId(userId);
+        return reservationRepository.findAllReservationByUserId(userId, pageRequest);
     }
 
     @Override
@@ -66,11 +66,14 @@ public class ReservationService implements IReservationService{
 
     @Override
     public Reservation saveReservation(Reservation reservation) {
-        Room room = roomService.getRoomById(reservation.getRoom().getId());
-        boolean isRoomAvailable = room.getReservations().stream().noneMatch(r -> r.getCheckIn().isBefore(reservation.getCheckOut()) && r.getCheckOut().isAfter(reservation.getCheckIn()));
-        if (!isRoomAvailable) {
-            throw new RuntimeException("Room is not available");
-        }
+        return reservationRepository.save(reservation);
+    }
+
+    public Reservation saveReservation(Reservation reservation, Long userId, Long roomId, Long hotelId) {
+        User user = userService.getUserById(userId);
+        Room room = roomService.getRoomById(roomId, hotelId);
+        reservation.setUser(user);
+        reservation.setRoom(room);
         return reservationRepository.save(reservation);
     }
 
