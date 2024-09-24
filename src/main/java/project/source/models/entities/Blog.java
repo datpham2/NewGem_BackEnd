@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.web.WebProperties;
 import project.source.models.enums.Status;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,8 +32,8 @@ public class Blog extends BaseEntity<Long>{
 //    @Column (name = "author_id", referenceColumnName = "user_id", nullable = false)
 //    private User user;
 
-    @OneToMany
-    private List<Image> images;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "blog")
+    private Set<Image> images = new HashSet<Image>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

@@ -1,4 +1,5 @@
 package project.source.dtos;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -35,12 +36,12 @@ public class ImageDTO {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    private Blog blog;
+    @JsonProperty(value = "blog_id")
+    private Long  blog_id;
 
 
-//    private String imageURL;
-    private String imageName;
+    private String imageURL;
+//    private String imageName;
 
     private ImageDirectory imageDirectory;
 

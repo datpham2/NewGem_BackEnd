@@ -47,6 +47,12 @@ public class BlogController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Blog> index(@PathVariable(value = "id" ) Long id) {
+        return ResponseEntity.ok().body(blogService.getBlogById(id));
+    }
+
+
     @PostMapping("/newBlog")
     public ResponseEntity<?> createBlog(@Valid @RequestBody BlogDTO blogDTO, BindingResult result) {
         if (result.hasErrors()) {
@@ -86,6 +92,9 @@ public class BlogController {
                 .build();
         return ResponseEntity.ok().body(apiResponse);
     }
+
+
+
 
     @DeleteMapping("deleteBlog/{id}")
     public ResponseEntity<ApiResponse> deleteBlog(@PathVariable long id) {

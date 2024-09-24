@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import project.source.dtos.BlogDTO;
 import project.source.dtos.ImageDTO;
+import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Blog;
 import project.source.models.entities.Image;
 import project.source.models.enums.ImageDirectory;
@@ -18,17 +19,18 @@ import project.source.services.IBlogService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 @Builder
 public class BlogService implements IBlogService {
     private final BlogRepository blogRepository;
-    private final ImageService imageService;
+    private final ImageRepository imageRepository;
 
     @Override
     public Blog getBlogById(Long id){
-        return blogRepository.getById(id);
+        return blogRepository.findById(id).orElseThrow(()-> new NotFoundException("Can not resolve this blog ID"));
     }
 
     @Override
@@ -52,23 +54,23 @@ public class BlogService implements IBlogService {
         List<Image> images = blogDTO.getImages();
         List<Image> temp = new ArrayList<>();
 
+        Blog newblog = Blog.builder()
+                .title(blogDTO.getTitle())
+                .status(Status.ACTIVE)
+                .content(blogDTO.getContent())
+                .images(null)
+                .build();
+
         for (Image image : images){
-            ImageDTO imageDTO = ImageDTO.builder()
-                    .imageDirectory(ImageDirectory.Blog)
-                    .imageURL(image.getImageURL())
-                    .status(Status.ACTIVE)
-                    .build();
-            Image newImage = imageService.saveImage(imageDTO,ImageDirectory.Blog);
-            temp.add(newImage);
+            image.setImageDirectory(ImageDirectory.Blog);
+            image.setStatus(Status.ACTIVE);
+            image.setSourceId(newblog.getId());
+            temp.add(image);
+            imageRepository.save(image);
         }
 
-          Blog  newblog = Blog.builder()
-                .title(blogDTO.getTitle())
-                  .status(Status.ACTIVE)
-                .content(blogDTO.getContent())
-                  .images(temp)
+        newblog.setImages((Set<Image>) temp);
 
-                .build();
         return blogRepository.save(newblog);
     }
 

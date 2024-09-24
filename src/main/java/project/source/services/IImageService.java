@@ -13,6 +13,7 @@ public interface IImageService {
     Image getImageById(Long id);
     void deleteImage(Long id);
     public Image updateImage(Long id, ImageDTO imageDTO);
-    public Image saveImage (ImageDTO imageDTO, ImageDirectory imageDirectory);
+//    public Image saveImage (Long id, ImageDTO imageDTO, ImageDirectory imageDirectory);
 //    public Image setImageDirectory(Image image, ImageDirectory imageDirectory);
+    Image saveImage(Long id, ImageDTO imageDTO, ImageDirectory imageDirectory);
 }

@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,10 +38,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageController {
     private final ImageService imageService;
+    private final BlogService blogService;
+//    private final HotelService hotelService;
+//    private final RoomService roomService;
+
     @GetMapping("")
     public ResponseEntity<ApiResponse> getImagesToPages(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size ){
+            @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Image> imagesPage = imageService.getAllImages(pageable);
 
@@ -52,15 +57,25 @@ public class ImageController {
         return ResponseEntity.ok(apiResponse);
     }
 
+//    @GetMapping("/getAllImage/{id}")
+//    public ResponseEntity<ApiResponse> getAllImage(@PathVariable Long id) {
+//        ApiResponse apiResponse = ApiResponse.builder()
+//                .data(studentService.getAllStudentImages(id))
+//                .status(HttpStatus.OK.value())
+//                .message("Get successfully")
+//                .build();
+//        return ResponseEntity.ok(apiResponse);
+//    }
+
     @PostMapping("")
-    public ResponseEntity<?> createImage(@Valid @RequestBody ImageDTO imageDTO, ImageDirectory imageDirectory, BindingResult result) {
+    public ResponseEntity<?> createImage(@Valid @RequestBody Long id, ImageDTO imageDTO, ImageDirectory imageDirectory, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = result.getFieldErrors().stream()
                     .map(FieldError::getDefaultMessage).toList();
             return ResponseEntity.badRequest().body(errors);
         }
-        Image image = imageService.saveImage(imageDTO, ImageDirectory.Blog);
-        return ResponseEntity.ok( "Add picture successfully " + image.toString());
+        Image image = imageService.saveImage(id, imageDTO, ImageDirectory.Blog);
+        return ResponseEntity.ok("Add picture successfully " + image.toString());
     }
 
     @PutMapping("/{id}")
@@ -97,40 +112,127 @@ public class ImageController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("upload")
+
+    @PostMapping(value = "/uploadsImage/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse> uploadImage(@PathVariable(value = "id") Long id, @RequestParam(value = "source") ImageDirectory imageDirectory,@ModelAttribute("files") List<MultipartFile> files) throws IOException {
+        List<Image> Images = new ArrayList<>();
+        int count = 0;
+        blogService.getBlogById(id);
+        for (MultipartFile file : files) {
+            if (file != null) {
+                if (file.getSize() == 0) {
+                    count++;
+                    continue;
+                }
+            }
+            String fileName = storeFile(file);
+            ImageDTO imageDTO = ImageDTO.builder()
+                    .imageURL(fileName)
+                    .blog_id(id)
+                    .build();
+            Image blogImage = imageService.saveImage(id, imageDTO,  imageDirectory);
+            Images.add(blogImage);
+        }
+        if (count == 1) {
+            throw new IllegalArgumentException("File rong");
+        }
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.CREATED.value())
+                .message("Upload Image Url successfully")
+                .data(null)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
     private String storeFile(MultipartFile file) throws IOException {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        String uniqueFileName = UUID.randomUUID().toString() +  "_" + fileName;
-        Path uploadDir = Paths.get("uploads");
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectory(uploadDir);
+        String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
+        java.nio.file.Path uploadDdir = Paths.get("upload");
+        if (!Files.exists(uploadDdir)) {
+            Files.createDirectory(uploadDdir);
         }
-        Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
-
+        java.nio.file.Path destination = Paths.get(uploadDdir.toString(), uniqueFileName);
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFileName;
     }
 
-    @GetMapping("/{imageName}")
+
+    @GetMapping("getimage/{imageName}")
     public ResponseEntity<?> viewImage(@PathVariable String imageName) {
         try {
-            java.nio.file.Path imagePath = Paths.get( "upload/"+imageName);
+            java.nio.file.Path imagePath = Paths.get("upload/" + imageName);
             UrlResource resource = new UrlResource(imagePath.toUri());
             if (resource.exists()) {
                 return ResponseEntity.ok()
                         .contentType(MediaType.IMAGE_JPEG)
                         .body(resource);
             } else {
-// logger.info(imageName + " not found");
                 return ResponseEntity.ok()
                         .contentType(MediaType.IMAGE_JPEG)
-                        .body(new UrlResource(Paths.get("uploads/notfound.jpeg").toUri()));
-//return ResponseEntity.notFound().build();
+                        .body(new UrlResource(Paths.get("upload/notfound.jpeg").toUri()));
             }
         } catch (Exception e) {
-//logger.error("Error occurred while retrieving image: " + e.getMessage
             return ResponseEntity.notFound().build();
         }
-    }
 
+
+        //    @GetMapping("/{imageName}")
+//    public ResponseEntity<?> viewImage(@PathVariable String imageName) {
+//        try {
+//            java.nio.file.Path imagePath = Paths.get( "upload/"+imageName);
+//            UrlResource resource = new UrlResource(imagePath.toUri());
+//            if (resource.exists()) {
+//                return ResponseEntity.ok()
+//                        .contentType(MediaType.IMAGE_JPEG)
+//                        .body(resource);
+//            } else {
+//// logger.info(imageName + " not found");
+//                return ResponseEntity.ok()
+//                        .contentType(MediaType.IMAGE_JPEG)
+//                        .body(new UrlResource(Paths.get("uploads/notfound.jpeg").toUri()));
+////return ResponseEntity.notFound().build();
+//            }
+//        } catch (Exception e) {
+////logger.error("Error occurred while retrieving image: " + e.getMessage
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
+//
+//    private String storeFile(MultipartFile file) throws IOException {
+//        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+//        String uniqueFileName = UUID.randomUUID().toString() +  "_" + fileName;
+//        Path uploadDir = Paths.get("uploads");
+//        if (!Files.exists(uploadDir)) {
+//            Files.createDirectory(uploadDir);
+//        }
+//        Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
+//
+//        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+//        return uniqueFileName;
+//    }
+//
+//
+//
+//    @PostMapping("/uploads/{id}")
+//    public ResponseEntity<ApiResponse> uploads(@PathVariable Long id, @Valid @RequestBody ImageDTO imageDTO, ImageDirectory imageDirectory, BindingResult result) {
+//        if (result.hasErrors()) {
+//            List<String> errors = result.getFieldErrors().stream()
+//                    .map(FieldError::getDefaultMessage).toList();
+//            ApiResponse apiResponse = ApiResponse.builder()
+//                    .data(errors)
+//                    .message("Validation failed")
+//                    .status(HttpStatus.BAD_REQUEST.value())
+//                    .build();
+//            return ResponseEntity.badRequest().body(apiResponse);
+//        }
+//
+//        ApiResponse apiResponse = ApiResponse.builder()
+//                .status(HttpStatus.OK.value())
+//                .message("Upload successfully")
+//                .data(imageService.saveImage(imageDTO, imageDirectory))
+//                .build();
+//        return ResponseEntity.ok(apiResponse);
+//    }
+//}
+    }
 }
