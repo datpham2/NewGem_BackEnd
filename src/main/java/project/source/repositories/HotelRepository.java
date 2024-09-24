@@ -18,4 +18,8 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
     Page<Hotel> searchByName(String name, PageRequest pageRequest);
 
     Optional<Hotel> findByName(String name);
+
+    boolean existsByName(String name);
+
+    boolean existsByLocation(String location);
 }

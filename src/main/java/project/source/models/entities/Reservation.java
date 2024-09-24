@@ -17,7 +17,6 @@ import java.time.temporal.ChronoUnit;
 @Getter
 @Entity
 @Builder
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)

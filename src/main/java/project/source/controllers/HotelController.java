@@ -33,9 +33,10 @@ public class HotelController {
                                         ,@RequestParam(value = "size", defaultValue = "8")int size){
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Hotel> hotelPage = hotelService.getAllHotel(pageRequest);
+        List<HotelDTO> hotelList = hotelPage.getContent().stream().map(HotelDTO::fromHotel).toList();
         HotelResponse hotelResponse = HotelResponse.builder()
                 .totalPage(hotelPage.getTotalPages())
-                .hotel(hotelPage.getContent())
+                .hotel(hotelList)
                 .build();
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
@@ -51,7 +52,7 @@ public class HotelController {
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("Get Hotel Successfully by id = "+ id)
-                .data(hotel)
+                .data(HotelDTO.fromHotel(hotel))
                 .build();
         return ResponseEntity.ok(apiResponse);
     }
@@ -67,9 +68,10 @@ public class HotelController {
                     .build();
             return ResponseEntity.badRequest().body(apiResponse);
         }else {
-            hotelService.saveHotel(hotelDTO);
+            hotelDTO.validatePrices();
+            Hotel hotel = hotelService.saveHotel(hotelDTO);
             ApiResponse apiResponse = ApiResponse.builder()
-                    .data(hotelDTO)
+                    .data(HotelDTO.fromHotel(hotel))
                     .message("Create successfully")
                     .status(HttpStatus.CREATED.value())
                     .build();
@@ -88,13 +90,14 @@ public class HotelController {
                     .build();
             return ResponseEntity.badRequest().body(apiResponse);
         }else {
+            hotelDTO.validatePrices();
             Hotel hotel = hotelService.getHotelById(id);
             if(hotel == null){
                 throw new NotFoundException("Not Found Hotel with ID = "+ id);
             }
-                hotelService.updateHotel(hotelDTO,id);
+            hotel = hotelService.updateHotel(hotelDTO,id);
             ApiResponse apiResponse = ApiResponse.builder()
-                    .data(hotelDTO)
+                    .data(HotelDTO.fromHotel(hotel))
                     .message("Upadte successfully")
                     .status(HttpStatus.OK.value())
                     .build();
@@ -119,7 +122,8 @@ public class HotelController {
                                                          @RequestParam(value = "size",defaultValue = "8")int size){
         PageRequest pageRequest = PageRequest.of(page,size);
         Page<Hotel> pageHotel = hotelService.searchHotelByName(name, pageRequest);
-        List<Hotel> hotelList = pageHotel.getContent();
+        List<HotelDTO> hotelList = pageHotel.getContent().stream().map(HotelDTO::fromHotel).toList();
+
         HotelResponse hotelResponse = HotelResponse.builder()
                 .totalPage(pageHotel.getTotalPages())
                 .hotel(hotelList)

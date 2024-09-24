@@ -33,12 +33,12 @@ public class ReservationDTO {
 
     int adults;
     int children;
-    Long bill;
+    Long billId;
 
     Status status;
 
     public static ReservationDTO fromReservation(Reservation reservation){
-        return ReservationDTO.builder()
+        ReservationDTO reservationDTO = ReservationDTO.builder()
                 .reservationId(reservation.getId())
                 .checkIn(reservation.getCheckIn())
                 .checkOut(reservation.getCheckOut())
@@ -49,5 +49,11 @@ public class ReservationDTO {
                 .children(reservation.getChildren())
                 .status(reservation.getStatus())
                 .build();
+
+        if (reservation.getBill() != null){
+                reservationDTO.setBillId(reservation.getBill().getId());
+        }
+
+        return reservationDTO;
     }
 }
