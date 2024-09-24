@@ -1,5 +1,6 @@
 package project.source.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +33,7 @@ public class Room extends BaseEntity<Long>{
     @Enumerated(EnumType.STRING)
     private RoomType type; /* old column name: typeRoom */
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Reservation> reservations = new HashSet<>();
 

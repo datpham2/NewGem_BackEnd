@@ -1,6 +1,7 @@
 package project.source.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -89,6 +90,8 @@ public class User extends BaseEntity<Long> implements UserDetails {
     }
 
     // Get reservations
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonManagedReference
     private Set<Reservation> reservations = new HashSet<Reservation>(0);
 }

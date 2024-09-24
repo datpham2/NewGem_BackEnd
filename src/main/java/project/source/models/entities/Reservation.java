@@ -1,5 +1,6 @@
 package project.source.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
@@ -36,12 +37,13 @@ public class Reservation extends BaseEntity<Long>{
     // room in the range of room available in Room class
     @ManyToOne
     @JoinColumn(name = "room_id")
-
+    @JsonBackReference
     private Room room;
 
     // user who made the reservation
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     // number of adults
