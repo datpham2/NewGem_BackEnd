@@ -30,8 +30,6 @@ public class BillDTO {
 
     Long voucherId;
 
-    @NonNull
-    LocalDate checkOut;
 
     boolean isPaid;
 
@@ -53,7 +51,6 @@ public class BillDTO {
                 .hotelId(bill.getHotel().getId())
                 .userId(bill.getUser().getId())
                 .totalFee(bill.getTotalFee())
-                .checkOut(bill.getCheckOut())
                 .reservations(reservations)
                 .isPaid(bill.isPaid())
                 .newFee(bill.getNewFee())

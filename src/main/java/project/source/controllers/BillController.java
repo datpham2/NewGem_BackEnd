@@ -35,20 +35,35 @@ public class BillController {
 
 
     @GetMapping("/getAllBill")
-    public ResponseEntity<ApiResponse> getAllBillByUserId(
+    public ResponseEntity<ApiResponse> getAllBillByUserIdAndHotelId(
             @RequestParam(value = "user") Long userId,
             @RequestParam(value = "hotel") Long hotelId){
         List<Bill> bills = billService.getAllBillByUserIdAndHotelId(userId,hotelId);
+        List<BillDTO> response = bills.stream().map(BillDTO::fromBill).toList();
 
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("Get all bills by user id " + userId + " hotel name " +
-                        hotelService.getHotelById(hotelId) + " successfully")
-                .data(bills)
+                        hotelService.getHotelById(hotelId).getName() + " successfully")
+                .data(response)
                 .build();
         return ResponseEntity.ok(apiResponse);
     }
 
+    @GetMapping("/getBillHotel/{hotelId}")
+    public ResponseEntity<ApiResponse> getAllBillByHotelId(
+            @RequestParam(value = "hotel") Long hotelId){
+        List<Bill> bills = billService.getAllBillByHotelId(hotelId);
+        List<BillDTO> response = bills.stream().map(BillDTO::fromBill).toList();
+
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get all bills of hotel " +
+                        hotelService.getHotelById(hotelId).getName() + " successfully")
+                .data(response)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
 
 
     @PostMapping("/createBill")

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import project.source.requests.RefreshRequest;
 import project.source.requests.ResetPasswordRequest;
 import project.source.requests.SignInRequest;
 import project.source.respones.ApiResponse;
@@ -44,9 +45,8 @@ public class AuthController {
             method = "POST",
             summary = "Refresh token",
             description = "Post the refresh token in the header Referer to get a new access token")
-    @Parameter(name = "Referer", in = ParameterIn.HEADER, required = true, description = "JWT token")
     @PostMapping("/refreshtoken")
-    public ResponseEntity<TokenResponse> refreshToken(HttpServletRequest request) {
+    public ResponseEntity<TokenResponse> refreshToken(RefreshRequest request) {
         return new ResponseEntity<>(authService.refreshToken(request), HttpStatus.ACCEPTED);
     }
 
@@ -56,7 +56,7 @@ public class AuthController {
             description = "Post the access token in the header referer to remove the token from the db"
     )
     @PostMapping("/removetoken")
-    public ResponseEntity<ApiResponse> removeToken(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> removeToken(RefreshRequest request) {
         authService.removeToken(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.builder()

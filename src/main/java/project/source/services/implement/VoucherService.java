@@ -13,15 +13,15 @@ import project.source.models.enums.Status;
 import project.source.repositories.VoucherRepository;
 import project.source.services.IVoucherService;
 
+import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class VoucherService implements IVoucherService {
-
     private final VoucherRepository voucherRepository;
     private final HotelService hotelService;
-
 
 
     @Override
@@ -48,6 +48,13 @@ public class VoucherService implements IVoucherService {
         }
     }
 
+//    public void checkVoucher(Voucher voucher){
+//        if (voucher.getEndDate().isBefore(LocalDate.now())){
+//            voucher.setStatus(Status.INACTIVE);
+//            voucherRepository.save(voucher);
+//        }
+//    }
+
 
 
     @Override
@@ -68,6 +75,7 @@ public class VoucherService implements IVoucherService {
         voucherRepository.save(voucher);
     }
 
+
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     public void disableVoucher(Long id) {
@@ -79,5 +87,6 @@ public class VoucherService implements IVoucherService {
         }
         voucherRepository.save(voucher);
     }
+
 
 }

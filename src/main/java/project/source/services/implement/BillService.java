@@ -11,6 +11,7 @@ import project.source.models.entities.Bill;
 import project.source.models.entities.Hotel;
 import project.source.models.entities.Reservation;
 
+import project.source.models.entities.Voucher;
 import project.source.models.enums.Status;
 import project.source.repositories.BillRepository;
 
@@ -47,12 +48,17 @@ public class BillService implements IBillService {
                 .user(userService.getUserById(userId))
                 .hotel(hotel)
                 .isPaid(false)
-                .checkOut(billRequest.getCheckOut())
                 .descriptions(new ArrayList<>())
                 .build();
 
         if (billRequest.getVoucherId() != null) {
-            bill.setVoucher(voucherService.getVoucherById(billRequest.getVoucherId()));
+            Voucher voucher = voucherService.getVoucherById(billRequest.getVoucherId());
+            if (voucher.getHotel() == bill.getHotel()){
+                bill.setVoucher(voucher);
+            }
+            else {
+                bill.getDescriptions().add("This voucher do not apply for this hotel");
+            }
         }
 
         Set<Reservation> reservations = reservationService.getAllReservationByUserId(userId);
@@ -114,5 +120,10 @@ public class BillService implements IBillService {
             bill.getDescriptions().add(description);
         }
         return billRepository.save(bill);
+    }
+
+    @Override
+    public List<Bill> getAllBillByHotelId(Long hotelId) {
+        return billRepository.findAllByHotelId(hotelId);
     }
 }

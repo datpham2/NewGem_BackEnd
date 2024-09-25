@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import project.source.models.enums.Status;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
@@ -55,11 +56,13 @@ public class Reservation extends BaseEntity<Long> {
     @Column(name = "status")
     Status status;
 
-    public double getTotalPrice() {
+
+    public BigDecimal getTotalPrice() {
         if (checkOut.isBefore(checkIn)) {
             throw new IllegalArgumentException("Check-out date cannot be before check-in date.");
         }
-        long daysBetween = ChronoUnit.DAYS.between(checkIn, checkOut);;
-        return room.getPrice() * daysBetween;
+        long daysBetween = ChronoUnit.DAYS.between(checkIn, checkOut);
+        return room.getPrice().multiply(BigDecimal.valueOf(daysBetween)); // Adjusted to use BigDecimal
     }
+
 }

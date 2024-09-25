@@ -11,21 +11,30 @@ import project.source.dtos.HotelDTO;
 import project.source.exceptions.ExistedException;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Hotel;
+import project.source.models.entities.Voucher;
+import project.source.models.enums.City;
 import project.source.models.enums.Status;
 import project.source.repositories.HotelRepository;
+import project.source.repositories.VoucherRepository;
 import project.source.services.IHotelService;
 
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class HotelService implements IHotelService {
-
     private final HotelRepository hotelRepository;
+
 
     @Override
     public Page<Hotel> getAllHotel(PageRequest pageRequest) {
         return hotelRepository.findAll(pageRequest);
+    }
+
+    @Override
+    public Page<Hotel> getHotelByCityAndPriceRange(City city, BigDecimal minPrice, BigDecimal maxPrice, PageRequest pageRequest) {
+        return hotelRepository.findByCityAndPriceRange(city,minPrice,maxPrice,pageRequest);
     }
 
     @Override
@@ -39,12 +48,12 @@ public class HotelService implements IHotelService {
         existed(hotelDTO);
         Hotel hotel = Hotel.builder()
                 .location(hotelDTO.getLocation())
+                .city(hotelDTO.getCity())
                 .noRooms(0)
                 .status(Status.ACTIVE)
-                .maxPrice(hotelDTO.getMaxPrice())
-                .minPrice(hotelDTO.getMinPrice())
                 .name(hotelDTO.getName())
                 .build();
+        hotel.setPrices();
         return hotelRepository.save(hotel);
     }
 
@@ -56,10 +65,7 @@ public class HotelService implements IHotelService {
             throw new NotFoundException("Can't find hotel by id = "+ id);
         }else {
             hotel1.setLocation(hotelDTO.getLocation());
-            hotel1.setStatus(hotelDTO.getStatus());
-//            hotel1.setNoRooms(hotelDTO.getNoRooms());
-//            hotel1.setMaxPrice(hotelDTO.getMaxPrice());
-//            hotel1.setMinPrice(hotelDTO.getMinPrice());
+            hotel1.setCity(hotelDTO.getCity());
             hotel1.setName(hotelDTO.getName());
             return hotelRepository.save(hotel1);
         }
@@ -82,11 +88,22 @@ public class HotelService implements IHotelService {
         hotelRepository.save(hotel);
     }
 
-    public void existed(HotelDTO hotelDTO){
-        if (hotelRepository.existsByLocation(hotelDTO.getLocation()) && hotelRepository.existsByName(hotelDTO.getName())){
-            throw new ExistedException("Hotel already existed");
+    public void existed(HotelDTO hotelDTO) {
+        boolean exists = hotelRepository.existsByNameAndCity(hotelDTO.getName(), hotelDTO.getCity()) &&
+                hotelRepository.existsByLocationAndCity(hotelDTO.getLocation(), hotelDTO.getCity());
+
+        if (exists) {
+            throw new ExistedException("Hotel already exists");
         }
     }
+
+    public boolean existedById(Long hotelId){
+        if (hotelRepository.existsById(hotelId)){
+            return true;
+        };
+        return false;
+    }
+
 
     public void saveHotel(Hotel hotel){
         hotelRepository.save(hotel);

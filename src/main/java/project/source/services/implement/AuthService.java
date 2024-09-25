@@ -18,6 +18,7 @@ import project.source.models.entities.User;
 import project.source.models.enums.TokenType;
 
 
+import project.source.requests.RefreshRequest;
 import project.source.requests.ResetPasswordRequest;
 import project.source.requests.SignInRequest;
 import project.source.respones.TokenResponse;
@@ -62,13 +63,14 @@ public class AuthService implements IAuthService {
         return TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .username(user.getUsername())
                 .userId(user.getId())
                 .build();
     }
 
 
-    public TokenResponse refreshToken(HttpServletRequest request) {
-        final String refreshToken = request.getHeader(REFERER);
+    public TokenResponse refreshToken(RefreshRequest request) {
+        final String refreshToken = request.getRefreshToken();
         if (StringUtils.isBlank(refreshToken)) {
             throw new InvalidDataException("Token must be not blank");
         }
@@ -92,16 +94,17 @@ public class AuthService implements IAuthService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .userId(user.getId())
+                .username(userName)
                 .build();
     }
 
-    public void removeToken(HttpServletRequest request) {
-        final String token = request.getHeader(REFERER);
+    public void removeToken(RefreshRequest request) {
+        final String token = request.getRefreshToken();
         if (StringUtils.isBlank(token)) {
             throw new InvalidDataException("Token must be not blank");
         }
 
-        final String userName = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
+        final String userName = jwtService.extractUsername(token, TokenType.REFRESH_TOKEN);
         tokenService.delete(userName);
     }
 

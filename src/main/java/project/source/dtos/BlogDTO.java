@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.boot.autoconfigure.web.WebProperties;
+import project.source.models.entities.Blog;
 import project.source.models.entities.Image;
 import project.source.models.enums.Status;
 
@@ -19,9 +20,8 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class BlogDTO {
-
+    private Long blogId;
 
     @NotEmpty(message = "You must create a title for this blog")
     private String title;
@@ -30,20 +30,20 @@ public class BlogDTO {
     @NotEmpty(message = "Blogs can not be empty!!")
     private String content;
 
-    @CreationTimestamp
-
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-
-    private LocalDateTime updatedAt;
-
-//    @Column (name = "author_id", referenceColumnName = "user_id", nullable = false)
-//    private User user;
-
+    private Long userId;
 
     private List<Image> images;
 
     Status status;
 
+    public static BlogDTO fromBlog(Blog blog){
+        return BlogDTO.builder()
+                .blogId(blog.getId())
+                .title(blog.getTitle())
+                .images(blog.getImages().stream().toList())
+                .content(blog.getContent())
+                .userId(blog.getUser().getId())
+                .status(blog.getStatus())
+                .build();
+    }
 }

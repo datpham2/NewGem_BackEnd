@@ -6,41 +6,50 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import project.source.models.enums.City;
 import project.source.models.enums.Status;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Setter
 @Getter
-@Data
 @Builder
 @Table(name = "hotels")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Hotel extends BaseEntity<Long>{
-    @NotNull(message = "Name can't be empty")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @NotNull(message = "Location can't be empty")
+
+    @Column(name = "location", nullable = false)
     private String location;
 
-    @Digits(integer = 5, fraction = 2)
+
+    @Column(name = "city", nullable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
+    private City city;
+
+    @Digits(integer = 10, fraction = 2)
     @JsonProperty(value = "min_price")
-    @Min(value = 1, message = "Min price must be greater than 0")
+    @Column(name = "min_price")
     private BigDecimal minPrice;
 
-    @Digits(integer = 5, fraction = 2)
+    @Digits(integer = 10, fraction = 2)
     @JsonProperty(value = "max_price")
-    @Min(value = 1, message = "Max price must be greater than 0")
+    @Column(name = "max_price")
     private BigDecimal maxPrice;
 
+    @Column(name = "rating")
     private double rating;
 
     @JsonProperty(value = "no_rooms")
-    @Min(value = 0, message = "Number of rooms must be greater than or equal to 0")
+    @Column(name = "no_rooms")
     private int noRooms;
 
     @Enumerated(EnumType.STRING)
@@ -56,7 +65,7 @@ public class Hotel extends BaseEntity<Long>{
     private Set<Room> rooms = new HashSet<>();
 
     public void setPrices() {
-        if (this.rooms.isEmpty()) {
+        if (this.rooms == null || this.rooms.isEmpty()) {
             this.minPrice = BigDecimal.ZERO;
             this.maxPrice = BigDecimal.ZERO;
             return;
@@ -64,29 +73,32 @@ public class Hotel extends BaseEntity<Long>{
 
         this.minPrice = rooms.stream()
                 .map(Room::getPrice)
-                .min(Double::compare)
-                .map(BigDecimal::valueOf)
+                .min(BigDecimal::compareTo)
                 .orElse(BigDecimal.ZERO);
 
         this.maxPrice = rooms.stream()
                 .map(Room::getPrice)
-                .max(Double::compare)
-                .map(BigDecimal::valueOf)
+                .max(BigDecimal::compareTo)
                 .orElse(BigDecimal.ZERO);
     }
 
+
+
     public void updateAverageRating() {
-        if (reviews.isEmpty()) {
+        Set<Reviews> activeReviews = reviews.stream()
+                .filter(review -> review.getStatus().equals(Status.ACTIVE))
+                .collect(Collectors.toSet());
+
+        if (activeReviews.isEmpty()) {
             this.rating = 0.0;
             return;
         }
 
-        double average = reviews.stream()
+        double average = activeReviews.stream()
                 .mapToInt(Reviews::getRating)
                 .average()
-                .orElse(0.0); // Default to 0 if no reviews
+                .orElse(0.0);
 
-
-        this.rating = Math.round(average * 10.0) / 10.0; 
+        this.rating = Math.round(average * 10.0) / 10.0;
     }
 }

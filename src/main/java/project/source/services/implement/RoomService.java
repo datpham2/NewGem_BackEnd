@@ -17,6 +17,7 @@ import project.source.models.enums.RoomType;
 import project.source.repositories.RoomRepository;
 import project.source.services.IRoomService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,6 +32,17 @@ public class RoomService implements IRoomService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Page<Room> getAllRoom(PageRequest pageRequest) {
         return roomRepository.findAll(pageRequest);
+    }
+
+    @Override
+    public Page<Room> getRoomByHotelAndTypeAndPrice(Long hotelId, RoomType type, BigDecimal maxPrice, PageRequest pageRequest) {
+        if (hotelId != null) {
+            if (!hotelService.existedById(hotelId)) {
+                throw new NotFoundException("Hotel with ID " + hotelId + " does not exist.");
+            }
+            return roomRepository.findByHotelAndTypeAndPrice(hotelId, type, maxPrice, pageRequest);
+        }
+        return roomRepository.findByHotelAndTypeAndPrice(null, type, maxPrice, pageRequest);
     }
 
 
@@ -69,7 +81,7 @@ public class RoomService implements IRoomService {
         List<Room> rooms = roomRepository.findAllByHotelId(hotel.getId());
         for (Room room : rooms){
             if (roomNumber == room.getRoomNumber()){
-                throw new ExistedException("Room " + roomNumber + " of hotel" + hotel.getName() + " existed");
+                throw new ExistedException("Room " + roomNumber + " of hotel " + hotel.getName());
             }
         }
     }
@@ -78,11 +90,8 @@ public class RoomService implements IRoomService {
     @PreAuthorize("hasRole('ADMIN')")
     public Room updateRoom(RoomDTO roomDTO, Long id) {
         Room updatedRoom = getRoomById(id);
-        Hotel hotel = hotelService.getHotelById(roomDTO.getHotelId());
+        Hotel hotel = hotelService.getHotelById(updatedRoom.getHotel().getId());
         existed(hotel,roomDTO.getRoomNumber());
-        if (!Objects.equals(updatedRoom.getHotel().getId(), roomDTO.getHotelId())){
-            throw new ConflictException("Can not change room to another hotel");
-        }
         updatedRoom.setRoomNumber(roomDTO.getRoomNumber());
         updatedRoom.setGuests(roomDTO.getGuests());
         updatedRoom.setType(roomDTO.getType());

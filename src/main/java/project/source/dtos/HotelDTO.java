@@ -5,12 +5,16 @@ package project.source.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import project.source.dtos.validations.EnumPattern;
 import project.source.exceptions.ConflictException;
 import project.source.models.entities.Hotel;
+import project.source.models.enums.City;
+import project.source.models.enums.Gender;
 import project.source.models.enums.Status;
 
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -23,36 +27,45 @@ public class HotelDTO {
     private String name;
     @NotNull(message = "Location can't be empty")
     private String location;
-    @Digits(integer = 5, fraction = 2)
+
+    @NotNull(message = "City can't be empty")
+    @EnumPattern(name = "City", regexp = "HCM|HANOI", message = "Gender must be HCM or HANOI")
+    private City city;
+
+    @Digits(integer = 10, fraction = 2)
     @JsonProperty(value = "min_price")
-    @Min(value = 1, message = "Price must be greater than 1")
     private BigDecimal minPrice;
-    @Digits(integer = 5, fraction = 2)
+
+    @Digits(integer = 10, fraction = 2)
     @JsonProperty(value = "max_price")
-    @Min(value = 1, message = "Price must be greater than 1")
     private BigDecimal maxPrice;
-    //private Image images;
+
     private double rating;
+
     @JsonProperty(value = "no_rooms")
-    @Min(value = 0, message = "Number of rooms must be greater than or equals 0")
     private int noRooms;
+
+    private Set<VoucherDTO> vouchers;
+
+    private Set<ReviewsDTO> reviews;
+
     private Status status;
 
     public static HotelDTO fromHotel(Hotel hotel){
+        Set<VoucherDTO> vouchers = hotel.getVouchers().stream().map(VoucherDTO::fromVoucher).collect(Collectors.toSet());
+        Set<ReviewsDTO> reviews = hotel.getReviews().stream().map(ReviewsDTO::fromReview).collect(Collectors.toSet());
+
         return HotelDTO.builder()
                 .name(hotel.getName())
                 .location(hotel.getLocation())
+                .city(hotel.getCity())
                 .minPrice(hotel.getMinPrice())
                 .maxPrice(hotel.getMaxPrice())
                 .rating(hotel.getRating())
                 .noRooms(hotel.getNoRooms())
                 .status(hotel.getStatus())
+                .vouchers(vouchers)
+                .reviews(reviews)
                 .build();
-    }
-
-    public void validatePrices() {
-        if (maxPrice.compareTo(minPrice) < 0) {
-            throw new ConflictException("Max price must be greater than or equal to min price");
-        }
     }
 }
