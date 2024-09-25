@@ -20,6 +20,7 @@ import project.source.dtos.BlogDTO;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Blog;
 import project.source.respones.ApiResponse;
+import project.source.respones.BlogListResponse;
 import project.source.services.implement.BlogService;
 
 import java.io.IOException;
@@ -41,18 +42,25 @@ public class BlogController {
             @RequestParam(defaultValue = "5") int size ){
         Pageable pageable = PageRequest.of(page, size);
         Page<Blog> blogsPage = blogService.getBlogs(pageable);
-
+        BlogListResponse blogListResponse = BlogListResponse.builder()
+                .blogList(blogsPage.getContent())
+                .totalPage(blogsPage.getTotalPages())
+                .build();
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
-                .data(blogsPage.getContent())
+                .data(blogListResponse)
                 .build();
 
         return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Blog> index(@PathVariable(value = "id" ) Long id) {
-        return ResponseEntity.ok().body(blogService.getBlogById(id));
+    public ResponseEntity<ApiResponse> index(@PathVariable(value = "id" ) Long id) {
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .data(blogService.getBlogById(id))
+                .build();
+        return ResponseEntity.ok().body(apiResponse);
     }
 
 
