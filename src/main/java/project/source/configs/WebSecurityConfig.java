@@ -63,7 +63,7 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITE_LIST_URL).permitAll()
-                        .requestMatchers("/auth/**", "/reviews/**", "/reservation/**","/hotel/**", "blog/**").permitAll()
+                        .requestMatchers("/auth/**", "/reviews/**", "/reservation/**","/hotel/**", "blog/**", "image/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "user/confirm/**").permitAll()
                         .anyRequest().authenticated())
