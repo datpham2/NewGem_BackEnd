@@ -29,8 +29,9 @@ public class Blog extends BaseEntity<Long>{
     @NotEmpty(message = "Blogs can not be empty!!")
     private String content;
 
-//    @Column (name = "author_id", referenceColumnName = "user_id", nullable = false)
-//    private User user;
+    @ManyToOne
+    @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
+    private User user;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "blog")
     private Set<Image> images = new HashSet<Image>();

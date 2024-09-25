@@ -38,6 +38,8 @@ public class ReviewService implements IReviewService {
                 .status(Status.ACTIVE)
                 .build();
         reviewsRepository.save(reviews);
+        hotel.updateAverageRating();
+        hotelService.saveHotel(hotel);
     }
 
     @Override
@@ -51,10 +53,10 @@ public class ReviewService implements IReviewService {
         Reviews reviews = reviewsRepository.findById(id).orElseThrow(()-> new NotFoundException("Review not found by Id = "+id));
         reviews.setRating(reviewsDTO.getRating());
         reviews.setComment(reviewsDTO.getComment());
-        reviews.setHotel(hotelService.getHotelById(reviewsDTO.getHotelId()));
-        reviews.setStatus(reviewsDTO.getStatus());
-        reviews.setUser(userService.getUserById(reviewsDTO.getUserId()));
+        Hotel hotel =hotelService.getHotelById(reviews.getHotel().getId());
         reviewsRepository.save(reviews);
+        hotel.updateAverageRating();
+        hotelService.saveHotel(hotel);
     }
 
     @Override
@@ -67,5 +69,8 @@ public class ReviewService implements IReviewService {
             reviews.setStatus(Status.ACTIVE);
         }
         reviewsRepository.save(reviews);
+        Hotel hotel =hotelService.getHotelById(reviews.getHotel().getId());
+        hotel.updateAverageRating();
+        hotelService.saveHotel(hotel);
     }
 }

@@ -13,9 +13,11 @@ import project.source.exceptions.ExistedException;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Hotel;
 import project.source.models.entities.Room;
+import project.source.models.enums.RoomType;
 import project.source.repositories.RoomRepository;
 import project.source.services.IRoomService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +32,17 @@ public class RoomService implements IRoomService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Page<Room> getAllRoom(PageRequest pageRequest) {
         return roomRepository.findAll(pageRequest);
+    }
+
+    @Override
+    public Page<Room> getRoomByHotelAndTypeAndPrice(Long hotelId, RoomType type, BigDecimal maxPrice, PageRequest pageRequest) {
+        if (hotelId != null) {
+            if (!hotelService.existedById(hotelId)) {
+                throw new NotFoundException("Hotel with ID " + hotelId + " does not exist.");
+            }
+            return roomRepository.findByHotelAndTypeAndPrice(hotelId, type, maxPrice, pageRequest);
+        }
+        return roomRepository.findByHotelAndTypeAndPrice(null, type, maxPrice, pageRequest);
     }
 
 
@@ -51,22 +64,24 @@ public class RoomService implements IRoomService {
     public Room saveRoom(RoomDTO roomDTO) {
         Hotel hotel = hotelService.getHotelById(roomDTO.getHotelId());
         existed(hotel,roomDTO.getRoomNumber());
-        hotel.setNoRooms(hotel.getRooms().size());
-        Room room = Room.builder()
+        Room room = roomRepository.save(Room.builder()
                 .price(roomDTO.getPrice())
                 .guests(roomDTO.getGuests())
                 .type(roomDTO.getType())
                 .roomNumber(roomDTO.getRoomNumber())
                 .hotel(hotel)
-                .build();
-        return roomRepository.save(room);
+                .build());
+        hotel.setNoRooms(hotel.getRooms().size());
+        hotel.setPrices();
+        hotelService.saveHotel(hotel);
+        return room;
     }
 
     public void existed(Hotel hotel, int roomNumber){
         List<Room> rooms = roomRepository.findAllByHotelId(hotel.getId());
         for (Room room : rooms){
             if (roomNumber == room.getRoomNumber()){
-                throw new ExistedException("Room " + roomNumber + " of hotel" + hotel.getName() + " existed");
+                throw new ExistedException("Room " + roomNumber + " of hotel " + hotel.getName());
             }
         }
     }
@@ -75,16 +90,20 @@ public class RoomService implements IRoomService {
     @PreAuthorize("hasRole('ADMIN')")
     public Room updateRoom(RoomDTO roomDTO, Long id) {
         Room updatedRoom = getRoomById(id);
-        Hotel hotel = hotelService.getHotelById(roomDTO.getHotelId());
+        Hotel hotel = hotelService.getHotelById(updatedRoom.getHotel().getId());
         existed(hotel,roomDTO.getRoomNumber());
-        if (!Objects.equals(updatedRoom.getHotel().getId(), roomDTO.getHotelId())){
-            throw new ConflictException("Can not change room to another hotel");
-        }
         updatedRoom.setRoomNumber(roomDTO.getRoomNumber());
         updatedRoom.setGuests(roomDTO.getGuests());
         updatedRoom.setType(roomDTO.getType());
         updatedRoom.setPrice(roomDTO.getPrice());
-
+        hotel.setPrices();
+        hotelService.saveHotel(hotel);
         return roomRepository.save(updatedRoom);
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public Page<Room> getAllRoomByType(RoomType roomType, PageRequest pageRequest) {
+        return roomRepository.findAllByType(roomType, pageRequest);
     }
 }

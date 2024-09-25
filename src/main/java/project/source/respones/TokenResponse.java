@@ -15,5 +15,7 @@ public class TokenResponse {
 
     String refreshToken;
 
+    String username;
+
     Long userId;
 }

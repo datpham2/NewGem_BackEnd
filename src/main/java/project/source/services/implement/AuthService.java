@@ -18,6 +18,7 @@ import project.source.models.entities.User;
 import project.source.models.enums.TokenType;
 
 
+import project.source.requests.RefreshRequest;
 import project.source.requests.ResetPasswordRequest;
 import project.source.requests.SignInRequest;
 import project.source.respones.TokenResponse;
@@ -62,13 +63,14 @@ public class AuthService implements IAuthService {
         return TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .username(user.getUsername())
                 .userId(user.getId())
                 .build();
     }
 
 
-    public TokenResponse refreshToken(HttpServletRequest request) {
-        final String refreshToken = request.getHeader(REFERER);
+    public TokenResponse refreshToken(RefreshRequest refreshRequest) {
+        final String refreshToken = refreshRequest.getRefreshToken();
         if (StringUtils.isBlank(refreshToken)) {
             throw new InvalidDataException("Token must be not blank");
         }
@@ -76,11 +78,10 @@ public class AuthService implements IAuthService {
         User user = userService.getByUsername(userName);
         log.info(user.getUsername());
         if (!jwtService.isValid(refreshToken, TokenType.REFRESH_TOKEN, user)) {
-            throw new InvalidDataException("Not allow access with this token");
+            throw new InvalidDataException("Not allowed access with this token");
         }
 
         String accessToken = jwtService.generateToken(user);
-
 
         tokenService.save(Token.builder()
                 .username(user.getUsername())
@@ -95,13 +96,14 @@ public class AuthService implements IAuthService {
                 .build();
     }
 
-    public void removeToken(HttpServletRequest request) {
-        final String token = request.getHeader(REFERER);
-        if (StringUtils.isBlank(token)) {
+
+    public void removeToken(RefreshRequest refreshRequest) {
+        final String refreshToken = refreshRequest.getRefreshToken();
+        if (StringUtils.isBlank(refreshToken)) {
             throw new InvalidDataException("Token must be not blank");
         }
 
-        final String userName = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
+        final String userName = jwtService.extractUsername(refreshToken, TokenType.REFRESH_TOKEN);
         tokenService.delete(userName);
     }
 

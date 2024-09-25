@@ -152,12 +152,12 @@ public class UserController {
     }
 
     @Operation(
-            method = "PATCH",
+            method = "POST",
             summary = "Change status of user",
             description = "Send a request via this API to change the status of the user"
     )
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("changeStatus/{id}")
+    @PostMapping("changeStatus/{id}")
     public ResponseEntity<ApiResponse> updateUserStatus(@PathVariable Long id) {
         userService.changeStatus(id);
         ApiResponse response = ApiResponse.builder()
@@ -168,16 +168,16 @@ public class UserController {
     }
 
     @Operation(
-            method = "PATCH",
+            method = "POST",
             summary = "Disable user",
             description = "Send a request via this API to disable user"
     )
-    @PatchMapping("disableUser/{id}")
-    public ResponseEntity<ApiResponse> deleteUser(@PathVariable long id) {
+    @PostMapping("disableUser/{id}")
+    public ResponseEntity<ApiResponse> disableUser(@PathVariable long id) {
         userService.disableUser(id);
         ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
-                .message("User disabled successfully")
+                .message("User deleted successfully")
                 .build();
         return ResponseEntity.ok(response);
     }
