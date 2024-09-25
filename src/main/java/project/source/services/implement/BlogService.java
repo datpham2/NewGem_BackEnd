@@ -18,8 +18,10 @@ import project.source.repositories.ImageRepository;
 import project.source.services.IBlogService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -69,7 +71,7 @@ public class BlogService implements IBlogService {
             imageRepository.save(image);
         }
 
-        newblog.setImages((Set<Image>) temp);
+        newblog.setImages(new HashSet<>(temp));
 
         return blogRepository.save(newblog);
     }

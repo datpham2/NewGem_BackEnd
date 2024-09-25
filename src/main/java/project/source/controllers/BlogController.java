@@ -32,6 +32,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BlogController {
     private final BlogService blogService;
+    private final ImageController imageController;
+
+
     @GetMapping("")
     public ResponseEntity<ApiResponse> getBlogsToPages(
             @RequestParam(defaultValue = "0") int page,
