@@ -69,8 +69,8 @@ public class AuthService implements IAuthService {
     }
 
 
-    public TokenResponse refreshToken(RefreshRequest request) {
-        final String refreshToken = request.getRefreshToken();
+    public TokenResponse refreshToken(RefreshRequest refreshRequest) {
+        final String refreshToken = refreshRequest.getRefreshToken();
         if (StringUtils.isBlank(refreshToken)) {
             throw new InvalidDataException("Token must be not blank");
         }
@@ -78,11 +78,10 @@ public class AuthService implements IAuthService {
         User user = userService.getByUsername(userName);
         log.info(user.getUsername());
         if (!jwtService.isValid(refreshToken, TokenType.REFRESH_TOKEN, user)) {
-            throw new InvalidDataException("Not allow access with this token");
+            throw new InvalidDataException("Not allowed access with this token");
         }
 
         String accessToken = jwtService.generateToken(user);
-
 
         tokenService.save(Token.builder()
                 .username(user.getUsername())
@@ -94,17 +93,17 @@ public class AuthService implements IAuthService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .userId(user.getId())
-                .username(userName)
                 .build();
     }
 
-    public void removeToken(RefreshRequest request) {
-        final String token = request.getRefreshToken();
-        if (StringUtils.isBlank(token)) {
+
+    public void removeToken(RefreshRequest refreshRequest) {
+        final String refreshToken = refreshRequest.getRefreshToken();
+        if (StringUtils.isBlank(refreshToken)) {
             throw new InvalidDataException("Token must be not blank");
         }
 
-        final String userName = jwtService.extractUsername(token, TokenType.REFRESH_TOKEN);
+        final String userName = jwtService.extractUsername(refreshToken, TokenType.REFRESH_TOKEN);
         tokenService.delete(userName);
     }
 
