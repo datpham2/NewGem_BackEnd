@@ -32,9 +32,9 @@ public class HotelDTO {
     @Min(value = 1, message = "Price must be greater than 1")
     private BigDecimal maxPrice;
     //private Image images;
-    private int rating;
+    private double rating;
     @JsonProperty(value = "no_rooms")
-    @Min(value = 1, message = "Number of rooms must be greater than 1")
+    @Min(value = 0, message = "Number of rooms must be greater than or equals 0")
     private int noRooms;
     private Status status;
 

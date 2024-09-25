@@ -37,6 +37,8 @@ public class ReviewService implements IReviewService {
                 .user(user)
                 .status(Status.ACTIVE)
                 .build();
+        hotel.updateAverageRating();
+        hotelService.saveHotel(hotel);
         reviewsRepository.save(reviews);
     }
 
@@ -54,6 +56,9 @@ public class ReviewService implements IReviewService {
         reviews.setHotel(hotelService.getHotelById(reviewsDTO.getHotelId()));
         reviews.setStatus(reviewsDTO.getStatus());
         reviews.setUser(userService.getUserById(reviewsDTO.getUserId()));
+        Hotel hotel =hotelService.getHotelById(reviewsDTO.getHotelId());
+        hotel.updateAverageRating();
+        hotelService.saveHotel(hotel);
         reviewsRepository.save(reviews);
     }
 

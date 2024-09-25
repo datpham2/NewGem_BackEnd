@@ -39,7 +39,7 @@ public class HotelService implements IHotelService {
         existed(hotelDTO);
         Hotel hotel = Hotel.builder()
                 .location(hotelDTO.getLocation())
-                .noRooms(hotelDTO.getNoRooms())
+                .noRooms(0)
                 .status(Status.ACTIVE)
                 .maxPrice(hotelDTO.getMaxPrice())
                 .minPrice(hotelDTO.getMinPrice())
@@ -57,9 +57,9 @@ public class HotelService implements IHotelService {
         }else {
             hotel1.setLocation(hotelDTO.getLocation());
             hotel1.setStatus(hotelDTO.getStatus());
-            hotel1.setNoRooms(hotelDTO.getNoRooms());
-            hotel1.setMaxPrice(hotelDTO.getMaxPrice());
-            hotel1.setMinPrice(hotelDTO.getMinPrice());
+//            hotel1.setNoRooms(hotelDTO.getNoRooms());
+//            hotel1.setMaxPrice(hotelDTO.getMaxPrice());
+//            hotel1.setMinPrice(hotelDTO.getMinPrice());
             hotel1.setName(hotelDTO.getName());
             return hotelRepository.save(hotel1);
         }
@@ -86,5 +86,9 @@ public class HotelService implements IHotelService {
         if (hotelRepository.existsByLocation(hotelDTO.getLocation()) && hotelRepository.existsByName(hotelDTO.getName())){
             throw new ExistedException("Hotel already existed");
         }
+    }
+
+    public void saveHotel(Hotel hotel){
+        hotelRepository.save(hotel);
     }
 }

@@ -1,7 +1,6 @@
 package project.source.dtos;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Digits;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import project.source.models.entities.*;
@@ -48,7 +47,6 @@ public class BillDTO {
         Set<ReservationDTO> reservations = bill.getReservations().stream().map(ReservationDTO::fromReservation).collect(Collectors.toSet());
 
         bill.getTotalFee();
-
 
         BillDTO billDTO = BillDTO.builder()
                 .billId(bill.getId())

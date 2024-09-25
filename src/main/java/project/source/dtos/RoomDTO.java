@@ -10,6 +10,7 @@ import project.source.dtos.validations.EnumPattern;
 import project.source.models.entities.Reservation;
 import project.source.models.entities.Room;
 import project.source.models.enums.RoomType;
+import project.source.repositories.HotelRepository;
 
 
 import java.util.List;
@@ -29,6 +30,8 @@ public class RoomDTO {
     @NonNull
     Long hotelId;
 
+    String hotelName;
+
     @NotNull
     int roomNumber;
 
@@ -46,6 +49,7 @@ public class RoomDTO {
         return RoomDTO.builder()
                 .roomId(room.getId())
                 .hotelId(room.getHotel().getId())
+                .hotelName(room.getHotel().getName())
                 .roomNumber(room.getRoomNumber())
                 .price(room.getPrice())
                 .type(room.getType())

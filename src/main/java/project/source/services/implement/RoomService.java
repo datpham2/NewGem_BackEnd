@@ -13,6 +13,7 @@ import project.source.exceptions.ExistedException;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Hotel;
 import project.source.models.entities.Room;
+import project.source.models.enums.RoomType;
 import project.source.repositories.RoomRepository;
 import project.source.services.IRoomService;
 
@@ -51,15 +52,17 @@ public class RoomService implements IRoomService {
     public Room saveRoom(RoomDTO roomDTO) {
         Hotel hotel = hotelService.getHotelById(roomDTO.getHotelId());
         existed(hotel,roomDTO.getRoomNumber());
-        hotel.setNoRooms(hotel.getRooms().size());
-        Room room = Room.builder()
+        Room room = roomRepository.save(Room.builder()
                 .price(roomDTO.getPrice())
                 .guests(roomDTO.getGuests())
                 .type(roomDTO.getType())
                 .roomNumber(roomDTO.getRoomNumber())
                 .hotel(hotel)
-                .build();
-        return roomRepository.save(room);
+                .build());
+        hotel.setNoRooms(hotel.getRooms().size());
+        hotel.setPrices();
+        hotelService.saveHotel(hotel);
+        return room;
     }
 
     public void existed(Hotel hotel, int roomNumber){
@@ -84,7 +87,14 @@ public class RoomService implements IRoomService {
         updatedRoom.setGuests(roomDTO.getGuests());
         updatedRoom.setType(roomDTO.getType());
         updatedRoom.setPrice(roomDTO.getPrice());
-
+        hotel.setPrices();
+        hotelService.saveHotel(hotel);
         return roomRepository.save(updatedRoom);
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public Page<Room> getAllRoomByType(RoomType roomType, PageRequest pageRequest) {
+        return roomRepository.findAllByType(roomType, pageRequest);
     }
 }

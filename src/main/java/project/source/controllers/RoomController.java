@@ -14,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import project.source.dtos.RoomDTO;
 import project.source.models.entities.Room;
+import project.source.models.enums.RoomType;
 import project.source.respones.ApiResponse;
 
 import project.source.respones.PageResponse;
@@ -108,14 +109,28 @@ public class RoomController {
         }
     }
 
-//    @PatchMapping("/delete/{id}")
-//    public ResponseEntity<ApiResponse> disableHotel(@PathVariable(value = "id")Long id){
-//        hotelService.disableHotel(id);
-//        ApiResponse apiResponse = ApiResponse.builder()
-//                .status(HttpStatus.OK.value())
-//                .message("Disable successfully")
-//                .data(null)
-//                .build();
-//        return ResponseEntity.ok(apiResponse);
-//    }
+    @GetMapping("/type/{type}")
+    public ResponseEntity<ApiResponse> getAllRoomByType(
+            @PathVariable(value = "type") RoomType type,
+            @RequestParam(value = "page", defaultValue = "0") @Min(value = 0, message = "Page must be more than zero") int page,
+            @RequestParam(value = "size", defaultValue = "8") @Min(value = 1, message = "Page must be more than one") int size){
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Room> rooms = roomService.getAllRoomByType(type,pageRequest);
+        List<RoomDTO> items = rooms.stream().map(RoomDTO::fromRoom).toList();
+
+        PageResponse<List<RoomDTO>> response = PageResponse.<List<RoomDTO>>builder()
+                .totalPage(rooms.getTotalPages())
+                .pageNo(rooms.getNumber())
+                .pageSize(rooms.getSize())
+                .items(items)
+                .build();
+
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get all rooms successfully")
+                .data(response)
+                .build();
+
+        return ResponseEntity.ok(apiResponse);
+    }
 }

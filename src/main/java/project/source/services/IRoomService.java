@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import project.source.dtos.RoomDTO;
 import project.source.models.entities.Room;
+import project.source.models.enums.RoomType;
 
 
 @Service
@@ -18,4 +19,6 @@ public interface IRoomService {
     Room saveRoom(RoomDTO roomDTO);
 
     Room updateRoom(RoomDTO roomDTO, Long id);
+
+    Page<Room> getAllRoomByType(RoomType roomType,PageRequest pageRequest);
 }
