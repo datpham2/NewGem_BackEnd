@@ -1,7 +1,6 @@
 package project.source.dtos;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Digits;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import project.source.models.entities.*;
@@ -31,8 +30,6 @@ public class BillDTO {
 
     Long voucherId;
 
-    @NonNull
-    LocalDate checkOut;
 
     boolean isPaid;
 
@@ -49,13 +46,11 @@ public class BillDTO {
 
         bill.getTotalFee();
 
-
         BillDTO billDTO = BillDTO.builder()
                 .billId(bill.getId())
                 .hotelId(bill.getHotel().getId())
                 .userId(bill.getUser().getId())
                 .totalFee(bill.getTotalFee())
-                .checkOut(bill.getCheckOut())
                 .reservations(reservations)
                 .isPaid(bill.isPaid())
                 .newFee(bill.getNewFee())

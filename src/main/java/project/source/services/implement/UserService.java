@@ -19,10 +19,12 @@ import org.springframework.stereotype.Service;
 import project.source.exceptions.ExistedException;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Role;
+import project.source.models.entities.Token;
 import project.source.models.entities.User;
 import project.source.models.enums.Status;
 
 import project.source.repositories.RoleRepository;
+import project.source.repositories.TokenRepository;
 import project.source.repositories.UserRepository;
 import project.source.dtos.UserDTO;
 
@@ -40,7 +42,7 @@ public class UserService implements IUserService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
-
+    TokenRepository tokenRepository;
 
 
     @Override
@@ -93,7 +95,9 @@ public class UserService implements IUserService {
         User user = getUserById(userId);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
+
         if (user.getUsername().equals(currentUsername)) {
+            // Update user details
             user.setFirstName(userDTO.getFirstName());
             user.setLastName(userDTO.getLastName());
             user.setPhone(userDTO.getPhone());
@@ -102,6 +106,16 @@ public class UserService implements IUserService {
             user.setGender(userDTO.getGender());
             user.setUsername(userDTO.getUsername());
 
+            Optional<Token> optionalToken = tokenRepository.findByUsername(currentUsername);
+
+            if (optionalToken.isPresent()) {
+                Token token = optionalToken.get();
+                token.setUsername(userDTO.getUsername());
+                tokenRepository.save(token);
+            } else {
+                throw new NotFoundException("Token not found for the user with id " + userId);
+            }
+
             User updatedUser = userRepository.save(user);
             updatedUser.setPassword(null);
             return UserDTO.fromUser(updatedUser);
@@ -109,6 +123,7 @@ public class UserService implements IUserService {
             throw new AccessDeniedException("You do not have permission to access this user.");
         }
     }
+
 
 
     @Override

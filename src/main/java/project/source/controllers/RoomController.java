@@ -12,13 +12,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import project.source.dtos.HotelDTO;
 import project.source.dtos.RoomDTO;
+import project.source.exceptions.ConflictException;
+import project.source.exceptions.InvalidDataException;
+import project.source.models.entities.Hotel;
 import project.source.models.entities.Room;
+
+import project.source.models.enums.RoomType;
 import project.source.respones.ApiResponse;
 
+import project.source.respones.HotelResponse;
 import project.source.respones.PageResponse;
 import project.source.services.implement.RoomService;
 
+
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -65,6 +74,30 @@ public class RoomController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse> searchRoom(@RequestParam(name = "hotel", required = false) Long hotelId,
+                                                   @RequestParam(name = "type", required = false) RoomType type,
+                                                   @RequestParam(name = "max", required = false) BigDecimal maxPrice,
+                                                   @RequestParam(name = "page", defaultValue = "0") int page,
+                                                   @RequestParam(name = "size", defaultValue = "5") int size){
+        Page<Room> rooms = roomService.getRoomByHotelAndTypeAndPrice(hotelId,type,maxPrice,PageRequest.of(page,size));
+        List<RoomDTO> roomDTOList = rooms.getContent().stream().map(RoomDTO::fromRoom).toList();
+
+        PageResponse<List<RoomDTO>> response = PageResponse.<List<RoomDTO>>builder()
+                .totalPage(rooms.getTotalPages())
+                .pageNo(rooms.getNumber())
+                .pageSize(rooms.getSize())
+                .items(roomDTOList)
+                .build();
+
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Search successfully")
+                .data(response)
+                .build();
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
     @PostMapping("/createRoom")
     public ResponseEntity<ApiResponse> addRoom(@Valid @RequestBody RoomDTO roomDTO, BindingResult result){
         if(result.hasErrors()){
@@ -108,14 +141,28 @@ public class RoomController {
         }
     }
 
-//    @PatchMapping("/delete/{id}")
-//    public ResponseEntity<ApiResponse> disableHotel(@PathVariable(value = "id")Long id){
-//        hotelService.disableHotel(id);
-//        ApiResponse apiResponse = ApiResponse.builder()
-//                .status(HttpStatus.OK.value())
-//                .message("Disable successfully")
-//                .data(null)
-//                .build();
-//        return ResponseEntity.ok(apiResponse);
-//    }
+    @GetMapping("/type/{type}")
+    public ResponseEntity<ApiResponse> getAllRoomByType(
+            @PathVariable(value = "type") RoomType type,
+            @RequestParam(value = "page", defaultValue = "0") @Min(value = 0, message = "Page must be more than zero") int page,
+            @RequestParam(value = "size", defaultValue = "8") @Min(value = 1, message = "Page must be more than one") int size){
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Room> rooms = roomService.getAllRoomByType(type,pageRequest);
+        List<RoomDTO> items = rooms.stream().map(RoomDTO::fromRoom).toList();
+
+        PageResponse<List<RoomDTO>> response = PageResponse.<List<RoomDTO>>builder()
+                .totalPage(rooms.getTotalPages())
+                .pageNo(rooms.getNumber())
+                .pageSize(rooms.getSize())
+                .items(items)
+                .build();
+
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Get all rooms successfully")
+                .data(response)
+                .build();
+
+        return ResponseEntity.ok(apiResponse);
+    }
 }

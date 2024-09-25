@@ -10,6 +10,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import project.source.models.entities.Reviews;
+import project.source.models.entities.Voucher;
 import project.source.models.enums.Status;
 
 @Data
@@ -35,4 +37,14 @@ public class ReviewsDTO {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    public static ReviewsDTO fromReview(Reviews reviews){
+        return ReviewsDTO.builder()
+                .userId(reviews.getUser().getId())
+                .hotelId(reviews.getHotel().getId())
+                .comment(reviews.getComment())
+                .rating(reviews.getRating())
+                .status(reviews.getStatus())
+                .build();
+    }
 }
