@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import project.source.dtos.BlogDTO;
 import project.source.dtos.ImageDTO;
@@ -16,6 +18,7 @@ import project.source.models.enums.ImageDirectory;
 import project.source.models.enums.Status;
 import project.source.repositories.BlogRepository;
 import project.source.repositories.ImageRepository;
+import project.source.repositories.UserRepository;
 import project.source.services.IBlogService;
 
 import java.util.ArrayList;
@@ -31,6 +34,7 @@ public class BlogService implements IBlogService {
     private final ImageRepository imageRepository;
     private final UserService userService;
 
+
     @Override
     public Blog getBlogById(Long id){
         return blogRepository.findById(id).orElseThrow(()-> new NotFoundException("Can not resolve this blog ID"));
@@ -42,6 +46,7 @@ public class BlogService implements IBlogService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteBlog(Long id) {
         Blog blog = getBlogById(id);
         blog.setStatus(Status.INACTIVE);
@@ -54,9 +59,11 @@ public class BlogService implements IBlogService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public Blog saveBlog(BlogDTO blogDTO){
         List<Image> images = blogDTO.getImages();
         Set<Image> temp = new HashSet<>();
+
         User user = userService.getUserById(blogDTO.getUserId());
 
         Blog newblog = Blog.builder()
@@ -81,6 +88,7 @@ public class BlogService implements IBlogService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public Blog updateBlog(Long id, BlogDTO blogDTO) {
         Blog updatedBlog = getBlogById(id);
         userService.getUserById(blogDTO.getUserId());

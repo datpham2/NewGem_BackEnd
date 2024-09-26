@@ -3,11 +3,13 @@ package project.source.services.implement;
  * @autor An Nguyen
  */
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import project.source.dtos.HotelDTO;
+import project.source.exceptions.ConflictException;
 import project.source.exceptions.ExistedException;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Hotel;
@@ -21,6 +23,7 @@ import project.source.services.IHotelService;
 import java.math.BigDecimal;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class HotelService implements IHotelService {
@@ -64,9 +67,11 @@ public class HotelService implements IHotelService {
         if(hotel1 == null){
             throw new NotFoundException("Can't find hotel by id = "+ id);
         }else {
+            if (hotel1.getCity() != hotelDTO.getCity()){
+                throw new ConflictException("Can move hotel to another city");
+            }
             hotel1.setLocation(hotelDTO.getLocation());
             hotel1.setCity(hotelDTO.getCity());
-            hotel1.setName(hotelDTO.getName());
             return hotelRepository.save(hotel1);
         }
     }
