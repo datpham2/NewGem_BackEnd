@@ -20,4 +20,6 @@ public interface IBillService {
     List<Bill> getAllBillByUserIdAndHotelId(Long userId, Long hotelId);
 
     Bill payBill(PayRequest payRequest);
+
+    List<Bill> getAllBillByHotelId(Long hotelId);
 }

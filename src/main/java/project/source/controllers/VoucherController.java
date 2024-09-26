@@ -63,6 +63,19 @@ public class VoucherController {
                 .build();
         return ResponseEntity.ok(apiResponse);
     }
+
+//    @GetMapping
+//    public ResponseEntity<ApiResponse> getAllVoucherByHotel(@PathVariable(value = "hotel")Long id){
+//        List<Voucher> vouchers = voucherService.getVoucherByHotelId(id);
+//        ApiResponse apiResponse = ApiResponse.builder()
+//                .status(HttpStatus.OK.value())
+//                .message("Get all vouchers successfully")
+//                .data(vouchers)
+//                .build();
+//        return ResponseEntity.ok(apiResponse);
+//    }
+
+
     @PostMapping("/update/{id}")
     public ResponseEntity<ApiResponse> updateVoucher(@Valid @PathVariable Long id,
                                                      @RequestBody VoucherDTO voucherDTO,

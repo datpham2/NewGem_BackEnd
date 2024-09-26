@@ -6,12 +6,12 @@ package project.source.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.*;
 import lombok.*;
+import project.source.models.entities.Voucher;
 import project.source.models.enums.Status;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -21,9 +21,9 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class VoucherDTO {
-
-    @Min(value = 1, message = "Discount must be greater than 1")
-    private int discount;
+    @DecimalMin(value = "0.5", message = "Discount must be at least 0.5")
+    @DecimalMax(value = "1.0", message = "Discount must not exceed 1.0")
+    private BigDecimal discount;
 
     @FutureOrPresent(message = "Start Date must be one day in future")
     private LocalDate startDate;
@@ -36,4 +36,14 @@ public class VoucherDTO {
 
     @JsonProperty(value = "hotel_id")
     private Long hotelId;
+
+    public static VoucherDTO fromVoucher(Voucher voucher){
+        return VoucherDTO.builder()
+                .discount(voucher.getDiscount())
+                .startDate(voucher.getStartDate())
+                .endDate(voucher.getEndDate())
+                .status(voucher.getStatus())
+                .hotelId(voucher.getHotel().getId())
+                .build();
+    }
 }

@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import project.source.models.entities.Hotel;
+import project.source.models.enums.City;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +21,14 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
 
     Optional<Hotel> findByName(String name);
 
-    boolean existsByName(String name);
+    List<Hotel> findByCity(City city);
 
-    boolean existsByLocation(String location);
+    boolean existsByNameAndCity(String name, City city);
+
+    boolean existsByLocationAndCity(String location, City city);
+
+    @Query("SELECT h FROM Hotel h WHERE (:city IS NULL OR h.city = :city) " +
+            "AND (:maxPrice IS NULL OR h.maxPrice <= :maxPrice) " +
+            "AND (:minPrice IS NULL OR h.minPrice >= :minPrice)")
+    Page<Hotel> findByCityAndPriceRange(City city, BigDecimal minPrice, BigDecimal maxPrice, PageRequest pageRequest);
 }
