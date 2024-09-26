@@ -148,13 +148,13 @@ public class RoomController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping("/type/{type}")
+    @GetMapping("/type")
     public ResponseEntity<ApiResponse> getAllRoomByType(
-            @PathVariable(value = "type") RoomType type,
+            @RequestParam(value = "type", required = false) RoomType roomType,
             @RequestParam(value = "page", defaultValue = "0") @Min(value = 0, message = "Page must be more than zero") int page,
             @RequestParam(value = "size", defaultValue = "8") @Min(value = 1, message = "Page must be more than one") int size){
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Room> rooms = roomService.getAllRoomByType(type,pageRequest);
+        Page<Room> rooms = roomService.getAllRoomByType(roomType,pageRequest);
         List<RoomDTO> items = rooms.stream().map(RoomDTO::fromRoom).toList();
 
         PageResponse<List<RoomDTO>> response = PageResponse.<List<RoomDTO>>builder()
