@@ -52,8 +52,16 @@ public class HotelDTO {
     private Status status;
 
     public static HotelDTO fromHotel(Hotel hotel){
-        Set<VoucherDTO> vouchers = hotel.getVouchers().stream().map(VoucherDTO::fromVoucher).collect(Collectors.toSet());
-        Set<ReviewsDTO> reviews = hotel.getReviews().stream().map(ReviewsDTO::fromReview).collect(Collectors.toSet());
+        Set<VoucherDTO> vouchers = null;
+        Set<ReviewsDTO> reviews = null;
+
+        if (hotel.getVouchers() != null){
+            vouchers = hotel.getVouchers().stream().map(VoucherDTO::fromVoucher).collect(Collectors.toSet());
+        }
+
+        if (hotel.getReviews() != null){
+            reviews = hotel.getReviews().stream().map(ReviewsDTO::fromReview).collect(Collectors.toSet());
+        }
 
         return HotelDTO.builder()
                 .name(hotel.getName())

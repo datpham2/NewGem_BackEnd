@@ -12,17 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import project.source.dtos.HotelDTO;
 import project.source.dtos.RoomDTO;
-import project.source.exceptions.ConflictException;
-import project.source.exceptions.InvalidDataException;
-import project.source.models.entities.Hotel;
 import project.source.models.entities.Room;
 
 import project.source.models.enums.RoomType;
+import project.source.models.enums.Status;
 import project.source.respones.ApiResponse;
 
-import project.source.respones.HotelResponse;
 import project.source.respones.PageResponse;
 import project.source.services.implement.RoomService;
 
@@ -139,6 +135,17 @@ public class RoomController {
                     .build();
             return ResponseEntity.ok(apiResponse);
         }
+    }
+
+    @PatchMapping("/changeStatus/{id}")
+    public ResponseEntity<ApiResponse> disableHotel(@PathVariable(value = "id")Long id){
+        Status status = roomService.changeStatus(id);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message(status == Status.ACTIVE ? "Activate room successfully" : "Disable room successfully")
+                .data(null)
+                .build();
+        return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/type/{type}")

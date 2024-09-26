@@ -14,6 +14,7 @@ import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Hotel;
 import project.source.models.entities.Room;
 import project.source.models.enums.RoomType;
+import project.source.models.enums.Status;
 import project.source.repositories.RoomRepository;
 import project.source.services.IRoomService;
 
@@ -29,7 +30,6 @@ public class RoomService implements IRoomService {
     HotelService hotelService;
 
     @Override
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Page<Room> getAllRoom(PageRequest pageRequest) {
         return roomRepository.findAll(pageRequest);
     }
@@ -47,13 +47,11 @@ public class RoomService implements IRoomService {
 
 
     @Override
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Room getRoomById(Long id) {
         return roomRepository.findById(id).orElseThrow(()-> new NotFoundException("Can not find room with id: " + id));
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Page<Room> getAllRoomByHotelId(Long hotelId, PageRequest pageRequest) {
         hotelService.getHotelById(hotelId);
         return roomRepository.findAllByHotelId(hotelId,pageRequest);
@@ -70,6 +68,7 @@ public class RoomService implements IRoomService {
                 .type(roomDTO.getType())
                 .roomNumber(roomDTO.getRoomNumber())
                 .hotel(hotel)
+                .status(Status.ACTIVE)
                 .build());
         hotel.setNoRooms(hotel.getRooms().size());
         hotel.setPrices();
@@ -102,7 +101,14 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Status changeStatus(Long hotelId) {
+        Room room = getRoomById(hotelId);
+        room.setStatus(room.getStatus() == Status.ACTIVE ? Status.INACTIVE : Status.ACTIVE);
+        return roomRepository.save(room).getStatus();
+    }
+
+    @Override
     public Page<Room> getAllRoomByType(RoomType roomType, PageRequest pageRequest) {
         return roomRepository.findAllByType(roomType, pageRequest);
     }

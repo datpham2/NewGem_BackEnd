@@ -117,6 +117,7 @@ public class ApplicationInitConfig {
                 .price(BigDecimal.valueOf(10))
                 .type(RoomType.VIP)
                 .roomNumber(101)
+                .status(Status.ACTIVE)
                 .build();
 
         Page<Room> rooms = roomRepository.findAllByHotelId(hotel.getId(), pageRequest);
