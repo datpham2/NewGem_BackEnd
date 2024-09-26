@@ -93,6 +93,7 @@ public class AuthService implements IAuthService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .userId(user.getId())
+                .username(user.getUsername())
                 .build();
     }
 

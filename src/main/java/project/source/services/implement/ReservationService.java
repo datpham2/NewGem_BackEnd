@@ -101,6 +101,9 @@ public class ReservationService implements IReservationService {
         Room room = roomService.getRoomById(reservationDTO.getRoomId());
         User user = userService.getUserById(reservationDTO.getUserId());
 
+        if (room.getStatus() == Status.INACTIVE){
+            throw new ConflictException("Can not make a reservation in an inactive room");
+        }
         Reservation reservation = Reservation.builder()
                 .user(user)
                 .hotel(room.getHotel())

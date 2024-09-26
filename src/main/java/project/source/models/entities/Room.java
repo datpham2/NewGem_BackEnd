@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import project.source.models.enums.RoomType;
+import project.source.models.enums.Status;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -41,6 +42,10 @@ public class Room extends BaseEntity<Long>{
 
     @Column(name="guests")
     int guests;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    Status status;
 
     public boolean bookRoom(Reservation reservation) {
         if (isConflict(reservation)) {
