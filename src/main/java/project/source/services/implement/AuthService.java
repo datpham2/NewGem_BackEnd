@@ -65,6 +65,7 @@ public class AuthService implements IAuthService {
                 .refreshToken(refreshToken)
                 .username(user.getUsername())
                 .userId(user.getId())
+                .role(user.getRole().getName())
                 .build();
     }
 
@@ -94,6 +95,7 @@ public class AuthService implements IAuthService {
                 .refreshToken(refreshToken)
                 .userId(user.getId())
                 .username(user.getUsername())
+                .role(user.getRole().getName())
                 .build();
     }
 
