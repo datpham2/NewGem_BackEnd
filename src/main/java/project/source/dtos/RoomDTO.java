@@ -11,6 +11,7 @@ import project.source.exceptions.ConflictException;
 import project.source.models.entities.Reservation;
 import project.source.models.entities.Room;
 import project.source.models.enums.RoomType;
+import project.source.models.enums.Status;
 import project.source.repositories.HotelRepository;
 
 
@@ -46,6 +47,8 @@ public class RoomDTO {
 
     int guests;
 
+    Status status;
+
     public static RoomDTO fromRoom(Room room){
         return RoomDTO.builder()
                 .roomId(room.getId())
@@ -55,6 +58,7 @@ public class RoomDTO {
                 .price(room.getPrice())
                 .type(room.getType())
                 .guests(room.getGuests())
+                .status(room.getStatus())
                 .build();
     }
 }

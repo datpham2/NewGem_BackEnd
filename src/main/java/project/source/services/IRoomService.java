@@ -7,6 +7,7 @@ import project.source.dtos.RoomDTO;
 import project.source.models.entities.Hotel;
 import project.source.models.entities.Room;
 import project.source.models.enums.RoomType;
+import project.source.models.enums.Status;
 
 import java.math.BigDecimal;
 
@@ -22,6 +23,8 @@ public interface IRoomService {
     Page<Room> getAllRoomByHotelId(Long hotelId, PageRequest pageRequest);
 
     Room saveRoom(RoomDTO roomDTO);
+
+    Status changeStatus(Long id);
 
     Room updateRoom(RoomDTO roomDTO, Long id);
 
