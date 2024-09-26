@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import project.source.models.entities.Role;
 
 @Getter
 @Setter
@@ -15,5 +16,9 @@ public class TokenResponse {
 
     String refreshToken;
 
+    String username;
+
     Long userId;
+
+    String role;
 }

@@ -33,7 +33,8 @@ public class Reviews extends BaseEntity<Long>{
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
     @JsonIgnore
+
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 }

@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import project.source.models.enums.RoomType;
+import project.source.models.enums.Status;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +30,7 @@ public class Room extends BaseEntity<Long>{
     int roomNumber;
 
     @Column(name="price", nullable = false)
-    double price;
+    BigDecimal price;
 
     @Column(name = "room_type",nullable = false)
     @Enumerated(EnumType.STRING)
@@ -41,6 +43,10 @@ public class Room extends BaseEntity<Long>{
     @Column(name="guests")
     int guests;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    Status status;
+
     public boolean bookRoom(Reservation reservation) {
         if (isConflict(reservation)) {
             return false;
@@ -50,19 +56,6 @@ public class Room extends BaseEntity<Long>{
         }
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Room ID: ").append(id).append("\n");
-        sb.append("Reservations:\n");
-        for (Reservation reservation : reservations) {
-            sb.append("Reservation ID: ").append(reservation.getId()).append(", ");
-            sb.append("Check in: ").append(reservation.getCheckIn()).append(", ");
-            sb.append("Check out: ").append(reservation.getCheckOut()).append(", ");
-            sb.append("Customer ID: ").append(reservation.getUser()).append("\n");
-        }
-        return sb.toString();
-    }
 
     public boolean isBooked(LocalDate date) {
         for (Reservation booking : reservations) {

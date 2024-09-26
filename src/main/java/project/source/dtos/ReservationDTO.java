@@ -22,7 +22,6 @@ public class ReservationDTO {
     @Future(message = "Check out date must be in the future")
     LocalDate checkOut;
 
-    @NotNull
     Long hotelId;
 
     @NonNull

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import project.source.requests.RefreshRequest;
 import project.source.requests.ResetPasswordRequest;
 import project.source.requests.SignInRequest;
 import project.source.respones.ApiResponse;
@@ -43,25 +44,25 @@ public class AuthController {
     @Operation(
             method = "POST",
             summary = "Refresh token",
-            description = "Post the refresh token in the header Referer to get a new access token")
-    @Parameter(name = "Referer", in = ParameterIn.HEADER, required = true, description = "JWT token")
+            description = "Post the refresh token in the body to get a new access token")
     @PostMapping("/refreshtoken")
-    public ResponseEntity<TokenResponse> refreshToken(HttpServletRequest request) {
-        return new ResponseEntity<>(authService.refreshToken(request), HttpStatus.ACCEPTED);
+    public ResponseEntity<TokenResponse> refreshToken(@RequestBody RefreshRequest refreshRequest) {
+        return new ResponseEntity<>(authService.refreshToken(refreshRequest), HttpStatus.ACCEPTED);
     }
+
 
     @Operation(
             method = "POST",
             summary = "Remove token for logout",
             description = "Post the access token in the header referer to remove the token from the db"
     )
-    @PostMapping("/removetoken")
-    public ResponseEntity<ApiResponse> removeToken(HttpServletRequest request) {
-        authService.removeToken(request);
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> removeToken(@RequestBody RefreshRequest refreshRequest) {
+        authService.removeToken(refreshRequest);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.builder()
                         .status(HttpStatus.OK.value())
-                        .message("Token removed")
+                        .message("Log out successfully")
                         .build());
     }
 
@@ -72,9 +73,9 @@ public class AuthController {
     @PostMapping("/forgotpassword")
     public ResponseEntity<ApiResponse> forgotPassword(@RequestBody String username) {
         String resetToken = authService.forgotPassword(username);
-        return ResponseEntity.status(HttpStatus.ACCEPTED)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.builder()
-                        .status(HttpStatus.ACCEPTED.value())
+                        .status(HttpStatus.CREATED.value())
                         .message("Reset token createad successfull")
                         .data(resetToken)
                         .build());
@@ -88,9 +89,9 @@ public class AuthController {
     @PostMapping("/changepassword")
     public ResponseEntity<ApiResponse> changePassword(@RequestBody @Valid ResetPasswordRequest request) {
         authService.changePassword(request);
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body(ApiResponse.builder()
-                        .status(HttpStatus.OK.value())
+                        .status(HttpStatus.ACCEPTED.value())
                         .message("Password changed successfully")
                         .build());
     }

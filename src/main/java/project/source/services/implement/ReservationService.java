@@ -93,18 +93,20 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Reservation saveReservation(ReservationDTO reservationDTO) {
         if (reservationDTO.getCheckOut().isBefore(reservationDTO.getCheckIn())){
             throw new ConflictException("Check out date can not be before check in date");
         }
         Room room = roomService.getRoomById(reservationDTO.getRoomId());
         User user = userService.getUserById(reservationDTO.getUserId());
-        Hotel hotel = hotelService.getHotelById(reservationDTO.getHotelId());
 
+        if (room.getStatus() == Status.INACTIVE){
+            throw new ConflictException("Can not make a reservation in an inactive room");
+        }
         Reservation reservation = Reservation.builder()
                 .user(user)
-                .hotel(hotel)
+                .hotel(room.getHotel())
                 .room(room)
                 .status(Status.ACTIVE)
                 .adults(reservationDTO.getAdults())
@@ -125,7 +127,7 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public void updateReservation(ReservationDTO reservationDTO, Long reservationId) {
         Reservation updatedReservation = getReservationById(reservationId);
         updatedReservation.setAdults(reservationDTO.getAdults());
@@ -143,7 +145,7 @@ public class ReservationService implements IReservationService {
         reservationRepository.save(updatedReservation);
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public void deleteReservations(List<Long> reservationIds) {
         List<Exception> exceptions = new ArrayList<>();
         for (Long id : reservationIds){

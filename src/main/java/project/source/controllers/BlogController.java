@@ -17,10 +17,11 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.source.dtos.BlogDTO;
+import project.source.dtos.RoomDTO;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Blog;
 import project.source.respones.ApiResponse;
-import project.source.respones.BlogListResponse;
+import project.source.respones.PageResponse;
 import project.source.services.implement.BlogService;
 
 import java.io.IOException;
@@ -33,22 +34,24 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BlogController {
     private final BlogService blogService;
-    private final ImageController imageController;
-
-
     @GetMapping("")
     public ResponseEntity<ApiResponse> getBlogsToPages(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size ){
         Pageable pageable = PageRequest.of(page, size);
         Page<Blog> blogsPage = blogService.getBlogs(pageable);
-        BlogListResponse blogListResponse = BlogListResponse.builder()
-                .blogList(blogsPage.getContent())
+        List<BlogDTO> roomDTOList = blogsPage.getContent().stream().map(BlogDTO::fromBlog).toList();
+
+        PageResponse<List<BlogDTO>> response = PageResponse.<List<BlogDTO>>builder()
                 .totalPage(blogsPage.getTotalPages())
+                .pageNo(blogsPage.getNumber())
+                .pageSize(blogsPage.getSize())
+                .items(roomDTOList)
                 .build();
+
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
-                .data(blogListResponse)
+                .data(response)
                 .build();
 
         return ResponseEntity.ok(apiResponse);
@@ -56,11 +59,13 @@ public class BlogController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> index(@PathVariable(value = "id" ) Long id) {
-        ApiResponse apiResponse = ApiResponse.builder()
+        Blog blog = blogService.getBlogById(id);
+        ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
-                .data(blogService.getBlogById(id))
+                .message("Successfully get blog by id " + id)
+                .data(BlogDTO.fromBlog(blog))
                 .build();
-        return ResponseEntity.ok().body(apiResponse);
+        return ResponseEntity.ok().body(response);
     }
 
 
@@ -75,7 +80,7 @@ public class BlogController {
         return ResponseEntity.ok().body(ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                         .message("Blog submit successfully ")
-                .data(blog)
+                .data(BlogDTO.fromBlog(blog))
                 .build());
 //        return ResponseEntity.ok( "Blog submit successfully " + blog.toString());
     }
@@ -97,7 +102,7 @@ public class BlogController {
             throw new NotFoundException("Can not resolve blog id: " + id);
         }
         ApiResponse apiResponse = ApiResponse.builder()
-                .data(updatedBlog)
+                .data(BlogDTO.fromBlog(updatedBlog))
                 .message("Edit blog successfully")
                 .status(HttpStatus.OK.value())
                 .build();
@@ -116,7 +121,4 @@ public class BlogController {
                 .build();
         return ResponseEntity.ok(response);
     }
-
-
-
 }

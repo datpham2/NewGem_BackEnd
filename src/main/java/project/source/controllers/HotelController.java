@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import project.source.dtos.HotelDTO;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Hotel;
+import project.source.models.enums.City;
 import project.source.respones.ApiResponse;
 import project.source.respones.HotelResponse;
+import project.source.respones.PageResponse;
 import project.source.services.implement.HotelService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -57,6 +60,28 @@ public class HotelController {
         return ResponseEntity.ok(apiResponse);
     }
 
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse> searchHotel(@RequestParam(name = "city", required = false) City city,
+                                                   @RequestParam(name = "min", required = false) BigDecimal minPrice,
+                                                   @RequestParam(name = "max", required = false) BigDecimal maxPrice,
+                                                   @RequestParam(name = "min", defaultValue = "0") int page,
+                                                   @RequestParam(name = "min", defaultValue = "5") int size){
+        Page<Hotel> hotels = hotelService.getHotelByCityAndPriceRange(city,minPrice,maxPrice,PageRequest.of(page,size));
+        List<HotelDTO> hotelList = hotels.getContent().stream().map(HotelDTO::fromHotel).toList();
+
+        HotelResponse hotelResponse = HotelResponse.builder()
+                .totalPage(hotels.getTotalPages())
+                .hotel(hotelList)
+                .build();
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Search successfully")
+                .data(hotelResponse)
+                .build();
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
     @PostMapping("/createHotel")
     public ResponseEntity<ApiResponse> createHotel(@Valid @RequestBody HotelDTO hotelDTO, BindingResult result){
         if(result.hasErrors()){
@@ -68,7 +93,6 @@ public class HotelController {
                     .build();
             return ResponseEntity.badRequest().body(apiResponse);
         }else {
-            hotelDTO.validatePrices();
             Hotel hotel = hotelService.saveHotel(hotelDTO);
             ApiResponse apiResponse = ApiResponse.builder()
                     .data(HotelDTO.fromHotel(hotel))
@@ -90,7 +114,6 @@ public class HotelController {
                     .build();
             return ResponseEntity.badRequest().body(apiResponse);
         }else {
-            hotelDTO.validatePrices();
             Hotel hotel = hotelService.getHotelById(id);
             if(hotel == null){
                 throw new NotFoundException("Not Found Hotel with ID = "+ id);
@@ -105,7 +128,7 @@ public class HotelController {
         }
     }
 
-    @PatchMapping("/delete/{id}")
+    @PatchMapping("/disable/{id}")
     public ResponseEntity<ApiResponse> disableHotel(@PathVariable(value = "id")Long id){
         hotelService.disableHotel(id);
         ApiResponse apiResponse = ApiResponse.builder()

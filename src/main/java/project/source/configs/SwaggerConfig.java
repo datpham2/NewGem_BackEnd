@@ -36,6 +36,8 @@ public class SwaggerConfig {
         apiGroups.put("reservation", "/reservation/**");
         apiGroups.put("reviews", "/reviews/**");
         apiGroups.put("voucher", "/voucher/**");
+        apiGroups.put("image", "/image/**");
+        apiGroups.put("blog", "/blog/**");
         return apiGroups;
     }
 

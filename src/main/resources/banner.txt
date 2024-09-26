@@ -10,4 +10,4 @@
  Made by Duy Khanh
 
  Backend: https://github.com/datpham2/NewGem_BackEnd
- Frontend: https://github.com/datpham2/NewGem_FrontEnd
+ Frontend: https://github.com/AnNguyen1998/NewGem_FrontEnd
