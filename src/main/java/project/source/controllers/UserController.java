@@ -43,8 +43,8 @@ public class UserController {
     @Operation(
             method = "POST",
             summary = "Add new user",
-            description = "Send a first name, last name, phone number, email," +
-                    "username, password, gender" +
+            description = "Send first name, last name, phone number, email," +
+                    "username, password, gender, date of birth" +
                     "via this API to create a new user then go to your email to activate the account")
     @PostMapping("addUser")
     public ResponseEntity<ApiResponse> addUser(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) throws MessagingException, UnsupportedEncodingException {
@@ -79,8 +79,7 @@ public class UserController {
     @Operation(
             method = "GET",
             summary = "Get the user by id",
-            description = "Send a request via this API to get the user with path variable id"
-    )
+            description = "Send a request via this API to get the user with path variable id")
     @GetMapping("getUser/{id}")
     public ResponseEntity<ApiResponse> getUser(@PathVariable long id) {
         User user = userService.getUserById(id);
@@ -96,8 +95,7 @@ public class UserController {
     @Operation(
             method = "GET",
             summary = "Get all users",
-            description = "Send a request via this API to retrieve all users"
-    )
+            description = "Send a request via this API to retrieve all users")
     @GetMapping("getAllUser")
     public ResponseEntity<ApiResponse> getAllUser(
             @RequestParam(name = "page", defaultValue = "0") @Min(value = 0, message = "Page must be greater than or equal to 0") int page,
@@ -127,8 +125,9 @@ public class UserController {
     @Operation(
             method = "PUT",
             summary = "Update user",
-            description = "Send a request via this API to update user"
-    )
+            description = "Send a request include" +
+                    "first name, last name, phone, dateOfBirth, gender, username" +
+                    "via this API to update user with path variable id")
     @PutMapping("updateUser/{id}")
     public ResponseEntity<ApiResponse> updateUser(@PathVariable long id, @Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -159,7 +158,7 @@ public class UserController {
             description = "Send a request via this API to change the status of the user"
     )
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("changeStatus/{id}")
+    @PatchMapping("changeStatus/{id}")
     public ResponseEntity<ApiResponse> updateUserStatus(@PathVariable Long id) {
         userService.changeStatus(id);
         ApiResponse response = ApiResponse.builder()
@@ -170,11 +169,10 @@ public class UserController {
     }
 
     @Operation(
-            method = "POST",
+            method = "PATCH",
             summary = "Disable user",
-            description = "Send a request via this API to disable user"
-    )
-    @PostMapping("disableUser/{id}")
+            description = "Send a request via this API to disable user")
+    @PatchMapping("disableUser/{id}")
     public ResponseEntity<ApiResponse> disableUser(@PathVariable long id) {
         userService.disableUser(id);
         ApiResponse response = ApiResponse.builder()

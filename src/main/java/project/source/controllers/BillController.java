@@ -1,5 +1,6 @@
 package project.source.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import lombok.AccessLevel;
@@ -28,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/bill")
 @RequiredArgsConstructor
+@Tag(name = "Bill", description = "Operations related to bills")
 @FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
 public class BillController {
     BillService billService;
