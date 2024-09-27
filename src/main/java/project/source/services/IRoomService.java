@@ -16,8 +16,6 @@ import java.math.BigDecimal;
 public interface IRoomService {
     Page<Room> getAllRoom(PageRequest pageRequest);
 
-    Page<Room> getRoomByHotelAndTypeAndPrice(Long hotelId, RoomType type, BigDecimal maxPrice, PageRequest pageRequest);
-
     Room getRoomById(Long id);
 
     Page<Room> getAllRoomByHotelId(Long hotelId, PageRequest pageRequest);
@@ -29,4 +27,6 @@ public interface IRoomService {
     Room updateRoom(RoomDTO roomDTO, Long id);
 
     Page<Room> getAllRoomByType(RoomType roomType,PageRequest pageRequest);
+
+    Page<Room> getRoomByHotelAndTypeAndPriceAndStatus(Long hotelId, RoomType type, BigDecimal maxPrice, Status status, PageRequest pageRequest);
 }

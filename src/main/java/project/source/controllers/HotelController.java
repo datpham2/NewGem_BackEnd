@@ -18,6 +18,7 @@ import project.source.dtos.HotelDTO;
 import project.source.exceptions.NotFoundException;
 import project.source.models.entities.Hotel;
 import project.source.models.enums.City;
+import project.source.models.enums.Status;
 import project.source.respones.ApiResponse;
 import project.source.respones.HotelResponse;
 import project.source.respones.PageResponse;
@@ -76,9 +77,10 @@ public class HotelController {
     public ResponseEntity<ApiResponse> searchHotel(@RequestParam(name = "city", required = false) City city,
                                                    @RequestParam(name = "min", required = false) BigDecimal minPrice,
                                                    @RequestParam(name = "max", required = false) BigDecimal maxPrice,
+                                                   @RequestParam(name = "status", required = false) Status status,
                                                    @RequestParam(name = "min", defaultValue = "0") int page,
                                                    @RequestParam(name = "min", defaultValue = "5") int size){
-        Page<Hotel> hotels = hotelService.getHotelByCityAndPriceRange(city,minPrice,maxPrice,PageRequest.of(page,size));
+        Page<Hotel> hotels = hotelService.getHotelByCityAndPriceRange(city,minPrice,maxPrice,status,PageRequest.of(page,size));
         List<HotelDTO> hotelList = hotels.getContent().stream().map(HotelDTO::fromHotel).toList();
 
         HotelResponse hotelResponse = HotelResponse.builder()
