@@ -21,6 +21,7 @@ import project.source.models.enums.Status;
 @Getter
 @Builder
 public class ReviewsDTO {
+    private Long reviewId;
 
     @JsonProperty(value = "user_id")
     private Long userId;
@@ -40,6 +41,7 @@ public class ReviewsDTO {
 
     public static ReviewsDTO fromReview(Reviews reviews){
         return ReviewsDTO.builder()
+                .reviewId(reviews.getId())
                 .userId(reviews.getUser().getId())
                 .hotelId(reviews.getHotel().getId())
                 .comment(reviews.getComment())

@@ -21,6 +21,8 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class VoucherDTO {
+    private Long voucherId;
+
     @DecimalMin(value = "0.5", message = "Discount must be at least 0.5")
     @DecimalMax(value = "1.0", message = "Discount must not exceed 1.0")
     private BigDecimal discount;
@@ -37,8 +39,10 @@ public class VoucherDTO {
     @JsonProperty(value = "hotel_id")
     private Long hotelId;
 
+
     public static VoucherDTO fromVoucher(Voucher voucher){
         return VoucherDTO.builder()
+                .voucherId(voucher.getId())
                 .discount(voucher.getDiscount())
                 .startDate(voucher.getStartDate())
                 .endDate(voucher.getEndDate())
