@@ -54,8 +54,7 @@ public class AuthController {
     @Operation(
             method = "POST",
             summary = "Remove token for logout",
-            description = "Post the access token in the header referer to remove the token from the db"
-    )
+            description = "Post the refresh token to remove the token from the db")
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse> removeToken(@RequestBody RefreshRequest refreshRequest) {
         authService.removeToken(refreshRequest);
@@ -65,6 +64,7 @@ public class AuthController {
                         .message("Log out successfully")
                         .build());
     }
+
 
     @Operation(
             method = "POST",
@@ -85,7 +85,7 @@ public class AuthController {
     @Operation(
             method = "POST",
             summary = "Change password",
-            description = "Post the reset token as secretkey, new password and confirm password to change password")
+            description = "Post the reset token as secret key, new password and confirm password to change password, password and confirm password must be the same")
     @PostMapping("/changepassword")
     public ResponseEntity<ApiResponse> changePassword(@RequestBody @Valid ResetPasswordRequest request) {
         authService.changePassword(request);

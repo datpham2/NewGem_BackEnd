@@ -82,6 +82,15 @@ public class HotelController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/totalHotel")
+    public ResponseEntity<ApiResponse> getTotalHotels(){
+        return ResponseEntity.ok(ApiResponse.builder()
+                        .message("Get total hotel successfully")
+                        .status(HttpStatus.OK.value())
+                        .data(hotelService.getTotalHotels())
+                .build());
+    }
+
     @PostMapping("/createHotel")
     public ResponseEntity<ApiResponse> createHotel(@Valid @RequestBody HotelDTO hotelDTO, BindingResult result){
         if(result.hasErrors()){
