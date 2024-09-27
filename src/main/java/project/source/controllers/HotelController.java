@@ -37,8 +37,8 @@ public class HotelController {
 
     @Operation(
             method = "GET",
-            summary = "Get all the hotels",
-            description = "Send a request to get all the hotel")
+            summary = "Get all the hotels (might need admin authentication)",
+            description = "Send a request to get all the hotel data ")
     @GetMapping("/allHotel")
     public ResponseEntity<ApiResponse> getAllHotel(@RequestParam(value = "page", defaultValue = "0")int page
                                         ,@RequestParam(value = "size", defaultValue = "8")int size){
@@ -59,7 +59,7 @@ public class HotelController {
 
     @Operation(
             method = "GET",
-            summary = "Get hotel by id",
+            summary = "Get hotel by id (might need admin authentication)",
             description = "Send a request to get the hotel with the path variable id")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getHotelDetail(@PathVariable(value = "id")Long id){
@@ -72,7 +72,10 @@ public class HotelController {
         return ResponseEntity.ok(apiResponse);
     }
 
-
+    @Operation(
+            method = "GET",
+            summary =  "Get hotel with address, prices and page size (might need admin authentication)",
+            description = "Send a request to get the hotel data with corresponding parameters ('City', 'minPrice', 'maxPrice' and 'totalPage') ")
     @GetMapping("/search")
     public ResponseEntity<ApiResponse> searchHotel(@RequestParam(name = "city", required = false) City city,
                                                    @RequestParam(name = "min", required = false) BigDecimal minPrice,
@@ -95,6 +98,10 @@ public class HotelController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
+    @Operation(
+            method = "GET",
+            summary = "Get the total number of hotels exist in the database (need admin authentication)",
+            description = "Send a request to get the value of 'TotalHotels'")
     @GetMapping("/totalHotel")
     public ResponseEntity<ApiResponse> getTotalHotels(){
         return ResponseEntity.ok(ApiResponse.builder()
@@ -103,7 +110,10 @@ public class HotelController {
                         .data(hotelService.getTotalHotels())
                 .build());
     }
-
+    @Operation(
+            method = "POST",
+            summary = "Post the hotel body to create a new hotel object",
+            description = "Send a request with hotel body ('name', 'location', 'city') to build and save a new object for class 'Hotel', respond with a rejecting message if not valid" )
     @PostMapping("/createHotel")
     public ResponseEntity<ApiResponse> createHotel(@Valid @RequestBody HotelDTO hotelDTO, BindingResult result){
         if(result.hasErrors()){
@@ -124,6 +134,11 @@ public class HotelController {
             return ResponseEntity.ok(apiResponse);
         }
     }
+
+    @Operation(
+            method = "PUT",
+            summary = "Put the new hotel body to an existed hotel",
+            description = "Send a request to find and save a new body ('name', 'location') for a targeted 'hotelId', respond with a rejecting message if not valid" )
     @PutMapping("/updateHotel/{id}")
     public ResponseEntity<ApiResponse> updateHotel(@Valid @RequestBody HotelDTO hotelDTO, @PathVariable(value = "id")Long id,
                                                    BindingResult result){
@@ -150,6 +165,10 @@ public class HotelController {
         }
     }
 
+    @Operation(
+            method = "PATCH",
+            summary = "Patch an existed hotel to disable it",
+            description = "Send a request to find and nullify the data of a targeted 'hotelId' " )
     @PatchMapping("/disable/{id}")
     public ResponseEntity<ApiResponse> disableHotel(@PathVariable(value = "id")Long id){
         hotelService.disableHotel(id);
@@ -161,6 +180,10 @@ public class HotelController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(
+            method = "GET",
+            summary = "Get hotel with the corresponding name ",
+            description = "Send a request to get the hotel data with corresponding parameters ('name', 'totalPages')  ")
     @GetMapping("/searchHotelByName")
     public ResponseEntity<ApiResponse> searchByNameHotel(@RequestParam(value = "name", defaultValue = "%")String name,
                                                          @RequestParam(value = "page",defaultValue = "0")int page,

@@ -1,5 +1,6 @@
 package project.source.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,10 @@ public class ImageController {
 //    private final HotelService hotelService;
 //    private final RoomService roomService;
 
+    @Operation(
+            method = "GET",
+            summary = "Get all images in the database (might need admin authentication)" ,
+            description = "Send a request to get all the images data ('imageId', 'imageURL', 'imageDirectory') existed in the database")
     @GetMapping("")
     public ResponseEntity<ApiResponse> getImagesToPages(
             @RequestParam(defaultValue = "0") int page,
@@ -69,6 +74,11 @@ public class ImageController {
 //        return ResponseEntity.ok(apiResponse);
 //    }
 
+
+    @Operation(
+            method = "POST",
+            summary = "Post the image body to create a new image",
+            description = "Send a request with image body ('imageId', 'imageURL', 'imageDirectory') to build and save a new object for class 'Image')")
     @PostMapping("")
     public ResponseEntity<?> createImage(@Valid @RequestBody Long id, ImageDTO imageDTO, ImageDirectory imageDirectory, BindingResult result) {
         if (result.hasErrors()) {
@@ -80,6 +90,10 @@ public class ImageController {
         return ResponseEntity.ok("Add picture successfully " + image.toString());
     }
 
+    @Operation(
+            method = "PUT",
+            summary = "Put the new image body to an existed image",
+            description = "Send a request to find and save a new body ('imageId', 'imageURL', 'imageDirectory') for a targeted 'imageId', respond with a rejecting message if not valid" )
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> updateStudent(@PathVariable Long id, @Valid @RequestBody ImageDTO imageDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -104,6 +118,10 @@ public class ImageController {
         return ResponseEntity.ok().body(apiResponse);
     }
 
+    @Operation(
+            method = "DELETE",
+            summary = "Set an image status to inactive",
+            description = "Send a request to set the 'status' enumerate from a targeted 'imageId' to 'INACTIVE'" )
     @DeleteMapping("deleteImage/{id}")
     public ResponseEntity<ApiResponse> deleteImage(@PathVariable long id) {
         imageService.deleteImage(id);
@@ -114,7 +132,10 @@ public class ImageController {
         return ResponseEntity.ok(response);
     }
 
-
+    @Operation(
+            method = "POST",
+            summary = "upload an image to the database",
+            description = "Send a request to upload a file to the local server as an object and store it under an 'imageId'" )
     @PostMapping(value = "/uploadsImage/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse> uploadImage(@PathVariable(value = "id") Long id, @RequestParam(value = "source") ImageDirectory imageDirectory,@ModelAttribute("files") List<MultipartFile> files) throws IOException {
         List<Image> Images = new ArrayList<>();
@@ -158,7 +179,10 @@ public class ImageController {
         return uniqueFileName;
     }
 
-
+    @Operation(
+            method = "GET",
+            summary = "Get an image with its name",
+            description = "Send a request to get the image data with corresponding parameters ('imageName') " )
     @GetMapping("getimage/{imageName}")
     public ResponseEntity<?> viewImage(@PathVariable String imageName) {
         try {

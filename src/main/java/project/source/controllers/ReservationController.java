@@ -1,5 +1,6 @@
 package project.source.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -31,6 +32,10 @@ import java.util.stream.Collectors;
 public class ReservationController {
     ReservationService reservationService;
 
+    @Operation(
+            method = "GET",
+            summary = "Get all reservation for a room",
+            description = "Send a request to get all the reservation data ('checkIn', 'checkOut', 'hotelId', 'roomId', 'userId', 'adults', 'children', 'billId') with the targeted 'roomId'")
     @GetMapping("/allRooms/{roomId}")
     public ResponseEntity<ApiResponse> getAllRoomByRoomId(
             @PathVariable(value = "roomId") Long roomId,
@@ -58,6 +63,10 @@ public class ReservationController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(
+            method = "GET",
+            summary = "Get all reservation from a user",
+            description = "Send a request to get all the reservation data ('checkIn', 'checkOut', 'hotelId', 'roomId', 'userId', 'adults', 'children', 'billId') with the targeted 'userId'")
     @GetMapping("/allUsers/{userId}")
     public ResponseEntity<ApiResponse> getAllRoomByUserId(
             @PathVariable(value = "userId") Long userId,
@@ -77,6 +86,10 @@ public class ReservationController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(
+            method = "GET",
+            summary = "Get all data with an ID ",
+            description = "Send a request to get all the reservation data ('checkIn', 'checkOut', 'hotelId', 'roomId', 'userId', 'adults', 'children', 'billId') with the targeted 'reservationId'")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getReservationById(@PathVariable(value = "id")Long id){
         Reservation reservation = reservationService.getReservationById(id);
@@ -88,9 +101,13 @@ public class ReservationController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(
+            method = "POST",
+            summary = "Post the reservation body to create a new reservation",
+            description = "Send a request with reservation body ('checkIn', 'checkOut', 'hotelId', 'roomId', 'userId', 'adults', 'children', 'billId') to build and save a new object for class 'Reservation', respond with a rejecting message if not valid" )
     @PostMapping("/bookRoom")
-    public ResponseEntity<ApiResponse> makeReservation(@Valid @RequestBody ReservationDTO reservationDTO, BindingResult result){
-        if(result.hasErrors()){
+    public ResponseEntity<ApiResponse> makeReservation(@Valid @RequestBody ReservationDTO reservationDTO, BindingResult result) {
+        if (result.hasErrors()) {
             List<String> err = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
             ApiResponse apiResponse = ApiResponse.builder()
                     .message("Can't create reservation")
@@ -98,17 +115,21 @@ public class ReservationController {
                     .status(HttpStatus.BAD_REQUEST.value())
                     .build();
             return ResponseEntity.badRequest().body(apiResponse);
-        }else {
+        } else {
             Reservation newReservation = reservationService.saveReservation(reservationDTO);
-                ApiResponse apiResponse = ApiResponse.builder()
-                        .message("Create successfully")
-                        .data(ReservationDTO.fromReservation(newReservation))
-                        .status(HttpStatus.CREATED.value())
-                        .build();
-                return ResponseEntity.ok(apiResponse);
-            }
+            ApiResponse apiResponse = ApiResponse.builder()
+                    .message("Create successfully")
+                    .data(ReservationDTO.fromReservation(newReservation))
+                    .status(HttpStatus.CREATED.value())
+                    .build();
+            return ResponseEntity.ok(apiResponse);
         }
+    }
 
+    @Operation(
+            method = "POST",
+            summary = "Post the reservation body to create multiple reservations",
+            description = "Send a request with multiple reservation bodies ('checkIn', 'checkOut', 'hotelId', 'roomId', 'userId', 'adults', 'children', 'billId') as a list to build and save a new object for class 'Reservation', respond with a rejecting message if not valid" )
     @PostMapping("/bookRooms")
     public ResponseEntity<ApiResponse> makeReservations(@Valid @RequestBody List<ReservationDTO> reservationDTOs, BindingResult result){
         if(result.hasErrors()){
@@ -142,6 +163,10 @@ public class ReservationController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(
+            method = "DELETE",
+            summary = "Delete an existed reservation by nullify its data",
+            description = "Send a request to find and nullify the data of a targeted list of 'reservationId' " )
     @DeleteMapping("/cancels")
     public ResponseEntity<ApiResponse> cancelReservations(@RequestBody List<Long> ids) {
         reservationService.deleteReservations(ids);
