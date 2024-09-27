@@ -15,7 +15,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     List<Room> findAllByHotelId(Long hotelId);
 
-    Page<Room> findAllByType(RoomType roomType, PageRequest pageable);
+    @Query("SELECT r FROM Room r WHERE (:type IS NULL OR r.type = :type)")
+    Page<Room> findAllByType(RoomType type, PageRequest pageRequest);
 
     @Query("SELECT r FROM Room r WHERE (:hotel IS NULL OR r.hotel.id = :hotel) " +
             "AND (:type IS NULL OR r.type = :type) " +

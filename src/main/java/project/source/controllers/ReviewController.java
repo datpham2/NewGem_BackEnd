@@ -2,6 +2,7 @@ package project.source.controllers;
 /**
  * @autor An Nguyen
  */
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reviews")
+@Tag(name = "Review", description = "Operations related to reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;

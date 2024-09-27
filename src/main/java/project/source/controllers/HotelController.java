@@ -3,6 +3,8 @@ package project.source.controllers;
  * @author An Nguyen
  */
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,9 +30,14 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/hotel")
+@Tag(name = "Hotel", description = "Operations related to hotels")
 public class HotelController {
     private final HotelService hotelService;
 
+    @Operation(
+            method = "GET",
+            summary = "Get all the hotels",
+            description = "Send a request to get all the hotel")
     @GetMapping("/allHotel")
     public ResponseEntity<ApiResponse> getAllHotel(@RequestParam(value = "page", defaultValue = "0")int page
                                         ,@RequestParam(value = "size", defaultValue = "8")int size){
@@ -49,6 +56,10 @@ public class HotelController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(
+            method = "GET",
+            summary = "Get hotel by id",
+            description = "Send a request to get the hotel with the path variable id")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getHotelDetail(@PathVariable(value = "id")Long id){
         Hotel hotel = hotelService.getHotelById(id);
@@ -80,6 +91,15 @@ public class HotelController {
                 .data(hotelResponse)
                 .build();
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/totalHotel")
+    public ResponseEntity<ApiResponse> getTotalHotels(){
+        return ResponseEntity.ok(ApiResponse.builder()
+                        .message("Get total hotel successfully")
+                        .status(HttpStatus.OK.value())
+                        .data(hotelService.getTotalHotels())
+                .build());
     }
 
     @PostMapping("/createHotel")

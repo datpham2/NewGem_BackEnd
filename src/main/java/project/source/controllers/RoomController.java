@@ -1,5 +1,7 @@
 package project.source.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
@@ -31,10 +33,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/room")
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Tag(name = "Room", description = "Operations related to rooms")
 public class RoomController {
     RoomService roomService;
 
+
     @GetMapping("/allRoom/{hotelId}")
+    @Operation(
+            method = "GET",
+            summary = "Get all room by hotel id",
+            description = "Send a request to get all the rooms of the hotel with the path variable hotelId")
     public ResponseEntity<ApiResponse> getAllRoomByHotelId(
             @PathVariable(value = "hotelId") Long hotelId,
             @RequestParam(value = "page", defaultValue = "0") @Min(value = 0, message = "Page must be more than zero") int page,
@@ -59,6 +67,10 @@ public class RoomController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(
+            method = "GET",
+            summary = "Add room by id",
+            description = "Send a request to get the room with the path variable id")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getRoomById(@PathVariable(value = "id")Long id){
         Room room = roomService.getRoomById(id);
@@ -70,6 +82,10 @@ public class RoomController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(
+            method = "GET",
+            summary = "Search room matching the criteria",
+            description = "Send a request to get all the rooms matching the criterias(hotel id, room type, max price")
     @GetMapping("/search")
     public ResponseEntity<ApiResponse> searchRoom(@RequestParam(name = "hotel", required = false) Long hotelId,
                                                    @RequestParam(name = "type", required = false) RoomType type,
@@ -94,6 +110,10 @@ public class RoomController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
+    @Operation(
+            method = "POST",
+            summary = "Add a room",
+            description = "Post a request with hotelId, roomNumber, price, type, guests")
     @PostMapping("/createRoom")
     public ResponseEntity<ApiResponse> addRoom(@Valid @RequestBody RoomDTO roomDTO, BindingResult result){
         if(result.hasErrors()){
@@ -115,6 +135,10 @@ public class RoomController {
         }
     }
 
+    @Operation(
+            method = "PUT",
+            summary = "Update the room with the pariable id",
+            description = "Send a request update the roomNumber, price, type and guests")
     @PutMapping("/updateRoom/{id}")
     public ResponseEntity<ApiResponse> updateRoom(@Valid @RequestBody RoomDTO roomDTO, @PathVariable(value = "id")Long id,
                                                    BindingResult result){
@@ -137,6 +161,10 @@ public class RoomController {
         }
     }
 
+    @Operation(
+            method = "PATCH",
+            summary = "Change the status of the room",
+            description = "Send a request change the status of the room")
     @PatchMapping("/changeStatus/{id}")
     public ResponseEntity<ApiResponse> disableHotel(@PathVariable(value = "id")Long id){
         Status status = roomService.changeStatus(id);
@@ -148,13 +176,17 @@ public class RoomController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping("/type/{type}")
+    @Operation(
+            method = "GET",
+            summary = "Get all rooms by type",
+            description = "Send a request to get all the rooms by the type")
+    @GetMapping("/type")
     public ResponseEntity<ApiResponse> getAllRoomByType(
-            @PathVariable(value = "type") RoomType type,
+            @RequestParam(value = "type", required = false) RoomType roomType,
             @RequestParam(value = "page", defaultValue = "0") @Min(value = 0, message = "Page must be more than zero") int page,
             @RequestParam(value = "size", defaultValue = "8") @Min(value = 1, message = "Page must be more than one") int size){
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Room> rooms = roomService.getAllRoomByType(type,pageRequest);
+        Page<Room> rooms = roomService.getAllRoomByType(roomType,pageRequest);
         List<RoomDTO> items = rooms.stream().map(RoomDTO::fromRoom).toList();
 
         PageResponse<List<RoomDTO>> response = PageResponse.<List<RoomDTO>>builder()

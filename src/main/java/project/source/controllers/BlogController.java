@@ -2,6 +2,7 @@ package project.source.controllers;
 
 import java.nio.file.*;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.UrlResource;
@@ -32,6 +33,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping ("/blog")
 @RequiredArgsConstructor
+@Tag(name = "Blog", description = "Operations related to blogs")
 public class BlogController {
     private final BlogService blogService;
     @GetMapping("")

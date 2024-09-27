@@ -26,4 +26,6 @@ public interface IHotelService {
     Page<Hotel> searchHotelByName(String name, PageRequest pageRequest);
 
     void disableHotel(Long id);
+
+    long getTotalHotels();
 }
