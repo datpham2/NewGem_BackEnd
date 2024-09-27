@@ -2,6 +2,7 @@ package project.source.controllers;
 
 import java.nio.file.*;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,11 @@ import java.util.UUID;
 @Tag(name = "Blog", description = "Operations related to blogs")
 public class BlogController {
     private final BlogService blogService;
+
+    @Operation(
+            method = "GET",
+            summary = "Get all blogs in the database",
+            description = "Send a request to get all the bills data ('blogId', 'title', 'content', 'images', 'authorId') existed in the database")
     @GetMapping("")
     public ResponseEntity<ApiResponse> getBlogsToPages(
             @RequestParam(defaultValue = "0") int page,
@@ -59,6 +65,10 @@ public class BlogController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(
+            method = "GET",
+            summary = "Get a blog with id",
+            description = "Send a request to get the blog data ('blogId', 'title', 'content', 'images', 'authorId') with corresponding 'blogId' ")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> index(@PathVariable(value = "id" ) Long id) {
         Blog blog = blogService.getBlogById(id);
@@ -70,7 +80,10 @@ public class BlogController {
         return ResponseEntity.ok().body(response);
     }
 
-
+    @Operation(
+            method = "POST",
+            summary = "Post the blog body to create a new blog ",
+            description = "Send a request with blog body ('blogId', 'title', 'content', 'images', 'authorId') to build and save a new object for class 'Blog')")
     @PostMapping("/newBlog")
     public ResponseEntity<?> createBlog(@Valid @RequestBody BlogDTO blogDTO, BindingResult result) {
         if (result.hasErrors()) {
@@ -87,6 +100,10 @@ public class BlogController {
 //        return ResponseEntity.ok( "Blog submit successfully " + blog.toString());
     }
 
+    @Operation(
+            method = "PUT",
+            summary = "Put the new blog body to an existed blog",
+            description = "Send a request to find and save a new body ('title', 'content', 'images') for a targeted 'blogId', respond with a rejecting message if not valid" )
     @PutMapping("/updateBlog/{id}")
     public ResponseEntity<ApiResponse> updateBlog(@PathVariable Long id, @Valid @RequestBody BlogDTO blogDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -113,7 +130,10 @@ public class BlogController {
 
 
 
-
+    @Operation(
+            method = "DELETE",
+            summary = "Set a blog status to inactive",
+            description = "Set the 'status' enumerate from a targeted 'blogId' to 'INACTIVE'" )
     @DeleteMapping("deleteBlog/{id}")
     public ResponseEntity<ApiResponse> deleteBlog(@PathVariable long id) {
         blogService.deleteBlog(id);

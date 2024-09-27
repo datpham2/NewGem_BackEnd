@@ -2,6 +2,7 @@ package project.source.controllers;
 /**
  * @autor An Nguyen
  */
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,10 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    @Operation(
+            method = "POST",
+            summary = "Post the review body to create a new review object",
+            description = "Send a request with hotel body ('comment', 'rating') to build and save a new object for class 'Reviews'" )
     @PostMapping("/createReview")
     public ResponseEntity<ApiResponse> createReview(@RequestParam(value = "hotelId")Long hotelId,
                                                     @RequestParam(value = "userId")Long userId,
@@ -40,6 +45,10 @@ public class ReviewController {
                 .build());
     }
 
+    @Operation(
+            method = "GET",
+            summary = "Get review by id",
+            description = "Send a request to get the review with targeted id")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> hotelDetail(@PathVariable(value = "id")Long id,
                                                    @RequestParam(value = "page", defaultValue = "0")int page,

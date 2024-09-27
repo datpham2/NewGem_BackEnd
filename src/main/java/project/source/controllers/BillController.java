@@ -1,5 +1,6 @@
 package project.source.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -35,7 +36,10 @@ public class BillController {
     BillService billService;
     HotelService hotelService;
 
-
+    @Operation(
+            method = "GET",
+            summary = "Get all bills in the database (might need admin authentication)",
+            description = "Send a request to get all the bills data existed in the database")
     @GetMapping("/getAllBill")
     public ResponseEntity<ApiResponse> getAllBillByUserIdAndHotelId(
             @RequestParam(value = "user") Long userId,
@@ -52,6 +56,10 @@ public class BillController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(
+            method = "GET",
+            summary = "Get all bills in the same hotel (might need admin authentication)",
+            description = "Send a request to get all the bills corresponding to a 'hotelId'")
     @GetMapping("/getBillHotel/{hotelId}")
     public ResponseEntity<ApiResponse> getAllBillByHotelId(
             @RequestParam(value = "hotel") Long hotelId){
@@ -67,7 +75,10 @@ public class BillController {
         return ResponseEntity.ok(apiResponse);
     }
 
-
+    @Operation(
+            method = "POST",
+            summary = "Post the body to create a new bill",
+            description = "Send a request with bill body ('hotelID', 'userId', 'checkOut', 'voucherId') to build and save a new object for class 'Bill', respond with a rejecting message if not valid" )
     @PostMapping("/createBill")
     public ResponseEntity<ApiResponse> getBillByUserId(@Valid @RequestBody BillRequest billRequest){
         Bill bill = billService.addBill(billRequest);
@@ -88,6 +99,10 @@ public class BillController {
                         .build());
     }
 
+    @Operation(
+            method = "GET",
+            summary = "Get a bill with id",
+            description = "Send a request to get the bill data ('hotelID', 'userId', 'checkOut', 'voucherId') with corresponding 'billId' ")
     @GetMapping("/getBill/{billId}")
     public ResponseEntity<ApiResponse> getBillId(@PathVariable(name = "billId") long billId){
         Bill bill = billService.getBillById(billId);
@@ -101,7 +116,10 @@ public class BillController {
         return ResponseEntity.ok(apiResponse);
     }
 
-
+    @Operation(
+            method = "POST",
+            summary = "Post the bill ",
+            description = "Send a request with bill body ('hotelID', 'userId', 'checkOut', 'voucherId') to build and save a new object for class 'Bill', respond with a rejecting message if not valid" )
     @PostMapping("/payBill")
     public ResponseEntity<ApiResponse> getBillById(@RequestBody @Valid PayRequest payRequest){
         Bill bill = billService.payBill(payRequest);
