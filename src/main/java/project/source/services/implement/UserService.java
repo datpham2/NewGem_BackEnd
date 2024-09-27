@@ -101,7 +101,6 @@ public class UserService implements IUserService {
             user.setFirstName(userDTO.getFirstName());
             user.setLastName(userDTO.getLastName());
             user.setPhone(userDTO.getPhone());
-            user.setEmail(userDTO.getEmail());
             user.setDateOfBirth(userDTO.getDateOfBirth());
             user.setGender(userDTO.getGender());
             user.setUsername(userDTO.getUsername());

@@ -1,5 +1,6 @@
 package project.source.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.UrlResource;
@@ -36,6 +37,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping ("/image")
 @RequiredArgsConstructor
+@Tag(name = "Image", description = "Operations related to images")
 public class ImageController {
     private final ImageService imageService;
     private final BlogService blogService;

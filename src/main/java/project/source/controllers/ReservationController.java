@@ -1,5 +1,6 @@
 package project.source.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/reservation")
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
+@Tag(name = "Reservation", description = "Operations related to reservations")
 public class ReservationController {
     ReservationService reservationService;
 

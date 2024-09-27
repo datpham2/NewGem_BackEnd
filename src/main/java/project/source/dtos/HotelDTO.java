@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HotelDTO {
+    private Long hotelId;
+
     @NotNull(message = "Name can't be empty")
     private String name;
     @NotNull(message = "Location can't be empty")
@@ -64,6 +66,7 @@ public class HotelDTO {
         }
 
         return HotelDTO.builder()
+                .hotelId(hotel.getId())
                 .name(hotel.getName())
                 .location(hotel.getLocation())
                 .city(hotel.getCity())

@@ -93,6 +93,11 @@ public class HotelService implements IHotelService {
         hotelRepository.save(hotel);
     }
 
+    @Override
+    public long getTotalHotels() {
+        return hotelRepository.countAllHotels();
+    }
+
     public void existed(HotelDTO hotelDTO) {
         boolean exists = hotelRepository.existsByNameAndCity(hotelDTO.getName(), hotelDTO.getCity()) &&
                 hotelRepository.existsByLocationAndCity(hotelDTO.getLocation(), hotelDTO.getCity());
