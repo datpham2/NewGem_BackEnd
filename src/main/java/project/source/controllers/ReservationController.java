@@ -118,7 +118,9 @@ public class ReservationController {
         } else {
             Reservation newReservation = reservationService.saveReservation(reservationDTO);
             ApiResponse apiResponse = ApiResponse.builder()
-                    .message("Create successfully")
+                    .message("Book room " + newReservation.getRoom().getRoomNumber() + " from " +
+                            newReservation.getCheckIn() + " to " + newReservation.getCheckOut() +
+                            "successfully")
                     .data(ReservationDTO.fromReservation(newReservation))
                     .status(HttpStatus.CREATED.value())
                     .build();
@@ -143,8 +145,22 @@ public class ReservationController {
         }else {
             List<Reservation> newReservations = reservationService.saveReservations(reservationDTOs);
             List<ReservationDTO> data = newReservations.stream().map(ReservationDTO::fromReservation).toList();
+
+            StringBuilder dateRange = new StringBuilder();
+
+            data.forEach(reservationDto -> {
+                if (!dateRange.isEmpty()) {
+                    dateRange.append(", ");
+                }
+                dateRange.append(" from ")
+                        .append(reservationDto.getCheckIn())
+                        .append(" to ")
+                        .append(reservationDto.getCheckOut());
+            });
+
             ApiResponse apiResponse = ApiResponse.builder()
-                    .message("Create successfully")
+                    .message("Book room " + newReservations.getFirst().getRoom().getRoomNumber() +
+                            dateRange + " successfully")
                     .data(data)
                     .status(HttpStatus.CREATED.value())
                     .build();

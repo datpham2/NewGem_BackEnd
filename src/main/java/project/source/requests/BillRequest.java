@@ -16,7 +16,7 @@ public class BillRequest {
     long hotelId;
 
     @NotNull
-    long userId;
+    String email;
 
     @NotNull
     LocalDate checkOut;

@@ -7,11 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import project.source.exceptions.NotFoundException;
-import project.source.models.entities.Bill;
-import project.source.models.entities.Hotel;
-import project.source.models.entities.Reservation;
+import project.source.models.entities.*;
 
-import project.source.models.entities.Voucher;
 import project.source.models.enums.Status;
 import project.source.repositories.BillRepository;
 
@@ -42,10 +39,11 @@ public class BillService implements IBillService {
     @Override
     public Bill addBill(BillRequest billRequest) {
         Hotel hotel = hotelService.getHotelById(billRequest.getHotelId());
-        long userId = billRequest.getUserId();
+        String email = billRequest.getEmail();
+        User user  = userService.getUserByEmail(email);
 
         Bill bill = Bill.builder()
-                .user(userService.getUserById(userId))
+                .user(user)
                 .hotel(hotel)
                 .isPaid(false)
                 .descriptions(new ArrayList<>())
@@ -61,16 +59,16 @@ public class BillService implements IBillService {
             }
         }
 
-        Set<Reservation> reservations = reservationService.getAllReservationByUserId(userId);
+        Set<Reservation> reservations = reservationService.getAllReservationByUserIdAndHotelId(user.getId(),hotel.getId());
         Set<Reservation> activeReservations = reservations.stream()
-                .filter(reservation -> reservation.getRoom().getHotel().equals(hotel) && reservation.getStatus().equals(Status.ACTIVE))
+                .filter(reservation -> reservation.getStatus().equals(Status.ACTIVE))
                 .collect(Collectors.toSet());
 
         if (activeReservations.isEmpty()) {
             return null;
         }
 
-        activeReservations.forEach(reservation -> {
+        reservations.forEach(reservation -> {
             reservation.setStatus(Status.INACTIVE);
             reservation.setBill(bill);
         });
@@ -87,8 +85,7 @@ public class BillService implements IBillService {
     @Override
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Bill getBillById(Long id) {
-        Bill bill = billRepository.findById(id).orElseThrow(()-> new NotFoundException("Can not find bill with id: " + id));
-        return bill;
+        return billRepository.findById(id).orElseThrow(()-> new NotFoundException("Can not find bill with id: " + id));
     }
 
     @Override

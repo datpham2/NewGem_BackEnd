@@ -1,6 +1,5 @@
 package project.source.services.implement;
 
-import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -13,7 +12,6 @@ import project.source.dtos.ReservationDTO;
 import project.source.exceptions.ConflictException;
 import project.source.exceptions.MultipleException;
 import project.source.exceptions.NotFoundException;
-import project.source.models.entities.Hotel;
 import project.source.models.entities.Reservation;
 import project.source.models.entities.Room;
 import project.source.models.entities.User;
@@ -63,6 +61,11 @@ public class ReservationService implements IReservationService {
     public Set<Reservation> getAllReservationByUserId(Long userId) {
         userService.getUserById(userId);
         return new HashSet<>(reservationRepository.findAllReservationByUserId(userId));
+    }
+
+    @Override
+    public Set<Reservation> getAllReservationByUserIdAndHotelId(Long userId, Long hotelId) {
+        return reservationRepository.getAllReservationByUserIdAndHotelId(userId,hotelId);
     }
 
     @Override
