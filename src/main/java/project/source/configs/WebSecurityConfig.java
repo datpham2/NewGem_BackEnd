@@ -64,6 +64,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITE_LIST_URL).permitAll()
                         .requestMatchers("/auth/**", "/reviews/**", "/reservation/**","/hotel/**", "blog/**", "image/**", "room/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/bill/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "user/confirm/**").permitAll()
                         .anyRequest().authenticated())

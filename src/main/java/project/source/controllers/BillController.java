@@ -38,7 +38,7 @@ public class BillController {
 
     @Operation(
             method = "GET",
-            summary = "Get all bills in the database (might need admin authentication)",
+            summary = "Get all bills in the database",
             description = "Send a request to get all the bills data existed in the database")
     @GetMapping("/getAllBill")
     public ResponseEntity<ApiResponse> getAllBillByUserIdAndHotelId(
@@ -58,11 +58,11 @@ public class BillController {
 
     @Operation(
             method = "GET",
-            summary = "Get all bills in the same hotel (might need admin authentication)",
+            summary = "Get all bills in the same hotel",
             description = "Send a request to get all the bills corresponding to a 'hotelId'")
     @GetMapping("/getBillHotel/{hotelId}")
     public ResponseEntity<ApiResponse> getAllBillByHotelId(
-            @RequestParam(value = "hotel") Long hotelId){
+            @PathVariable(value = "hotelId") Long hotelId){
         List<Bill> bills = billService.getAllBillByHotelId(hotelId);
         List<BillDTO> response = bills.stream().map(BillDTO::fromBill).toList();
 
@@ -78,7 +78,7 @@ public class BillController {
     @Operation(
             method = "POST",
             summary = "Post the body to create a new bill",
-            description = "Send a request with bill body ('hotelID', 'userId', 'checkOut', 'voucherId' or else null) to create a bill" )
+            description = "Send a request with bill body ('hotelID', 'email', 'checkOut', 'voucherId' or else null) to create a bill" )
     @PostMapping("/createBill")
     public ResponseEntity<ApiResponse> getBillByUserId(@Valid @RequestBody BillRequest billRequest){
         Bill bill = billService.addBill(billRequest);

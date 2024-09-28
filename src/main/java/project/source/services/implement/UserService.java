@@ -82,7 +82,10 @@ public class UserService implements IUserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
 
-        if (user.getUsername().equals(currentUsername)) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        if (isAdmin || user.getUsername().equals(currentUsername)) {
             return user;
         } else {
             throw new AccessDeniedException("You do not have permission to access this user.");
@@ -205,5 +208,22 @@ public class UserService implements IUserService {
         return userRepository.findByUsername(username).orElseThrow(() ->
                 new NotFoundException("User not found with username: " + username)
         );
+    }
+
+
+    public User getUserByEmail(String email){
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new NotFoundException("User not found with email : " + email));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        if (isAdmin || user.getUsername().equals(currentUsername)) {
+            return user;
+        } else {
+            throw new AccessDeniedException("You do not have permission to access this user.");
+        }
     }
 }

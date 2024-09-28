@@ -20,6 +20,8 @@ public interface IReservationService {
 
     Set<Reservation> getAllReservationByUserId(Long userId);
 
+    Set<Reservation> getAllReservationByUserIdAndHotelId(Long userId, Long hotelId);
+
     Page<Reservation> getAllReservationByRoomId(Long roomId, PageRequest pageRequest);
 
     List<Reservation> saveReservations(List<ReservationDTO> reservationDTOS);

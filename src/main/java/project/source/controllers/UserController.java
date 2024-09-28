@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -83,6 +84,21 @@ public class UserController {
     @GetMapping("getUser/{id}")
     public ResponseEntity<ApiResponse> getUser(@PathVariable long id) {
         User user = userService.getUserById(id);
+        ApiResponse response = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("User retrieved successfully")
+                .data(UserDTO.fromUser(user))
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            method = "GET",
+            summary = "Get the user by email",
+            description = "Send a request via this API to get the user with path variable email")
+    @GetMapping("getUserByEmail/{email}")
+    public ResponseEntity<ApiResponse> getUserByEmail(@PathVariable @Valid @Email String email) {
+        User user = userService.getUserByEmail(email);
         ApiResponse response = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("User retrieved successfully")
@@ -182,7 +198,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Confirm user", description = "Send a request via this API to confirm user")
+    @Operation(summary = "Confirm user", description = "Send a request via this API to activate user")
     @GetMapping("/confirm/{userId}")
     public ResponseEntity<String> confirm(@Min(1) @PathVariable long userId, @RequestParam String verifyCode, HttpServletResponse response) throws IOException {
         try {
