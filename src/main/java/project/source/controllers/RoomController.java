@@ -156,7 +156,7 @@ public class RoomController {
             ApiResponse apiResponse = ApiResponse.builder()
                     .message("Update successfully")
                     .data(RoomDTO.fromRoom(updatedRoom))
-                    .status(HttpStatus.ACCEPTED.value())
+                    .status(HttpStatus.OK.value())
                     .build();
             return ResponseEntity.ok(apiResponse);
         }

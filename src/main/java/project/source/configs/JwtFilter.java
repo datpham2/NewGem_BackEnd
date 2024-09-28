@@ -35,10 +35,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-        log.info("---------- doFilterInternal ----------");
 
         final String authorization = request.getHeader(AUTHORIZATION);
-        log.info("Authorization: {}", authorization);
 
         if (request.getRequestURI().contains("**/oauth2/**")) {
             filterChain.doFilter(request, response);

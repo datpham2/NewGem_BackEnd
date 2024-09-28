@@ -185,7 +185,6 @@ public class UserController {
     @Operation(summary = "Confirm user", description = "Send a request via this API to confirm user")
     @GetMapping("/confirm/{userId}")
     public ResponseEntity<String> confirm(@Min(1) @PathVariable long userId, @RequestParam String verifyCode, HttpServletResponse response) throws IOException {
-        log.info("Confirm user, userId={}, verifyCode={}", userId, verifyCode);
         try {
             userService.confirmUser(userId, verifyCode);
             return ResponseEntity.accepted().body("User has confirmed successfully");
@@ -193,7 +192,7 @@ public class UserController {
             log.error("errorMessage={}", e.getMessage(), e.getCause());
             return ResponseEntity.badRequest().body("Confirm was failed");
         } finally {
-            response.sendRedirect("http://localhost:3000/");
+            response.sendRedirect("http://localhost:3000/login");
         }
     }
 
