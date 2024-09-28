@@ -104,7 +104,7 @@ public class ReservationController {
     @Operation(
             method = "POST",
             summary = "Post the reservation body to create a new reservation",
-            description = "Send a request with reservation body ('checkIn', 'checkOut', 'hotelId', 'roomId', 'userId', 'adults', 'children', 'billId') to build and save a new object for class 'Reservation', respond with a rejecting message if not valid" )
+            description = "Send a request with reservation body ('checkIn', 'checkOut', 'hotelId', 'roomId', 'userId', 'adults', 'children') to build and save a new object for class 'Reservation', respond with a rejecting message if not valid" )
     @PostMapping("/bookRoom")
     public ResponseEntity<ApiResponse> makeReservation(@Valid @RequestBody ReservationDTO reservationDTO, BindingResult result) {
         if (result.hasErrors()) {
@@ -129,7 +129,7 @@ public class ReservationController {
     @Operation(
             method = "POST",
             summary = "Post the reservation body to create multiple reservations",
-            description = "Send a request with multiple reservation bodies ('checkIn', 'checkOut', 'hotelId', 'roomId', 'userId', 'adults', 'children', 'billId') as a list to build and save a new object for class 'Reservation', respond with a rejecting message if not valid" )
+            description = "Send a request with multiple reservation bodies ('checkIn', 'checkOut', 'hotelId', 'roomId', 'userId', 'adults', 'children') as a list to build and save a new object for class 'Reservation', respond with a rejecting message if not valid" )
     @PostMapping("/bookRooms")
     public ResponseEntity<ApiResponse> makeReservations(@Valid @RequestBody List<ReservationDTO> reservationDTOs, BindingResult result){
         if(result.hasErrors()){
