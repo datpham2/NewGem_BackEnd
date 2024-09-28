@@ -78,14 +78,14 @@ public class BillController {
     @Operation(
             method = "POST",
             summary = "Post the body to create a new bill",
-            description = "Send a request with bill body ('hotelID', 'userId', 'checkOut', 'voucherId') to build and save a new object for class 'Bill', respond with a rejecting message if not valid" )
+            description = "Send a request with bill body ('hotelID', 'userId', 'checkOut', 'voucherId' or else null) to create a bill" )
     @PostMapping("/createBill")
     public ResponseEntity<ApiResponse> getBillByUserId(@Valid @RequestBody BillRequest billRequest){
         Bill bill = billService.addBill(billRequest);
         if (bill != null){
             ApiResponse apiResponse = ApiResponse.builder()
                     .status(HttpStatus.CREATED.value())
-                    .message("Get all bills successfully").message("Get all bills by user id "
+                    .message("Create bill for user id "
                             + bill.getUser().getId() + " hotel name " +
                             bill.getHotel().getName() + " successfully")
                     .data(BillDTO.fromBill(bill))
@@ -118,10 +118,10 @@ public class BillController {
 
     @Operation(
             method = "POST",
-            summary = "Post the bill ",
-            description = "Send a request with bill body ('hotelID', 'userId', 'checkOut', 'voucherId') to build and save a new object for class 'Bill', respond with a rejecting message if not valid" )
+            summary = "Pay the bill",
+            description = "Send a request(billId, newFee if necessary or else null, descriptions, receivedAmount) to pay the bill " )
     @PostMapping("/payBill")
-    public ResponseEntity<ApiResponse> getBillById(@RequestBody @Valid PayRequest payRequest){
+    public ResponseEntity<ApiResponse> payBill(@RequestBody @Valid PayRequest payRequest){
         Bill bill = billService.payBill(payRequest);
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())

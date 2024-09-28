@@ -36,8 +36,8 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public Page<Hotel> getHotelByCityAndPriceRange(City city, BigDecimal minPrice, BigDecimal maxPrice, PageRequest pageRequest) {
-        return hotelRepository.findByCityAndPriceRange(city,minPrice,maxPrice,pageRequest);
+    public Page<Hotel> getHotelByCityAndPriceRange(City city, BigDecimal minPrice, BigDecimal maxPrice, Status status, PageRequest pageRequest) {
+        return hotelRepository.findByCityAndPriceRange(city,minPrice,maxPrice,status, pageRequest);
     }
 
     @Override

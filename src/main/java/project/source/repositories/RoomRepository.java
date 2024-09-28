@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import project.source.models.entities.Room;
 import project.source.models.enums.RoomType;
+import project.source.models.enums.Status;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,4 +23,10 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             "AND (:type IS NULL OR r.type = :type) " +
             "AND (:maxPrice IS NULL OR r.price <= :maxPrice)")
     Page<Room> findByHotelAndTypeAndPrice(Long hotel, RoomType type, BigDecimal maxPrice, PageRequest pageRequest);
+
+    @Query("SELECT r FROM Room r WHERE (:hotel IS NULL OR r.hotel.id = :hotel) " +
+            "AND (:type IS NULL OR r.type = :type) " +
+            "AND (:maxPrice IS NULL OR r.price <= :maxPrice) " +
+            "AND (:status IS NULL OR r.status = :status)")
+    Page<Room> findByHotelAndTypeAndPriceAndStatus(Long hotel, RoomType type, BigDecimal maxPrice, Status status, PageRequest pageRequest);
 }

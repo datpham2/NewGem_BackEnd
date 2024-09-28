@@ -34,17 +34,6 @@ public class RoomService implements IRoomService {
         return roomRepository.findAll(pageRequest);
     }
 
-    @Override
-    public Page<Room> getRoomByHotelAndTypeAndPrice(Long hotelId, RoomType type, BigDecimal maxPrice, PageRequest pageRequest) {
-        if (hotelId != null) {
-            if (!hotelService.existedById(hotelId)) {
-                throw new NotFoundException("Hotel with ID " + hotelId + " does not exist.");
-            }
-            return roomRepository.findByHotelAndTypeAndPrice(hotelId, type, maxPrice, pageRequest);
-        }
-        return roomRepository.findByHotelAndTypeAndPrice(null, type, maxPrice, pageRequest);
-    }
-
 
     @Override
     public Room getRoomById(Long id) {
@@ -111,5 +100,16 @@ public class RoomService implements IRoomService {
     @Override
     public Page<Room> getAllRoomByType(RoomType roomType, PageRequest pageRequest) {
         return roomRepository.findAllByType(roomType, pageRequest);
+    }
+
+    @Override
+    public Page<Room> getRoomByHotelAndTypeAndPriceAndStatus(Long hotelId, RoomType type, BigDecimal maxPrice, Status status, PageRequest pageRequest) {
+        if (hotelId != null) {
+            if (!hotelService.existedById(hotelId)) {
+                throw new NotFoundException("Hotel with ID " + hotelId + " does not exist.");
+            }
+            return roomRepository.findByHotelAndTypeAndPriceAndStatus(hotelId, type, maxPrice, status, pageRequest);
+        }
+        return roomRepository.findByHotelAndTypeAndPriceAndStatus(null, type, maxPrice, status, pageRequest);
     }
 }

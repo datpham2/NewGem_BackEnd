@@ -85,14 +85,15 @@ public class RoomController {
     @Operation(
             method = "GET",
             summary = "Search room matching the criteria",
-            description = "Send a request to get all the rooms matching the criterias(hotel id, room type, max price")
+            description = "Send a request to get all the rooms matching the criterias(hotel id, room type, max price and status")
     @GetMapping("/search")
     public ResponseEntity<ApiResponse> searchRoom(@RequestParam(name = "hotel", required = false) Long hotelId,
                                                    @RequestParam(name = "type", required = false) RoomType type,
                                                    @RequestParam(name = "max", required = false) BigDecimal maxPrice,
+                                                  @RequestParam(name = "status", required = false) Status status,
                                                    @RequestParam(name = "page", defaultValue = "0") int page,
                                                    @RequestParam(name = "size", defaultValue = "5") int size){
-        Page<Room> rooms = roomService.getRoomByHotelAndTypeAndPrice(hotelId,type,maxPrice,PageRequest.of(page,size));
+        Page<Room> rooms = roomService.getRoomByHotelAndTypeAndPriceAndStatus(hotelId,type,maxPrice,status,PageRequest.of(page,size));
         List<RoomDTO> roomDTOList = rooms.getContent().stream().map(RoomDTO::fromRoom).toList();
 
         PageResponse<List<RoomDTO>> response = PageResponse.<List<RoomDTO>>builder()
@@ -155,7 +156,7 @@ public class RoomController {
             ApiResponse apiResponse = ApiResponse.builder()
                     .message("Update successfully")
                     .data(RoomDTO.fromRoom(updatedRoom))
-                    .status(HttpStatus.ACCEPTED.value())
+                    .status(HttpStatus.OK.value())
                     .build();
             return ResponseEntity.ok(apiResponse);
         }

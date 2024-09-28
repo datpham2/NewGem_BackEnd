@@ -15,7 +15,7 @@ import java.util.List;
 public interface IHotelService {
     Page<Hotel> getAllHotel(PageRequest pageRequest);
 
-    Page<Hotel> getHotelByCityAndPriceRange(City city, BigDecimal minPrice, BigDecimal maxPrice, PageRequest pageRequest);
+    Page<Hotel> getHotelByCityAndPriceRange(City city, BigDecimal minPrice, BigDecimal maxPrice, Status status, PageRequest pageRequest);
 
     Hotel getHotelById(Long id);
 
