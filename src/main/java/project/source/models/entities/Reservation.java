@@ -62,7 +62,10 @@ public class Reservation extends BaseEntity<Long> {
             throw new IllegalArgumentException("Check-out date cannot be before check-in date.");
         }
         long daysBetween = ChronoUnit.DAYS.between(checkIn, checkOut);
-        return room.getPrice().multiply(BigDecimal.valueOf(daysBetween)); // Adjusted to use BigDecimal
+        if (daysBetween == 0){
+            return room.getPrice();
+        }
+        return room.getPrice().multiply(BigDecimal.valueOf(daysBetween));
     }
 
 }

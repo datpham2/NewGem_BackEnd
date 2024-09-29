@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -47,7 +48,7 @@ public class RoomController {
             @PathVariable(value = "hotelId") Long hotelId,
             @RequestParam(value = "page", defaultValue = "0") @Min(value = 0, message = "Page must be more than zero") int page,
             @RequestParam(value = "size", defaultValue = "8") @Min(value = 1, message = "Page must be more than one") int size){
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size,Sort.by("roomNumber").ascending());
         Page<Room> rooms = roomService.getAllRoomByHotelId(hotelId, pageRequest);
         List<RoomDTO> items = rooms.stream().map(RoomDTO::fromRoom).toList();
 
@@ -93,7 +94,7 @@ public class RoomController {
                                                   @RequestParam(name = "status", required = false) Status status,
                                                    @RequestParam(name = "page", defaultValue = "0") int page,
                                                    @RequestParam(name = "size", defaultValue = "5") int size){
-        Page<Room> rooms = roomService.getRoomByHotelAndTypeAndPriceAndStatus(hotelId,type,maxPrice,status,PageRequest.of(page,size));
+        Page<Room> rooms = roomService.getRoomByHotelAndTypeAndPriceAndStatus(hotelId,type,maxPrice,status,PageRequest.of(page,size, Sort.by("roomNumber").ascending()));
         List<RoomDTO> roomDTOList = rooms.getContent().stream().map(RoomDTO::fromRoom).toList();
 
         PageResponse<List<RoomDTO>> response = PageResponse.<List<RoomDTO>>builder()
@@ -128,7 +129,8 @@ public class RoomController {
         }else {
             Room newRoom = roomService.saveRoom(roomDTO);
             ApiResponse apiResponse = ApiResponse.builder()
-                    .message("Create successfully")
+                    .message("Create room " + newRoom.getRoomNumber() + " at hotel "
+                            + newRoom.getHotel().getName() + " successfully")
                     .data(RoomDTO.fromRoom(newRoom))
                     .status(HttpStatus.CREATED.value())
                     .build();
@@ -186,7 +188,7 @@ public class RoomController {
             @RequestParam(value = "type", required = false) RoomType roomType,
             @RequestParam(value = "page", defaultValue = "0") @Min(value = 0, message = "Page must be more than zero") int page,
             @RequestParam(value = "size", defaultValue = "8") @Min(value = 1, message = "Page must be more than one") int size){
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size,Sort.by("roomNumber").ascending());
         Page<Room> rooms = roomService.getAllRoomByType(roomType,pageRequest);
         List<RoomDTO> items = rooms.stream().map(RoomDTO::fromRoom).toList();
 

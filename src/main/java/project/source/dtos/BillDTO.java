@@ -7,6 +7,7 @@ import project.source.models.entities.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,6 +21,8 @@ public class BillDTO {
 
     @NonNull
     Long userId;
+
+    UserDTO user;
 
     @NonNull
     Long hotelId;
@@ -41,6 +44,8 @@ public class BillDTO {
 
     List<String> descriptions;
 
+    LocalDateTime checkOut;
+
     public static BillDTO fromBill(Bill bill){
         Set<ReservationDTO> reservations = bill.getReservations().stream().map(ReservationDTO::fromReservation).collect(Collectors.toSet());
 
@@ -50,6 +55,7 @@ public class BillDTO {
                 .billId(bill.getId())
                 .hotelId(bill.getHotel().getId())
                 .userId(bill.getUser().getId())
+                .user(UserDTO.fromUser(bill.getUser()))
                 .totalFee(bill.getTotalFee())
                 .reservations(reservations)
                 .isPaid(bill.isPaid())
@@ -57,6 +63,7 @@ public class BillDTO {
                 .changedAmount(bill.getChangedAmount())
                 .receivedAmount(bill.getReceivedAmount())
                 .descriptions(bill.getDescriptions())
+                .checkOut(bill.getUpdatedAt())
                 .build();
         if (bill.getVoucher() != null){
             billDTO.setVoucherId(bill.getVoucher().getId());

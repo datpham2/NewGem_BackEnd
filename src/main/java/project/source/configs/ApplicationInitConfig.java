@@ -41,7 +41,7 @@ public class ApplicationInitConfig {
     private static final String ADMIN_EMAIL = "admin@newgem.com";
     private static final String ADMIN_PHONE = "3725985432";
     private static final String HOTEL_NAME = "New Gem";
-    private static final String HOTEL_LOCATION = "HCM city";
+    private static final String HOTEL_LOCATION = "District 1";
 
     @Bean
     ApplicationRunner applicationRunner() {
