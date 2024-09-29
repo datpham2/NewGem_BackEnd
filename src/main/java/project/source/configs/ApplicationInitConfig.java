@@ -41,7 +41,7 @@ public class ApplicationInitConfig {
     private static final String ADMIN_EMAIL = "admin@newgem.com";
     private static final String ADMIN_PHONE = "3725985432";
     private static final String HOTEL_NAME = "New Gem";
-    private static final String HOTEL_LOCATION = "District 1";
+    private static final String HOTEL_LOCATION = "135 Hai Ba Trung, District 1";
 
     @Bean
     ApplicationRunner applicationRunner() {
@@ -114,7 +114,7 @@ public class ApplicationInitConfig {
         Room room = Room.builder()
                 .guests(4)
                 .hotel(hotel)
-                .price(BigDecimal.valueOf(10))
+                .price(BigDecimal.valueOf(70))
                 .type(RoomType.VIP)
                 .roomNumber(101)
                 .status(Status.ACTIVE)
