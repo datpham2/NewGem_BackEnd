@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import project.source.models.entities.*;
 import project.source.models.enums.Status;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Builder
@@ -27,6 +28,12 @@ public class ReservationDTO {
     @NonNull
     Long roomId;
 
+    int roomNumber;
+
+    BigDecimal price;
+
+    BigDecimal total;
+
     @NonNull
     Long userId;
 
@@ -43,6 +50,9 @@ public class ReservationDTO {
                 .checkOut(reservation.getCheckOut())
                 .hotelId(reservation.getHotel().getId())
                 .roomId(reservation.getRoom().getId())
+                .roomNumber(reservation.getRoom().getRoomNumber())
+                .price(reservation.getRoom().getPrice())
+                .total(reservation.getTotalPrice())
                 .userId(reservation.getUser().getId())
                 .adults(reservation.getAdults())
                 .children(reservation.getChildren())
