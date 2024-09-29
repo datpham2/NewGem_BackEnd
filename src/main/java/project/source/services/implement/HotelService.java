@@ -71,7 +71,7 @@ public class HotelService implements IHotelService {
                 throw new ConflictException("Can move hotel to another city");
             }
             hotel1.setLocation(hotelDTO.getLocation());
-            hotel1.setCity(hotelDTO.getCity());
+            hotel1.setName(hotelDTO.getName());
             return hotelRepository.save(hotel1);
         }
     }

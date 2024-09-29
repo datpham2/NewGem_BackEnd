@@ -158,7 +158,7 @@ public class HotelController {
             hotel = hotelService.updateHotel(hotelDTO,id);
             ApiResponse apiResponse = ApiResponse.builder()
                     .data(HotelDTO.fromHotel(hotel))
-                    .message("Upadte successfully")
+                    .message("Update successfully")
                     .status(HttpStatus.OK.value())
                     .build();
             return ResponseEntity.ok(apiResponse);
